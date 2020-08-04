@@ -1,0 +1,15 @@
+{"title": "For Realforce 23U",
+"rules":[{
+  "description": "Use equal button on Realforce 23U (DIP SW3 ON)",
+  "manipulators":[
+    {"conditions":[{"type":"device_if","identifiers":[{"product_id":279,"vendor_id":2131}]}],
+    "from":{"simultaneous":[{"key_code":"left_option"},{"key_code":"keypad_6"},{"key_code":"keypad_1"}],
+      "simultaneous_options":{"key_down_order":"strict"}},
+    "to":[{"key_code": "keypad_equal_sign"}],"type":"basic"}
+]},{
+  "description": "Use Cut, Copy and Paste button on Realforce 23U (DIP SW1 & 3 ON)",
+  "manipulators":[
+    {"conditions":[{"type":"device_if","identifiers":[{"product_id":279,"vendor_id":2131}]}],
+    "from":{"key_code":"left_control","modifiers":{"optional":["any"]}},
+    "to":[{"key_code":"left_command"}],"type":"basic"}
+]}]}
