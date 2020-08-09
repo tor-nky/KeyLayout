@@ -5,7 +5,6 @@
 フォルダ ~/.config/karabiner/assets/complex_modifications  にスクリプトをコピーしてください。
 
 JISキーボードにもUSキーボードにも対応しています。
-
 Karabiner-Elements を動かしたまま、システム環境設定 → キーボード → キーボードの種類を変更　からお使いのキーボードの種類を設定してください。
 
 ## 月配列2-263式 +ローマ字入力
