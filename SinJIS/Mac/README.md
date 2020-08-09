@@ -1,7 +1,11 @@
 # Mac を 新JISかな配列 にするスクプリト
 
 * SinJIS_Layout.json
+
+フォルダ ~/.config/karabiner/assets/complex_modifications  にスクリプトをコピーしてください。
+
 JISキーボードにもUSキーボードにも対応しています。
+
 Karabiner-Elements を動かしたまま、システム環境設定 → キーボード → キーボードの種類を変更　からお使いのキーボードの種類を設定してください。
 
 ![JISキーボードの配列図](SinJIS_Layout.png)
@@ -11,6 +15,7 @@ Karabiner-Elements を動かしたまま、システム環境設定 → キー�
 ## 新JIS配列+ローマ字入力
 
 入力方法にローマ字入力を使うように、ＩＭを設定してください。
+
 Karabiner-Elements で、英語系の配列より上に登録してください。
 
 macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM あるいは かわせみ2 (2.0.17) で動作確認しました。
@@ -24,11 +29,12 @@ macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM あるい�
 ### 応用
 
 スクリプトの 18-676 行目を消すと、スペースバーだけ連続シフトとなり、左右のシフトを押しながらでは英数入力になります。
-Shiftキーの動作を「英字モードに入る」に設定してください。
+ＩＭ設定で、Shiftキーの動作を「英字モードに入る」にします。
 
 ## 新JIS配列+日本語IMかな入力
 
 入力方法にかな入力を使うように、日本語ＩＭを設定してください。
+
 Karabiner-Elements で、英語系の配列より上に登録してください。
 
 macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM で動作確認しました。
