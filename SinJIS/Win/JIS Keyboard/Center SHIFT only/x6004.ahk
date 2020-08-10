@@ -330,12 +330,6 @@ $!sc29::    ; 漢字キー
     }
     ChangeIcon()
     return
-$sc3A:: ; 英数キー単独で CapsLock をオンオフする
-    if (GetKeyState("CapsLock", "T"))
-        SetCapsLockState, Off
-    else
-        SetCapsLockState, On
-    return
 
 ; 他のキーやマウスボタンをパススルーするとともに、シフト状態を操作する
 $*sc79::    ; 変換キー
