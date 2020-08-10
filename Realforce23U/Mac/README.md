@@ -20,4 +20,4 @@ Cut, Copy, Paste キーを、それぞれ command+X、command+C、command+V と�
 
 上記のスクリプトが動かなかったら、Karabiner-Elements Preferences の Devices 画面で、REALFORCE23U の Vendor ID と Product ID を確認して、スクリプトを書き換えてください。
 
-「00」キーは OS が認識しないようで、使うことができません。
+「00」キーは OS が認識しないようなので、使うことができません。
