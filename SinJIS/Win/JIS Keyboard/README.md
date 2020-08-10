@@ -47,8 +47,8 @@ Windows のキーボードのリピート設定時間（通常０.５〜１秒�
 
 ### 動作確認
 
-Windows 10 Home version 2004 + AutoHotkey (v1.1.33.02) + 新MS-IME あるいは ATOK 2017
-Windows 10 Pro version 1909 + AutoHotkey (v1.1.33.02) + 旧MS-IME
+* Windows 10 Home version 2004 + AutoHotkey (v1.1.33.02) + 新MS-IME あるいは ATOK 2017
+* Windows 10 Pro version 1909 + AutoHotkey (v1.1.33.02) + 旧MS-IME
 
 ### 制限
 
