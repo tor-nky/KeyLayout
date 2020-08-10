@@ -4,13 +4,8 @@
 
 ## Mac 用の使い方
 
-スクリプトを動かすために、Karabiner-Elements をインストールしましょう。
-
-その後、
-
-* Finder のメニュー、移動 → フォルダへ移動。
-* ~/.config/karabiner/assets/complex_modifications  と入力し、移動。
-* そのフォルダにスクリプトを移す。
+Karabiner-Elements で動作します。
+* フォルダ ~/.config/karabiner/assets/complex_modifications にスクリプトをコピーします。
 * Karabiner-Elements の Preferences を開き、Complex modifications 画面の下の方にある Add rule を押す。
 * 使いたいスクリプトを選び、+Enable を押す。
 
@@ -21,6 +16,8 @@
 * 新下駄配列
 
 いずれも、JISキーボードにもUSキーボードにも対応しています。
+
+認識し直すには、Karabiner-Elements を動かしたまま、システム環境設定 → キーボード → キーボードの種類を変更　からお使いのキーボードの種類を設定してください。
 
 ## おまけ
 

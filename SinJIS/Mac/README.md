@@ -2,20 +2,26 @@
 
 * SinJIS_Layout.json
 
-フォルダ ~/.config/karabiner/assets/complex_modifications  にスクリプトをコピーしてください。
-
 JISキーボードにもUSキーボードにも対応しています。
-Karabiner-Elements を動かしたまま、システム環境設定 → キーボード → キーボードの種類を変更　からお使いのキーボードの種類を設定してください。
+
+使いたい方を、Karabiner-Elements に英語系の配列より上に登録してください。
 
 ![JISキーボードの配列図](SinJIS_Layout.png)
 
 ![USキーボードの配列図](SinJIS-US_Layout.png)
 
+## シフト方式
+
+* 左右シフト：前置・連続シフト
+* スペースキー：連続シフト
+
+押してすぐ離した次のキーにもシフトがかかる前置・連続シフトが、左右シフトで使えるので、一本指打法で使えます。
+
+Karabiner-Elements の to_if_alone_timeout_milliseconds の設定時間（通常１秒）以上、左右シフトを押してから離すと、シフト解除します。
+
 ## 新JIS配列+ローマ字入力
 
 入力方法にローマ字入力を使うように、ＩＭを設定してください。
-
-Karabiner-Elements で、英語系の配列より上に登録してください。
 
 macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM あるいは かわせみ2 (2.0.17) で動作確認しました。
 
@@ -23,7 +29,6 @@ macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM あるい�
 
 * 濁音、半濁音を、後からさかのぼって付け直すことはできません。
 * 日本語ＩＭのライブ変換は、非常にもたつきます。
-* Caps Lock の設定を見直さないと、うまく動かないかもしれません。
 
 ### 応用
 
@@ -34,11 +39,9 @@ macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM あるい�
 
 入力方法にかな入力を使うように、日本語ＩＭを設定してください。
 
-Karabiner-Elements で、英語系の配列より上に登録してください。
-
 macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + 日本語IM で動作確認しました。
 
 ### 制限
 
-* Caps Lock はたいてい、解除されます。
-* Caps Lock の設定を見直さないと、うまく動かないかもしれません。
+* Caps Lock は、「あうえおやゆよわ…」などの入力の際に、(シフト側の文字が入力されないように)解除されます。
+* そのため、Caps Lock の設定を見直さないと、うまく動かないかもしれません。

@@ -2,16 +2,18 @@
 
 * SinGeta_Layout.json
 
-フォルダ ~/.config/karabiner/assets/complex_modifications  にスクリプトをコピーしてください。
-
 JISキーボードにもUSキーボードにも対応しています。
-Karabiner-Elements を動かしたまま、システム環境設定 → キーボード → キーボードの種類を変更　からお使いのキーボードの種類を設定してください。
+
+Karabiner-Elements で、英語系の配列より上に登録してください。
 
 ## 新下駄配列 +ローマ字入力
 
 入力方法にローマ字入力を使うように、ＩＭを設定します。
 
-Karabiner-Elements で、英語系の配列より上に登録してください。
+同時押し入力のみに対応します。
+Karabiner-Elements の simultaneous_threshold_milliseconds の設定時間（通常50ミリ秒）を調整してみてください。
+
+中指・薬指キーを押しながらの連続シフトには対応していません。
 
 ## 参考
 
