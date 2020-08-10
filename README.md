@@ -22,3 +22,15 @@ Karabiner-Elements で動作します。
 ## おまけ
 
 * Mac で、東プレのテンキー REALFORCE23U で「＝」キーを使う、あるいは Cut, Copy, Paste キーを使うスクプリト
+
+## Windows 用の使い方
+
+AutoHotkey で動作します。
+
+### 種類
+
+* 新JISかな配列
+
+新MS-IME（Windows 10 version 2004）に対応し、ストアアプリや 旧EDGE でもかな入力が可能です。
+
+JISキーボード用のみです。
