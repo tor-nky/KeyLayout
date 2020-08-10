@@ -31,7 +31,7 @@ MS-IME 方式のキー設定にすれば、他の IME でも使えると思い�
 
 Mac のような入力切り替え操作が可能です。
 
-## Center SHIFT only 内の x6004.ahk
+# Center SHIFT only 内の x6004.ahk
 
 ![JISキーボードの配列図](SinJIS_Layout.png)
 
@@ -56,7 +56,7 @@ Windows のキーボードのリピート設定時間（通常０.５〜１秒�
 * 新MS-IME（Windows 10 version 2004）では、左右シフトを押しっぱなしにしないと、一時的な英数入力がうまく動きません。
 * パソコンが処理に追われている時などに、まれに入力が素通りしてしまうことがあります。
 
-## with Side SHIFT 内の x6004SS.ahk
+# with Side SHIFT 内の x6004SS.ahk
 
 ![JISキーボードの配列図](SinJIS_SS_Layout.png)
 
