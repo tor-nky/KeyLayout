@@ -1,6 +1,6 @@
 # Windows で 新JISかな配列 にするスクプリト
 
-エスリルさんが作成したスクリプトファイル（https://github.com/esrille/new-stickney にある x6004.ahk）をもとに、機能追加
+エスリルさんが作成したスクリプトファイル（https://github.com/esrille/new-stickney にある x6004.ahk）に、機能追加
 と修正を行いました。
 
 * x6004.ahk または x6004SS.ahk

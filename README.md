@@ -11,7 +11,7 @@ Karabiner-Elements で動作します。
 
 ### 種類
 
-* 新JISかな配列
+* 新JIS配列
 * 月配列2-263式
 * 新下駄配列
 
@@ -29,7 +29,7 @@ AutoHotkey で動作します。
 
 ### 種類
 
-* 新JISかな配列
+* 新JIS配列
 
 新MS-IME（Windows 10 version 2004）に対応し、ストアアプリや 旧EDGE でもかな入力が可能です。
 
