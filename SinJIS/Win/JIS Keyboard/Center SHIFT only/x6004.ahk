@@ -318,7 +318,7 @@ $!sc29::    ; 漢字キー
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
     if (IMEMode & 1)
     {
-        send, {vkF3}    ; 半角/全角キー
+        send, {vk19}    ; 漢字キー
         IMEMode := 0    ; IME 入力モード    半英数
     }
     else
@@ -363,6 +363,7 @@ $*~Home::
 $*~End::
 $*~PgUp::
 $*~PgDn::
+;
 $*~Numpad0::
 $*~Numpad1::
 $*~Numpad2::
@@ -396,7 +397,7 @@ $*~RWin::
 ; ----------------------------------------------------------------------
 $sc7B::     ; 無変換
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
-    send, {vkF3}    ; 半角/全角キー
+    send, {vk19}    ; 漢字キー
     IMEMode := 0    ; IME 入力モード    半英数
     ChangeIcon()
     return
