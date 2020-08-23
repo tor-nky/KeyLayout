@@ -423,7 +423,7 @@ $+sc70::    ; Shift + ひらがな
     send, {vkF2}    ; ひらがな(旧MS-IME対策)
     send, {vkF1}    ; カタカナ
     IMEMode := 27   ; IME 入力モード    カタカナ
-    ShiftState := 0
+    ShiftState := 3
     Last := " "
     ChangeIcon()
     return
