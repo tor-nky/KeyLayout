@@ -2417,7 +2417,7 @@
       "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
       "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"}
 ]},{
-  "description": "新JIS配列+かわせみ2 ※設定必要",
+  "description": "新JIS配列+かわせみ2",
   "manipulators":[
     {"conditions":[{"type":"variable_unless","name":"shift_state","value":0},
     {"input_sources":[{"language":"ja"}],"type":"input_source_if"},
