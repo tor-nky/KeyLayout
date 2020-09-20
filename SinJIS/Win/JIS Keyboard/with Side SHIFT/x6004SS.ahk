@@ -18,7 +18,7 @@
 ;     https://github.com/esrille/new-stickney/blob/master/ahk/NewStickney.ahk
 ; Arranged by Satoru NAKAYA
 ;   主な書き換え箇所
-;     Windows 10 version 2005 の MS-IME に対応させるため、ローマ字入力化。
+;     Windows 10 version 2004 の MS-IME に対応させるため、ローマ字入力化。
 ;     シフトを増やしやすくするため、実装方法を変更。
 ;   追加箇所
 ;     シフト状態をタスクバーのアイコンで表示。
@@ -34,13 +34,17 @@
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 ; SendMode Input    ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+#SingleInstance force
+SetStoreCapslockMode, off   ; Sendコマンド実行時にCapsLockの状態を自動的に変更しない
 
+#Include IME.ahk    ; 参考: https://w.atwiki.jp/eamat/pages/17.html
 
-#Include IME.ahk            ; 参考: https://w.atwiki.jp/eamat/pages/17.html
-#Persistent                 ; ホットキーなどを使用しない場合で、スクリプトを常駐させたいときに記述
+SetBatchLines, -1           ; 自動Sleepなし
+#MenuMaskKey vk07           ; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
+#UseHook                    ; ホットキーはすべてフックを使用する
+Process, Priority, , High   ; プロセスの優先度を変更
 SetKeyDelay, 0, 0           ; キーストローク間のディレイを、不具合が起きなければ小さくする
 SetTimer, OnTimer, 250      ; 指定サブルーチンを0.25秒ごとに実行されるようにする
-SetStoreCapslockMode, off   ; Sendコマンド実行時にCapsLockの状態を自動的に変更しない
 
 Qwerty := ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "{sc1A}"
     , "a", "s", "d", "f", "g", "h", "j", "k", "l", "{sc27}", "{sc28}"
@@ -93,6 +97,7 @@ OnTimer:    ;タイマーに割り当てられるサブルーチンラベル
     }
     else if IconTimer > 0       ; IME の状態が検出できない時、2秒間アイコンで表示
     {
+        IMEMode := 0
         LastIcon := -1
         Menu, TRAY, Icon, x6004_UD.ico
         IconTimer--
@@ -167,7 +172,7 @@ OnKeypress(keyName)
         {
             c := KanaShift[keyName]
             if ShiftState = 132     ; 変換中のリピートを止める
-                send, {BS}
+                send, +{Esc}
         }
         else
             c := Kana[keyName]
@@ -273,7 +278,6 @@ $*Space::
     else if (ShiftState & 4)    ; スペースキーのリピート
     {
         send, {Blind}{Space}
-        Last := " "
         ShiftState |= 128
     }
     else
@@ -318,7 +322,7 @@ $!sc29::    ; 漢字キー
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
     if (IMEMode & 1)
     {
-        send, {sc29}    ; 半角/全角キー
+        send, {vkF0}    ; 英数キー
         IMEMode := 0    ; IME 入力モード    半英数
     }
     else
@@ -395,17 +399,23 @@ $*~RWin::
 ; IME 操作
 ; ----------------------------------------------------------------------
 $sc7B::     ; 無変換
+$sc71 up::  ; (Apple Pro Keyboard)英数  (旧方式)
+$vk1A::     ; (Apple Pro Keyboard)英数
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
-    send, {sc29}    ; 半角/全角キー
+    send, {vkF0}    ; 英数キー
     IMEMode := 0    ; IME 入力モード    半英数
     ChangeIcon()
     return
 $+sc7B::    ; Shift + 無変換
+$+sc71 up:: ; (Apple Pro Keyboard)Shift + 英数  (旧方式)
+$+vk1A::    ; (Apple Pro Keyboard)Shift + 英数
     IME_SET(1)                      ; IMEオン
     IME_SetConvMode(IMEMode := 24)  ; IME 入力モード    全英数
     ChangeIcon()
     return
 $sc70::     ; ひらがな
+$sc72 up::  ; (Apple Pro Keyboard)かな  (旧方式)
+$vk16::     ; (Apple Pro Keyboard)かな
     if (A_PriorHotKey = A_ThisHotKey && A_TimeSincePriorHotkey < 200)
         send, {vk1C}    ; 2連打で 変換キー 入力
     else
@@ -419,6 +429,8 @@ $sc70::     ; ひらがな
     }
     return
 $+sc70::    ; Shift + ひらがな
+$+sc72 up:: ; (Apple Pro Keyboard)Shift + かな  (旧方式)
+$+vk16::    ; (Apple Pro Keyboard)Shift + かな
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
     send, {vkF2}    ; ひらがな(旧MS-IME対策)
     send, {vkF1}    ; カタカナ
