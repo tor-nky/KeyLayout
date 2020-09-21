@@ -110,6 +110,7 @@ ChangeIcon()
 {
     global ShiftState, IMEMode, LastIcon, IconTimer
 
+    IconTimer := -1
     if (!(IMEMode & 1) && LastIcon)
     {
         LastIcon := 0
@@ -128,7 +129,6 @@ ChangeIcon()
             Menu, TRAY, Icon, x6004_2.ico
         }
     }
-    IconTimer := -1
     return
 }
 
@@ -147,6 +147,8 @@ OnKeypress(keyName)
             Last := " "
         }
     }
+    else if IconTimer >= 0
+        IMEMode := 0
 
     state := GetKeyState("Shift", "P")  ; Shiftを押しているか保存
     if (GetKeyState("LWin", "P")        ; Win, Alt, Ctrl を併用の場合
