@@ -3362,4 +3362,36 @@
       "from":{"key_code":"close_bracket","modifiers":{"optional":["caps_lock"]}},
       "to":[{"key_code":"japanese_eisuu"},
       {"key_code":"slash"},{"key_code":"a","modifiers":["option","shift"]}],"type":"basic"}
+]},{
+  "description": "[シフト拡張] 無変換, 変換→(英数入力時)スペース(かな入力時)前置・連続シフト",
+  "manipulators":[
+    {"conditions":[{"type":"variable_unless","name":"shift_state","value":0},
+    {"input_sources":[{"language":"ja"}],"type":"input_source_if"},
+    {"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],
+      "from":{"key_code":"japanese_pc_nfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"set_variable":{"name":"shift_state","value":1}}],
+      "to_after_key_up":[{"set_variable":{"name":"shift_state","value":0}}],"type":"basic"},
+    {"conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},
+    {"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],
+      "from":{"key_code":"japanese_pc_nfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"set_variable":{"name":"shift_state","value":1}}],
+      "to_if_alone":[{"set_variable":{"name":"shift_state","value":2},"halt":true}],
+      "to_after_key_up":[{"set_variable":{"name":"shift_state","value":0}}],"type":"basic"},
+    {"from":{"key_code":"japanese_pc_nfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"spacebar"}],"type":"basic"},
+
+    {"conditions":[{"type":"variable_unless","name":"shift_state","value":0},
+    {"input_sources":[{"language":"ja"}],"type":"input_source_if"},
+    {"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],
+      "from":{"key_code":"japanese_pc_xfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"set_variable":{"name":"shift_state","value":1}}],
+      "to_after_key_up":[{"set_variable":{"name":"shift_state","value":0}}],"type":"basic"},
+    {"conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},
+    {"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],
+      "from":{"key_code":"japanese_pc_xfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"set_variable":{"name":"shift_state","value":1}}],
+      "to_if_alone":[{"set_variable":{"name":"shift_state","value":2},"halt":true}],
+      "to_after_key_up":[{"set_variable":{"name":"shift_state","value":0}}],"type":"basic"},
+    {"from":{"key_code":"japanese_pc_xfer","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"spacebar"}],"type":"basic"}
 ]}]}

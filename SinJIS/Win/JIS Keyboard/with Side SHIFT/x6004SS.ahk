@@ -433,8 +433,7 @@ $vk16::     ; (Apple Pro Keyboard)かな
 $+sc70::    ; Shift + ひらがな
 $+sc72 up:: ; (Apple Pro Keyboard)Shift + かな  (旧方式)
 $+vk16::    ; (Apple Pro Keyboard)Shift + かな
-    send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
-    send, {vkF2}    ; ひらがな(旧MS-IME対策)
+    send, {vkF2 2}  ; ひらがな(旧MS-IME対策)
     send, {vkF1}    ; カタカナ
     IMEMode := 27   ; IME 入力モード    カタカナ
     ShiftState := 3
