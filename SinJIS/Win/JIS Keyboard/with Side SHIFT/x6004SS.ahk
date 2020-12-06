@@ -39,10 +39,10 @@ SetStoreCapslockMode, off   ; Sendコマンド実行時にCapsLockの状態を�
 
 #Include IME.ahk    ; 参考: https://w.atwiki.jp/eamat/pages/17.html
 
-SetBatchLines, -1           ; 自動Sleepなし
+; SetBatchLines, -1           ; 自動Sleepなし
 #MenuMaskKey vk07           ; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
-#UseHook                    ; ホットキーはすべてフックを使用する
-Process, Priority, , High   ; プロセスの優先度を変更
+; #UseHook                    ; ホットキーはすべてフックを使用する
+; Process, Priority, , High   ; プロセスの優先度を変更
 SetKeyDelay, 0, 0           ; キーストローク間のディレイを、不具合が起きなければ小さくする
 SetTimer, OnTimer, 250      ; 指定サブルーチンを0.25秒ごとに実行されるようにする
 
