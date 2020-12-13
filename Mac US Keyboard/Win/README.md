@@ -2,9 +2,9 @@
 
 * MacUSKeyboard.ahk
 
-写真のかな表示を Windows で実現します。
+下の写真のかな表示を Windows で実現します。
 
-![Mac用英語キーボードの配列図](Mac OS Mackey.jpg)
+![Mac用英語キーボードの配列図](Mac_OS_Mackey.jpg)
 
 IME.ahk も同じディレクトリに入れておきます。
 
@@ -32,4 +32,4 @@ Mac で Karabiner-Elements の「コマンドキーを単体で押したとき�
 
 スクリプトの 17行目から70行目を削除すると、「コマンドキーを単体で押したときに、英数・かなキーを送信する」だけ使うことができます。
 
-すべてにキーボードフックを使うことで、元にした「WindowsのAlt空打ちで日本語入力(IME)を切り替えるツールを作った」http://www.karakaram.com/alt-ime-on-off より短いコードにできています。
+すべてにキーボードフックを使うことで、参考にした「WindowsのAlt空打ちで日本語入力(IME)を切り替えるツールを作った」http://www.karakaram.com/alt-ime-on-off より短いコードになっています。
