@@ -94,7 +94,7 @@ $LWin up::
         else
         {
             IME_SET(1)                      ; IMEオン
-            IME_SetConvMode(IMEMode := 24)  ; IME 入力モード    全英数
+            IME_SetConvMode(24)  ; IME 入力モード    全英数
         }
     }
     return
