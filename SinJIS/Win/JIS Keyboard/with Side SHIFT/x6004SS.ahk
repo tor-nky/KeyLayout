@@ -324,7 +324,7 @@ $!sc29::    ; 漢字キー
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
     if (IMEMode & 1)
     {
-        send, {vkF0}    ; 英数キー
+        send, {vkF3}    ; 半角/全角キー
         IMEMode := 0    ; IME 入力モード    半英数
     }
     else
@@ -404,7 +404,7 @@ $sc7B::     ; 無変換
 $sc71 up::  ; (Apple Pro Keyboard)英数  (旧方式)
 $vk1A::     ; (Apple Pro Keyboard)英数
     send, {vkF2}    ; ひらがな(IMEオンを兼ねる)
-    send, {vkF0}    ; 英数キー
+    send, {vkF3}    ; 半角/全角キー
     IMEMode := 0    ; IME 入力モード    半英数
     ChangeIcon()
     return
