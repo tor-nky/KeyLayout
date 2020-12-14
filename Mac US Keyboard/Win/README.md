@@ -2,15 +2,18 @@
 
 * MacUSKeyboard.ahk
 
-下の写真のかな表示を Windows で実現します。
+下の写真のかな表示を Windows で実現します。(｀〜を除く)
 
 ![Mac用英語キーボードの配列図](Mac_OS_Mackey.jpg)
 
+## 使い方
+
+AutoHotkey で動作します。
 IME.ahk も同じディレクトリに入れておきます。
 
 ## IME の設定
 
-旧MS-IME、新MS-IME（Windows 10 version 2004）では初期状態の設定から、かな入力にするだけで使えます。
+旧MS-IME、新MS-IME（Windows 10 version 2004）の初期状態ならば、設定をかな入力にするだけで使えます。
 
 そのほかの場合は、かな入力に設定し、次のようにキーカスタマイズします。例は ATOK です。
 
@@ -32,4 +35,4 @@ Mac で Karabiner-Elements の「コマンドキーを単体で押したとき�
 
 スクリプトの 17行目から70行目を削除すると、「コマンドキーを単体で押したときに、英数・かなキーを送信する」だけ使うことができます。
 
-すべてにキーボードフックを使うことで、参考にした「WindowsのAlt空打ちで日本語入力(IME)を切り替えるツールを作った」http://www.karakaram.com/alt-ime-on-off より短いコードになっています。
+この部分は、全てにキーボードフックを使ったことで、参考にした「WindowsのAlt空打ちで日本語入力(IME)を切り替えるツールを作った」http://www.karakaram.com/alt-ime-on-off より短いコードになっています。
