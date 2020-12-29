@@ -56,6 +56,7 @@
 ## 3. DvorakJ の設定
 
 DvorakJ の設定画面で、「IME 関連」の「Google 日本語入力を使用している」のチェックを入れる
+
 ![IME 関連](DvorakJ_Setting.png)
 
 ## 4. DvorakJ を一旦終了し、再び起動する
