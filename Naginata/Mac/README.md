@@ -18,7 +18,7 @@ JISキーボードにもUSキーボードにも対応しています。
 
 eswai 氏作の、薙刀式カナ配列QMK版を Mac で使うための辞書登録を利用し、Karabiner-Elements と日本語IM でもなんとか薙刀式を使えるようにしたものです。
 
-https://github.com/eswai/qmk_firmware/tree/master/keyboards/crkbd/keymaps/naginata_v13
+https://github.com/eswai/qmk_firmware/tree/master/keyboards/crkbd/keymaps/naginata_v13u
 の 
 naginata_dictionary.plist
 を使って辞書登録してください。
@@ -158,4 +158,8 @@ A5. かわせみ2 のキー割り当て編集ツールで、「読み操作」�
 (ここまで2020年12月28日追加)
 
 * スクリプトのコメントを修正
+(ここまで2021年1月1日追加)
+
+* 「辞書登録式」に使う辞書登録を、QMK版の Big Sur 対応に合わせた
+* ワークシートでのコメント生成方法を修正
 (ここまで2021年1月1日追加)
