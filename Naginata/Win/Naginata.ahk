@@ -33,7 +33,7 @@ SetKeyDelay, 0, 0           ; キーストローク間のディレイを変更
 #MenuMaskKey vk07           ; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
 #UseHook                    ; ホットキーはすべてフックを使用する
 ; Process, Priority, , High ; プロセスの優先度を変更
-Thread, interrupt, 15, 6    ; スレッド開始から15ミリ秒ないし6行以内の割り込みを、絶対禁止
+;Thread, interrupt, 15, 6   ; スレッド開始から15ミリ秒ないし6行以内の割り込みを、絶対禁止
 SetStoreCapslockMode, off   ; Sendコマンド実行時にCapsLockの状態を自動的に変更しない
 
 SetFormat, Integer, H       ; 数値演算の結果を、16進数の整数による文字列で表現する
@@ -46,6 +46,7 @@ SetFormat, Integer, H       ; 数値演算の結果を、16進数の整数によ
 KanaMode := 0   ; 0: 英数入力, 1: かな入力
 ; 入力バッファ
 InBuf := []
+InBufTime := [] ; 入力の時間
 InBufRead := 1  ; 読み出し位置
 InBufWrite := 1 ; 書き込み位置
 InBufRest := 15
@@ -56,8 +57,6 @@ _usc := 0       ; 保存されている文字数
 
 RealKey := 0    ; 今押している全部のキービットの集合
 Yoko := 0       ; 0: 縦書き用, 1: 横書き用
-LastTickCount := A_TickCount    ; OSが起動してからの経過時間(ミリ秒)を保存
-                                ; Winキー２度押しで、再変換とするのに必要
 
     KanaSetting()   ; 出力確定する定義に印をつける
     EisuSetting()
@@ -157,7 +156,7 @@ Convert()
     {
         ; 入力バッファから読み出し
         Str := InBuf[InBufRead++]
-        if InBufRead >= 16
+        if InBufRead > 16
             InBufRead := 1
         InBufRest++
 
@@ -187,7 +186,7 @@ Convert()
         ; キーリリース時
         if (Term == "Up")
         {
-            if spc = 1  ; スペースキー単押しだったなら、空白出力
+            if (spc = 1 && RecentKey = KC_SPC)  ; スペースキー単押しだったなら、空白出力
             {
                 Str := "{Space}"
                 StoreBuf(0, Str)
@@ -412,13 +411,10 @@ sc34 Up::   ; .
 sc35 Up::   ; /
 sc73 Up::   ; (JIS)_
 sc39 Up::   ; Space
-    if (InBufRest)  ; バッファの空きを確認
-    {   ; 入力バッファへ保存
-        InBufRest--
-        InBuf[InBufWrite++] := A_ThisHotkey ; "+" は後処理で無視されるので、そのまま
-        if InBufWrite >= 16
-            InBufWrite := 1
-    }
+    ; 入力バッファへ保存
+    InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
+        , InBufWrite -= InBufRest ? (++InBufWrite > 16 ? 16 : 0) : 0
+        , InBufRest -= InBufRest ? 1 : 0
     ; 変換ルーチン
     Convert()   ; 入力バッファがいっぱいでも、不具合回避のため一応実行する
     return
