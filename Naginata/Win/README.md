@@ -39,8 +39,6 @@ Autohotkey の書き方そのものです。
 
 そのまま入力	0〜9 A〜Z -^@[]./ ユニコード文字
 
-; : ,	→	`; `: `,
-
 {Enter} {Esc} {Space} {Tab} {BS} {Del} {Ins}
 {Up} {Down} {Left} {Right}
 {Home} {End} {PgUp} {PgDn}
