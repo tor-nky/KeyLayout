@@ -55,7 +55,7 @@ OutStr := []
 OutDelay := []  ; キーストローク間のディレイ
 _usc := 0       ; 保存されている文字数
 
-RealKey := 0    ; 今押している全部のキービットの集合
+Reset := 0
 Yoko := 0       ; 0: 縦書き用, 1: 横書き用
 
     KanaSetting()   ; 出力確定する定義に印をつける
@@ -133,9 +133,10 @@ Convert()
         , KC_SPC, JP_YEN, KC_INT1
         , Key, Kana, KanaSetted, Eisu, EisuSetted, Repeatable, KeyDelay
         , BeginTable, EndTable
-        , RealKey, Yoko
+        , Reset, Yoko
     static run      := 0    ; 多重起動防止フラグ
         , spc       := 0    ; スペースキーの単押しを空白入力にするためのフラグ
+        , RealKey   := 0    ; 今押している全部のキービットの集合
         , LastKeys  := 0    ; 前回のキービット
         , Last2Keys := 0    ; 前々回のキービット
         , _lks      := 0    ; 前回、何キー同時押しだったか？
@@ -147,7 +148,15 @@ Convert()
 ;       , i         ; カウンタ
 ;       , nkeys     ; 今回は何キー同時押しか
 
-    if (run)
+    if (Reset)
+    {
+        StoreBuf(2, "")     ; 仮出力バッファをクリア
+        spc := 0, RealKey := 0, LastKeys := 0, Last2Keys := 0
+;       RepeatKey := 0, _lks := 0
+        Reset := 0
+        return
+    }
+    else if (run)
         return  ; 多重起動防止で終了
 
     run := 1
@@ -419,8 +428,5 @@ sc39 Up::   ; Space
     Convert()   ; 入力バッファがいっぱいでも、不具合回避のため一応実行する
     return
 
-~Esc::  ; Esc の入力はスルーすると共に、放し忘れのキーがないようリセットする
-;   if RealKey != 0
-;       TrayTip, %A_ScriptName%, キー認識を初期化しました, , 16
-    RealKey := 0
-    return
+; Esc は、放し忘れのキーをなくすリセットを兼ねる
+~Esc::Reset := 1

@@ -119,11 +119,11 @@ ConvTateYoko(Str)
 {
 ;   local Temp
 
-    StringReplace, Str, Str, {Up, {Temp
-    StringReplace, Str, Str, {Right, {Up
-    StringReplace, Str, Str, {Down, {Right
-    StringReplace, Str, Str, {Left, {Down
-    StringReplace, Str, Str, {Temp, {Left
+    StringReplace, Str, Str, {Up, {Temp, A
+    StringReplace, Str, Str, {Right, {Up, A
+    StringReplace, Str, Str, {Down, {Right, A
+    StringReplace, Str, Str, {Left, {Down, A
+    StringReplace, Str, Str, {Temp, {Left, A
 
     return Str
 }
@@ -139,6 +139,7 @@ SetKana(KeyComb, TateStr, Repeat="", Delay="")
 
     if (TateStr == "")  ; 定義なし
         return
+    StringReplace, TateStr, TateStr, {確定}, n{Enter}{BS}, A    ; {確定} → n{Enter}{BS}
 
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
 

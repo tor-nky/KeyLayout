@@ -50,7 +50,7 @@
     SetKana( KC_E | KC_R | KC_EQL   ,"")
     SetKana( KC_E | KC_R | JP_YEN   ,"")
 
-    SetKana( KC_U | KC_I | KC_Q     ,"臨兵闘者皆陣烈在")
+    SetKana( KC_U | KC_I | KC_Q     ,"臨兵闘者皆陣烈在前")
     SetKana( KC_U | KC_I | KC_W     ,"ネムカケ")
     SetKana( KC_U | KC_I | KC_E     ,"天狗")
     SetKana( KC_U | KC_I | KC_R     ,"シンイチ")
@@ -90,8 +90,8 @@
     SetKana( KC_E | KC_R | KC_INT1  ,"")
 
 
-; IME ON/OFF */
-; HJ: ON / FG: OFF*/
+; IME ON/OFF
+; HJ: ON / FG: OFF
     SetKana( KC_H | KC_J            ,"{vkF2 2}"     )   ; IME ON
     SetEisu( KC_H | KC_J            ,"{vkF2 2}"     )
     SetKana( KC_F | KC_G            ,"{vkF2}{vkF3}" )   ; IME OFF
@@ -109,92 +109,92 @@
 ; 「て」の部分は定義できない。「ディ」があるため
 
 ; 左手
-    SetKana( KC_J | KC_K | KC_Q     ,"^{End}"       )       ; ◀最末尾
-    SetKana( KC_J | KC_K | KC_W     ,"｜{Enter}"    )       ; ｜
-    SetKana( KC_J | KC_K | KC_R     ,"^s"           )       ; 保存
-    SetKana( KC_J | KC_K | KC_T     ,"/"            )       ; ・
-    SetKana( KC_J | KC_K | KC_A     ,"……{Enter}"  )       ; ……
-    SetKana( KC_J | KC_K | KC_S     ,"《{Enter}"    )       ; 《
-    SetKana( KC_J | KC_K | KC_D     ,"?{Enter}"     )       ; ？
-    SetKana( KC_J | KC_K | KC_F     ,"[{Enter}"     )       ; 「
-    SetKana( KC_J | KC_K | KC_G     ,"({Enter}"     )       ; （
-    SetKana( KC_J | KC_K | KC_Z     ,"││{Enter}"  )       ; ──
-    SetKana( KC_J | KC_K | KC_X     ,"》{Enter}"    )       ; 》
-    SetKana( KC_J | KC_K | KC_C     ,"{!}{Enter}"   )       ; ！
-    SetKana( KC_J | KC_K | KC_V     ,"]{Enter}"     )       ; 」
-    SetKana( KC_J | KC_K | KC_B     ,"){Enter}"     )       ; ）
+    SetKana( KC_J | KC_K | KC_Q     ,"^{End}"           )       ; ◀最末尾
+    SetKana( KC_J | KC_K | KC_W     ,"|{Enter}"         )       ; ｜
+    SetKana( KC_J | KC_K | KC_R     ,"^s"               )       ; 保存
+    SetKana( KC_J | KC_K | KC_T     ,"/"                )       ; ・
+    SetKana( KC_J | KC_K | KC_A     ,"……{確定}"       )       ; ……
+    SetKana( KC_J | KC_K | KC_S     ,"《{確定}"         )       ; 《
+    SetKana( KC_J | KC_K | KC_D     ,"?{Enter}"         )       ; ？
+    SetKana( KC_J | KC_K | KC_F     ,"[{Enter}"         )       ; 「
+    SetKana( KC_J | KC_K | KC_G     ,"({Enter}"         )       ; （
+    SetKana( KC_J | KC_K | KC_Z     ,"││{確定}"       )       ; ──
+    SetKana( KC_J | KC_K | KC_X     ,"》{確定}"         )       ; 》
+    SetKana( KC_J | KC_K | KC_C     ,"{!}{Enter}"       )       ; ！
+    SetKana( KC_J | KC_K | KC_V     ,"]{Enter}"         )       ; 」
+    SetKana( KC_J | KC_K | KC_B     ,"){Enter}"         )       ; ）
 
 ; 右手(R はリピート)
-    SetKana( KC_D | KC_F | KC_Y     ,"{Home}"       )       ; ▲Home
-    SetKana( KC_D | KC_F | KC_U     ,"+{End}{BS}"   )       ; 末消
-    SetKana( KC_D | KC_F | KC_I     ,"{vk1C}"       )       ; 再変換
-    SetKana( KC_D | KC_F | KC_O     ,"{Del}"        )       ; Del
-    SetKana( KC_D | KC_F | KC_P     ,"{Esc 3}"      )       ; 入力キャンセル
-    SetKana( KC_D | KC_F | KC_H     ,"{Enter}{End}" , , 10) ; 確定End▼
-    SetKana( KC_D | KC_F | KC_J     ,"{Up}"         , R)    ; ↑
-    SetKana( KC_D | KC_F | KC_K     ,"+{Up}"        , R)    ; 選択↑
-    SetKana( KC_D | KC_F | KC_L     ,"{Up 5}"       , R)    ; 5↑
-    SetKana( KC_D | KC_F | KC_SCLN  ,"^i"           )       ; カタカナ
-    SetKana( KC_D | KC_F | KC_N     ,"{End}"        )       ; End▼
-    SetKana( KC_D | KC_F | KC_M     ,"{Down}"       , R)    ; ↓
-    SetKana( KC_D | KC_F | KC_COMM  ,"+{Down}"      , R)    ; 選択↓
-    SetKana( KC_D | KC_F | KC_DOT   ,"{Down 5}"     , R)    ; 5↓
-    SetKana( KC_D | KC_F | KC_SLSH  ,"^u"           )       ; ひらがな
+    SetKana( KC_D | KC_F | KC_Y     ,"{Home}"           )       ; ▲Home
+    SetKana( KC_D | KC_F | KC_U     ,"+{End}{BS}"       )       ; 末消
+    SetKana( KC_D | KC_F | KC_I     ,"{vk1C}"           )       ; 再変換
+    SetKana( KC_D | KC_F | KC_O     ,"{Del}"            )       ; Del
+    SetKana( KC_D | KC_F | KC_P     ,"{Esc 3}"          )       ; 入力キャンセル
+    SetKana( KC_D | KC_F | KC_H     ,"{Enter}{End}"     , , 10) ; 確定End▼
+    SetKana( KC_D | KC_F | KC_J     ,"{Up}"             , R)    ; ↑
+    SetKana( KC_D | KC_F | KC_K     ,"+{Up}"            , R)    ; 選択↑
+    SetKana( KC_D | KC_F | KC_L     ,"{Up 5}"           , R)    ; 5↑
+    SetKana( KC_D | KC_F | KC_SCLN  ,"^i"               )       ; カタカナ
+    SetKana( KC_D | KC_F | KC_N     ,"{End}"            )       ; End▼
+    SetKana( KC_D | KC_F | KC_M     ,"{Down}"           , R)    ; ↓
+    SetKana( KC_D | KC_F | KC_COMM  ,"+{Down}"          , R)    ; 選択↓
+    SetKana( KC_D | KC_F | KC_DOT   ,"{Down 5}"         , R)    ; 5↓
+    SetKana( KC_D | KC_F | KC_SLSH  ,"^u"               )       ; ひらがな
 
 ; 英数編集モード
 ; 左手
-    SetEisu( KC_J | KC_K | KC_Q     ,"^{End}"       )       ; ◀最末尾
-    SetEisu( KC_J | KC_K | KC_W     ,"｜"           )       ; ｜
-    SetEisu( KC_J | KC_K | KC_R     ,"^s"           )       ; 保存
-    SetEisu( KC_J | KC_K | KC_T     ,"・"           )       ; ・
-    SetEisu( KC_J | KC_K | KC_A     ,"……"         )       ; ……
-    SetEisu( KC_J | KC_K | KC_S     ,"《"           )       ; 《
-    SetEisu( KC_J | KC_K | KC_D     ,"？"           )       ; ？
-    SetEisu( KC_J | KC_K | KC_F     ,"「"           )       ; 「
-    SetEisu( KC_J | KC_K | KC_G     ,"（"           )       ; （
-    SetEisu( KC_J | KC_K | KC_Z     ,"││"         )       ; ──
-    SetEisu( KC_J | KC_K | KC_X     ,"》"           )       ; 》
-    SetEisu( KC_J | KC_K | KC_C     ,"！"           )       ; ！
-    SetEisu( KC_J | KC_K | KC_V     ,"」"           )       ; 」
-    SetEisu( KC_J | KC_K | KC_B     ,"）"           )       ; ）
+    SetEisu( KC_J | KC_K | KC_Q     ,"^{End}"           )       ; ◀最末尾
+    SetEisu( KC_J | KC_K | KC_W     ,"｜"               )       ; ｜
+    SetEisu( KC_J | KC_K | KC_R     ,"^s"               )       ; 保存
+    SetEisu( KC_J | KC_K | KC_T     ,"・"               )       ; ・
+    SetEisu( KC_J | KC_K | KC_A     ,"……"             )       ; ……
+    SetEisu( KC_J | KC_K | KC_S     ,"《"               )       ; 《
+    SetEisu( KC_J | KC_K | KC_D     ,"？"               )       ; ？
+    SetEisu( KC_J | KC_K | KC_F     ,"「"               )       ; 「
+    SetEisu( KC_J | KC_K | KC_G     ,"（"               )       ; （
+    SetEisu( KC_J | KC_K | KC_Z     ,"││"             )       ; ──
+    SetEisu( KC_J | KC_K | KC_X     ,"》"               )       ; 》
+    SetEisu( KC_J | KC_K | KC_C     ,"！"               )       ; ！
+    SetEisu( KC_J | KC_K | KC_V     ,"」"               )       ; 」
+    SetEisu( KC_J | KC_K | KC_B     ,"）"               )       ; ）
 
 ; 右手(R はリピート)
-    SetEisu( KC_D | KC_F | KC_Y     ,"{Home}"       )       ; ▲Home
-    SetEisu( KC_D | KC_F | KC_U     ,"+{End}{BS}"   )       ; 末消
-    SetEisu( KC_D | KC_F | KC_I     ,"{vk1C}"       )       ; 再変換
-    SetEisu( KC_D | KC_F | KC_O     ,"{Del}"        )       ; Del
-    SetEisu( KC_D | KC_F | KC_P     ,"{Esc 3}"      )       ; 入力キャンセル
-    SetEisu( KC_D | KC_F | KC_H     ,"{Enter}{End}" , , 10) ; 確定End▼
-    SetEisu( KC_D | KC_F | KC_J     ,"{Up}"         , R)    ; ↑
-    SetEisu( KC_D | KC_F | KC_K     ,"+{Up}"        , R)    ; 選択↑
-    SetEisu( KC_D | KC_F | KC_L     ,"{Up 5}"       , R)    ; 5↑
-    SetEisu( KC_D | KC_F | KC_SCLN  ,"^i"           )       ; カタカナ
-    SetEisu( KC_D | KC_F | KC_N     ,"{End}"        )       ; End▼
-    SetEisu( KC_D | KC_F | KC_M     ,"{Down}"       , R)    ; ↓
-    SetEisu( KC_D | KC_F | KC_COMM  ,"+{Down}"      , R)    ; 選択↓
-    SetEisu( KC_D | KC_F | KC_DOT   ,"{Down 5}"     , R)    ; 5↓
-;   SetEisu( KC_D | KC_F | KC_SLSH  ,"^u"           )       ; ひらがな
+    SetEisu( KC_D | KC_F | KC_Y     ,"{Home}"           )       ; ▲Home
+    SetEisu( KC_D | KC_F | KC_U     ,"+{End}{BS}"       )       ; 末消
+    SetEisu( KC_D | KC_F | KC_I     ,"{vk1C}"           )       ; 再変換
+    SetEisu( KC_D | KC_F | KC_O     ,"{Del}"            )       ; Del
+    SetEisu( KC_D | KC_F | KC_P     ,"{Esc 3}"          )       ; 入力キャンセル
+    SetEisu( KC_D | KC_F | KC_H     ,"{Enter}{End}"     , , 10) ; 確定End▼
+    SetEisu( KC_D | KC_F | KC_J     ,"{Up}"             , R)    ; ↑
+    SetEisu( KC_D | KC_F | KC_K     ,"+{Up}"            , R)    ; 選択↑
+    SetEisu( KC_D | KC_F | KC_L     ,"{Up 5}"           , R)    ; 5↑
+;   SetEisu( KC_D | KC_F | KC_SCLN  ,"^i"               )       ; カタカナ
+    SetEisu( KC_D | KC_F | KC_N     ,"{End}"            )       ; End▼
+    SetEisu( KC_D | KC_F | KC_M     ,"{Down}"           , R)    ; ↓
+    SetEisu( KC_D | KC_F | KC_COMM  ,"+{Down}"          , R)    ; 選択↓
+    SetEisu( KC_D | KC_F | KC_DOT   ,"{Down 5}"         , R)    ; 5↓
+;   SetEisu( KC_D | KC_F | KC_SLSH  ,"^u"               )       ; ひらがな
 
 
 ; 編集モード２
 ; 下段人差指＋中指
 
 ; 左手(最後の数字はディレイの長さ[ms])
-    SetKana( KC_M | KC_COMM | KC_Q  ,"／{Enter}"                        )       ; ／
-    SetKana( KC_M | KC_COMM | KC_W  ,"｜{Enter}{End}《》{Enter}{Up}"    , , 10) ; ルビマクロ
-    SetKana( KC_M | KC_COMM | KC_E  ,"{Home}{Enter}{Space 3}{End}"      , , 10) ; トマクロ
-    SetKana( KC_M | KC_COMM | KC_R  ,"{Home}{Enter}{Space 1}{End}"      , , 10) ; 台マクロ
-    SetKana( KC_M | KC_COMM | KC_T  ,"〇{Enter}"                        )       ; ○
-    SetKana( KC_M | KC_COMM | KC_A  ,"【{Enter}"                        )       ; 【
-    SetKana( KC_M | KC_COMM | KC_S  ,"〈{Enter}"                        )       ; 〈
-    SetKana( KC_M | KC_COMM | KC_D  ,"『{Enter}"                        )       ; 『
-    SetKana( KC_M | KC_COMM | KC_F  ,"]{Enter 2}[{Enter}"               , , 50) ; 」「マクロ
-    SetKana( KC_M | KC_COMM | KC_G  ,"{Space 3}"                        )       ; □□□
-    SetKana( KC_M | KC_COMM | KC_Z  ,"】{Enter}"                        )       ; 】
-    SetKana( KC_M | KC_COMM | KC_X  ,"〉{Enter}"                        )       ; 〉
-    SetKana( KC_M | KC_COMM | KC_C  ,"』{Enter}"                        )       ; 』
-    SetKana( KC_M | KC_COMM | KC_V  ,"]{Enter 2}{Space}"                , , 50) ; 」□マクロ
-    SetKana( KC_M | KC_COMM | KC_B  ,"　　　×　　　×　　　×{Enter 2}")       ; x  x   x
+    SetKana( KC_M | KC_COMM | KC_Q  ,"／{確定}"                             )       ; ／
+    SetKana( KC_M | KC_COMM | KC_W  ,"｜{確定}{End}《》{確定}{Up}"          , , 10) ; ルビマクロ
+    SetKana( KC_M | KC_COMM | KC_E  ,"{Home}{Enter}{Space 3}{End}"          , , 10) ; トマクロ
+    SetKana( KC_M | KC_COMM | KC_R  ,"{Home}{Enter}{Space 1}{End}"          , , 10) ; 台マクロ
+    SetKana( KC_M | KC_COMM | KC_T  ,"〇{確定}"                             )       ; ○
+    SetKana( KC_M | KC_COMM | KC_A  ,"【{確定}"                             )       ; 【
+    SetKana( KC_M | KC_COMM | KC_S  ,"〈{確定}"                             )       ; 〈
+    SetKana( KC_M | KC_COMM | KC_D  ,"『{確定}"                             )       ; 『
+    SetKana( KC_M | KC_COMM | KC_F  ,"]{Enter 2}[{Enter}"                   , , 50) ; 」「マクロ
+    SetKana( KC_M | KC_COMM | KC_G  ,"{Space 3}"                            )       ; □□□
+    SetKana( KC_M | KC_COMM | KC_Z  ,"】{確定}"                             )       ; 】
+    SetKana( KC_M | KC_COMM | KC_X  ,"〉{確定}"                             )       ; 〉
+    SetKana( KC_M | KC_COMM | KC_C  ,"』{確定}"                             )       ; 』
+    SetKana( KC_M | KC_COMM | KC_V  ,"]{Enter 2}{Space}"                    , , 50) ; 」□マクロ
+    SetKana( KC_M | KC_COMM | KC_B  ,"　　　×　　　×　　　×{確定}{Enter}")       ; x  x   x
 
 ; 右手(R はリピート)
     SetKana( KC_C | KC_V | KC_Y     ,"+{Home}"                          )       ; ▲Home選択
@@ -314,8 +314,8 @@
     SetKana( KC_RBRC | KC_SPC   ,"『"       )       ; 『
     SetKana( KC_NUHS | KC_SPC   ,"』"       )       ; 』
 
-    SetKana( KC_Q               ,"{sc7E}"   )       ; ダミー (KC_PCMM)
-    SetKana( KC_Q | KC_SPC      ,"{sc7E}"   )       ; ダミー (KC_PCMM)
+    SetKana( KC_Q               ,"{scF2}"   )       ; ダミー (KC_LANG1)
+    SetKana( KC_Q | KC_SPC      ,"{scF2}"   )       ; ダミー (KC_LANG1)
 
 ; スペースキーの定義は不要
 
