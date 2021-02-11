@@ -148,15 +148,7 @@ Convert()
 ;       , i         ; カウンタ
 ;       , nkeys     ; 今回は何キー同時押しか
 
-    if (Reset)
-    {
-        StoreBuf(2, "")     ; 仮出力バッファをクリア
-        spc := 0, RealKey := 0, LastKeys := 0, Last2Keys := 0
-;       RepeatKey := 0, _lks := 0
-        Reset := 0
-        return
-    }
-    else if (run)
+    if (run)
         return  ; 多重起動防止で終了
 
     run := 1
@@ -168,6 +160,9 @@ Convert()
         if InBufRead > 16
             InBufRead := 1
         InBufRest++
+
+        if (Reset)      ; リセットが押された時
+            continue    ; 入力バッファが空になるまで回す
 
         ; IME の状態を検出
         KanaMode := IME_GetConvMode() & 1
@@ -315,6 +310,13 @@ Convert()
         }
     }
 
+    if (Reset)  ; リセットが押された時
+    {
+        StoreBuf(2, "")     ; 仮出力バッファをクリア
+        spc := 0, RealKey := 0, LastKeys := 0, Last2Keys := 0
+        Reset := 0
+    }
+
     run := 0    ; 入力バッファが空になったので、処理終了
     return
 }
@@ -424,9 +426,10 @@ sc39 Up::   ; Space
     InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
         , InBufWrite -= InBufRest ? (++InBufWrite > 16 ? 16 : 0) : 0
         , InBufRest -= InBufRest ? 1 : 0
-    ; 変換ルーチン
-    Convert()   ; 入力バッファがいっぱいでも、不具合回避のため一応実行する
+    Convert()   ; 変換ルーチン
     return
 
-; Esc は、放し忘れのキーをなくすリセットを兼ねる
-~Esc::Reset := 1
+~Esc::  ; 放し忘れのキーをなくすリセットを兼ねる
+    Reset := 1
+    Convert()
+    return

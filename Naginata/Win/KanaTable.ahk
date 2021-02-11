@@ -314,8 +314,8 @@
     SetKana( KC_RBRC | KC_SPC   ,"『"       )       ; 『
     SetKana( KC_NUHS | KC_SPC   ,"』"       )       ; 』
 
-    SetKana( KC_Q               ,"{scF2}"   )       ; ダミー (KC_LANG1)
-    SetKana( KC_Q | KC_SPC      ,"{scF2}"   )       ; ダミー (KC_LANG1)
+    SetKana( KC_Q               ,"{sc72}"   )       ; ダミー (KC_LANG1)
+    SetKana( KC_Q | KC_SPC      ,"{sc72}"   )       ; ダミー (KC_LANG1)
 
 ; スペースキーの定義は不要
 
