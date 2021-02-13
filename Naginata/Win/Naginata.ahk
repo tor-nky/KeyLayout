@@ -47,8 +47,8 @@ KanaMode := 0   ; 0: 英数入力, 1: かな入力
 ; 入力バッファ
 InBuf := []
 InBufTime := [] ; 入力の時間
-InBufRead := 1  ; 読み出し位置
-InBufWrite := 1 ; 書き込み位置
+InBufRead := 0  ; 読み出し位置
+InBufWrite := 0 ; 書き込み位置
 InBufRest := 15
 ; 仮出力バッファ
 OutStr := []
@@ -156,10 +156,7 @@ Convert()
     while (InBufRest < 15)
     {
         ; 入力バッファから読み出し
-        Str := InBuf[InBufRead++]
-        if InBufRead > 16
-            InBufRead := 1
-        InBufRest++
+        Str := InBuf[InBufRead++], InBufRead := InBufRead & 15, InBufRest++
 
         if (Reset)      ; リセットが押された時
             continue    ; 入力バッファが空になるまで回す
@@ -304,7 +301,7 @@ Convert()
                 LastKeys := RecentKey
             }
             _lks := nkeys
-            if (Repeatable[i] != "")
+            if (Repeatable[i])
                 RepeatKey := RecentKey  ; キーリピートできる
 ;MsgBox, , , Test: %RepeatKey%, 1   ; デバッグ用
         }
@@ -424,8 +421,8 @@ sc73 Up::   ; (JIS)_
 sc39 Up::   ; Space
     ; 入力バッファへ保存
     InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
-        , InBufWrite -= InBufRest ? (++InBufWrite > 16 ? 16 : 0) : 0
-        , InBufRest -= InBufRest ? 1 : 0
+        , InBufWrite := InBufRest ? ((++InBufWrite) & 15) :
+        , InBufRest ? InBufRest-- :
     Convert()   ; 変換ルーチン
     return
 

@@ -18,17 +18,17 @@
 ; 例：  SetKana( KC_Q | KC_L | KC_SPC       ,"xwa"  , R, 10)    ; (ゎ)
 ;       ~~~~~~~  ~~~~~~~~~~~~~~~~~~~~         ~~~     ~  ~~       ~~~~
 ;       かな定義    スペース+Q+L        変換後の出力  ↑ ↑     コメント
-;                                                     ↑ ↑
-;                                   リピートあり(省略可)  ディレイ[ms](省略可)
+;                                                     ｜ ｜
+;                       リピートあり(省略はリピートなし)  ディレイ[ms](省略可)
 ;
-; 例：   SetEisu( KC_H | KC_J           ,"{vkF2 2}"     )   ; IME ON
+; 例：   SetEisu( KC_H | KC_J           ,"{vkF2 2}" )           ; IME ON
 ;        ~~~~~~~
 ;        英数定義
 ;
 ;   ※再読み込みか、再起動で有効になります
 ;   ※全角空白の違いが見えるエディタを使うことをおすすめします
 ;   ※UTF-8(BOM付)で保存してください
-;   ※順序は自由です。同じキーの組み合わせがあると上書きします。
+;   ※順序は自由です。同じキーの組み合わせは、後の方が有効になります。
 ; ----------------------------------------------------------------------
 
 ;#Include init.ahk
@@ -181,19 +181,19 @@
 
 ; 左手(最後の数字はディレイの長さ[ms])
     SetKana( KC_M | KC_COMM | KC_Q  ,"／{確定}"                             )       ; ／
-    SetKana( KC_M | KC_COMM | KC_W  ,"｜{確定}{End}《》{確定}{Up}"          , , 10) ; ルビマクロ
+    SetKana( KC_M | KC_COMM | KC_W  ,"｜{確定}{End}《》{確定}{Up}"          , , 20) ; ルビマクロ
     SetKana( KC_M | KC_COMM | KC_E  ,"{Home}{Enter}{Space 3}{End}"          , , 10) ; トマクロ
     SetKana( KC_M | KC_COMM | KC_R  ,"{Home}{Enter}{Space 1}{End}"          , , 10) ; 台マクロ
     SetKana( KC_M | KC_COMM | KC_T  ,"〇{確定}"                             )       ; ○
     SetKana( KC_M | KC_COMM | KC_A  ,"【{確定}"                             )       ; 【
     SetKana( KC_M | KC_COMM | KC_S  ,"〈{確定}"                             )       ; 〈
     SetKana( KC_M | KC_COMM | KC_D  ,"『{確定}"                             )       ; 『
-    SetKana( KC_M | KC_COMM | KC_F  ,"]{Enter 2}[{Enter}"                   , , 50) ; 」「マクロ
+    SetKana( KC_M | KC_COMM | KC_F  ,"]{Enter 2}[{Enter}"                   , , 60) ; 」「マクロ
     SetKana( KC_M | KC_COMM | KC_G  ,"{Space 3}"                            )       ; □□□
     SetKana( KC_M | KC_COMM | KC_Z  ,"】{確定}"                             )       ; 】
     SetKana( KC_M | KC_COMM | KC_X  ,"〉{確定}"                             )       ; 〉
     SetKana( KC_M | KC_COMM | KC_C  ,"』{確定}"                             )       ; 』
-    SetKana( KC_M | KC_COMM | KC_V  ,"]{Enter 2}{Space}"                    , , 50) ; 」□マクロ
+    SetKana( KC_M | KC_COMM | KC_V  ,"]{Enter 2}{Space}"                    , , 60) ; 」□マクロ
     SetKana( KC_M | KC_COMM | KC_B  ,"　　　×　　　×　　　×{確定}{Enter}")       ; x  x   x
 
 ; 右手(R はリピート)
@@ -223,12 +223,12 @@
     SetEisu( KC_M | KC_COMM | KC_A  ,"【"                               )       ; 【
     SetEisu( KC_M | KC_COMM | KC_S  ,"〈"                               )       ; 〈
     SetEisu( KC_M | KC_COMM | KC_D  ,"『"                               )       ; 『
-    SetEisu( KC_M | KC_COMM | KC_F  ,"」{Enter}「"                      , , 50) ; 」「マクロ
+    SetEisu( KC_M | KC_COMM | KC_F  ,"」{Enter}「"                      , , 10) ; 」「マクロ
     SetEisu( KC_M | KC_COMM | KC_G  ,"　　　"                           )       ; □□□
     SetEisu( KC_M | KC_COMM | KC_Z  ,"】"                               )       ; 】
     SetEisu( KC_M | KC_COMM | KC_X  ,"〉"                               )       ; 〉
     SetEisu( KC_M | KC_COMM | KC_C  ,"』"                               )       ; 』
-    SetEisu( KC_M | KC_COMM | KC_V  ,"」{Enter}　"                      , , 50) ; 」□マクロ
+    SetEisu( KC_M | KC_COMM | KC_V  ,"」{Enter}　"                      , , 10) ; 」□マクロ
     SetEisu( KC_M | KC_COMM | KC_B  ,"　　　×　　　×　　　×{Enter}"  )       ; x  x   x
 
 ; 右手(R はリピート)
@@ -279,7 +279,7 @@
     SetKana( KC_COMM    ,"nn"       )       ; ん
     SetKana( KC_DOT     ,"ra"       )       ; ら
     SetKana( KC_SLSH    ,"re"       )       ; れ
-    SetKana( KC_INT1    ,"_"        )       ; _
+    SetKana( KC_INT1    ,"\"        )       ; ￥
 
     SetKana( KC_W | KC_SPC      ,"ne"       )       ; ね
     SetKana( KC_E | KC_SPC      ,"ri"       )       ; り
@@ -304,7 +304,7 @@
     SetKana( KC_N | KC_SPC      ,"o"        )       ; お
     SetKana( KC_COMM | KC_SPC   ,"mu"       )       ; む
     SetKana( KC_DOT | KC_SPC    ,"hu"       )       ; ふ
-    SetKana( KC_INT1 | KC_SPC   ,"—"        )       ; —
+    SetKana( KC_INT1 | KC_SPC   ,"―"       )       ; ―
     SetKana( KC_Z | KC_SPC      ,"ho"       )       ; ほ
     SetKana( KC_X | KC_SPC      ,"hi"       )       ; ひ
     SetKana( KC_SLSH | KC_SPC   ,"re"       )       ; れ
@@ -349,7 +349,7 @@
     SetKana( KC_J | KC_A | KC_SPC       ,"ze"   )
     SetKana( KC_J | KC_W                ,"gi"   )       ; ぎ
     SetKana( KC_J | KC_W | KC_SPC       ,"gi"   )
-    SetKana( KC_J | KC_D                ,"do"   )       ; ど
+    SetKana( KC_J | KC_D                ,"do"   )       ; どi
     SetKana( KC_J | KC_D | KC_SPC       ,"do"   )
     SetKana( KC_J | KC_F                ,"ga"   )       ; が
     SetKana( KC_J | KC_F | KC_SPC       ,"ga"   )
@@ -548,16 +548,16 @@
  RegRead, Var, HKEY_LOCAL_MACHINE, SYSTEM\CurrentControlSet\Services\i8042prt\Parameters, LayerDriver JPN
 if (Var == "kbd101.dll")
 {
-    SetKana( KC_NUHS | KC_SPC   ,"|"    )   ; ｜
+    SetKana( KC_NUHS | KC_SPC   ,"" )       ; ｜(デフォルトに戻す)
     SetKana( KC_LBRC | KC_SPC   ,"『"   )   ; 『
     SetKana( KC_RBRC | KC_SPC   ,"』"   )   ; 』
     SetKana( KC_INT1            ,"?"    )   ; ？
     SetKana( KC_INT1 | KC_SPC   ,"{!}"  )   ; ！
 ; おまけ
     SetKana( JP_YEN             ,"\"    )   ; ￥
-    SetKana( JP_YEN | KC_SPC    ,"|"    )   ; ｜    スペース押しながらですよ
+    SetKana( JP_YEN | KC_SPC    ,"|"    )   ; ｜    スペース押しながら
     SetEisu( JP_YEN             ,"\"    )   ; ￥
-    SetEisu( JP_YEN | KC_SPC    ,"|"    )   ; ｜    スペース押しながらですよ
+    SetEisu( JP_YEN | KC_SPC    ,"|"    )   ; ｜    スペース押しながら
     SetEisu( KC_INT1            ,"\"    )   ; ￥
-    SetEisu( KC_INT1 | KC_SPC   ,"_"    )   ; ＿    スペース押しながらですよ
+    SetEisu( KC_INT1 | KC_SPC   ,"_"    )   ; ＿    スペース押しながら
 }

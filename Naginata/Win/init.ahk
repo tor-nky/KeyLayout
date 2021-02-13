@@ -31,7 +31,7 @@ KC_9    := 1 << 0x0A
 KC_0    := 1 << 0x0B
 KC_MINS := 1 << 0x0C
 KC_EQL  := 1 << 0x0D
-JP_YEN  := 1 << 0x37 ; sc7D
+JP_YEN  := 1 << 0x37    ; sc7D
 
 KC_Q    := 1 << 0x10
 KC_W    := 1 << 0x11
@@ -72,9 +72,9 @@ KC_M    := 1 << 0x32
 KC_COMM := 1 << 0x33
 KC_DOT  := 1 << 0x34
 KC_SLSH := 1 << 0x35
-KC_INT1 := 1 << 0x38 ; sc73
+KC_INT1 := 1 << 0x38    ; sc73
 
-KC_SPC := 1 << 0x39
+KC_SPC  := 1 << 0x39
 
 ; リピート定義用
 R := 1
@@ -129,7 +129,7 @@ ConvTateYoko(Str)
 }
 
 ; かな定義登録  (定義が多すぎても警告は出ません)
-SetKana(KeyComb, TateStr, Repeat="", Delay="")
+SetKana(KeyComb, TateStr, Repeat:=0, Delay:=0)
 {
     global Key, Kana, KanaYoko, Repeatable, KeyDelay
         , BeginTable, EndTable
@@ -137,12 +137,10 @@ SetKana(KeyComb, TateStr, Repeat="", Delay="")
 ;       , i         ; カウンタ
 ;       , YokoStr
 
-    if (TateStr == "")  ; 定義なし
-        return
+    ; 機能置き換え処理
     StringReplace, TateStr, TateStr, {確定}, n{Enter}{BS}, A    ; {確定} → n{Enter}{BS}
 
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
-
     i := BeginTable[nkeys]
     while (i < EndTable[nkeys])
     {
@@ -156,21 +154,24 @@ SetKana(KeyComb, TateStr, Repeat="", Delay="")
         }
         i++
     }
-;   i := EndTable[nkeys]
-    Key[i] := KeyComb
-    Kana[i] := TateStr
-    YokoStr := ConvTateYoko(TateStr)
-    if (YokoStr != TateStr)
-        KanaYoko[i] := YokoStr
-    Repeatable[i] := Repeat
-    KeyDelay[i] := Delay
-    EndTable[nkeys]++
+    if (TateStr != "")  ; 定義あり
+    {
+;       i := EndTable[nkeys]
+        Key[i] := KeyComb
+        Kana[i] := TateStr
+        YokoStr := ConvTateYoko(TateStr)
+        if (YokoStr != TateStr)
+            KanaYoko[i] := YokoStr
+        Repeatable[i] := Repeat
+        KeyDelay[i] := Delay
+        EndTable[nkeys]++
+    }
 
     return
 }
 
 ; 英数定義登録  (定義が多すぎても警告は出ません)
-SetEisu(KeyComb, TateStr, Repeat="", Delay="")
+SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=0)
 {
     global Key, Eisu, EisuYoko, Repeatable, KeyDelay
         , BeginTable, EndTable
@@ -178,11 +179,7 @@ SetEisu(KeyComb, TateStr, Repeat="", Delay="")
 ;       , i         ; カウンタ
 ;       , YokoStr
 
-    if (TateStr == "")  ; 定義なし
-        return
-
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
-
     i := BeginTable[nkeys]
     while (i < EndTable[nkeys])
     {
@@ -196,15 +193,18 @@ SetEisu(KeyComb, TateStr, Repeat="", Delay="")
         }
         i++
     }
-;   i := EndTable[nkeys]
-    Key[i] := KeyComb
-    Eisu[i] := TateStr
-    YokoStr := ConvTateYoko(TateStr)
-    if (YokoStr != TateStr)
-        EisuYoko[i] := YokoStr
-    Repeatable[i] := Repeat
-    KeyDelay[i] := Delay
-    EndTable[nkeys]++
+    if (TateStr != "")  ; 定義あり
+    {
+;       i := EndTable[nkeys]
+        Key[i] := KeyComb
+        Eisu[i] := TateStr
+        YokoStr := ConvTateYoko(TateStr)
+        if (YokoStr != TateStr)
+            EisuYoko[i] := YokoStr
+        Repeatable[i] := Repeat
+        KeyDelay[i] := Delay
+        EndTable[nkeys]++
+    }
 
     return
 }
