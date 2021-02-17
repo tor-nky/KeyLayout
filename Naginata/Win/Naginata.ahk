@@ -38,7 +38,7 @@ SetStoreCapslockMode, off   ; Sendコマンド実行時にCapsLockの状態を�
 
 SetFormat, Integer, H       ; 数値演算の結果を、16進数の整数による文字列で表現する
 
-#Include IME.ahk    ; 参考: https://w.atwiki.jp/eamat/pages/17.html
+#Include IME.ahk    ; Author: eamat. http://www6.atwiki.jp/eamat/
 #Include init.ahk
 #Include KanaTable.ahk
 
