@@ -12,10 +12,13 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-; ----------------------------------------------------------------------
-; 配列定義用の初期化
-; ----------------------------------------------------------------------
+; **********************************************************************
+;   3キー同時押し配列 初期設定
+; **********************************************************************
 
+; ----------------------------------------------------------------------
+; 配列定義で使う変数
+; ----------------------------------------------------------------------
 ; キーを64bitの各ビットに割り当てる
 ; 右側の数字は仮想キーコードになっている
 KC_1    := 1 << 0x02
@@ -79,6 +82,10 @@ KC_SPC  := 1 << 0x39
 ; リピート定義用
 R := 1
 
+
+; ----------------------------------------------------------------------
+; 共通変数
+; ----------------------------------------------------------------------
 ; 入れ物の定義
 Key := []           ; キービットの集合
 Kana := []          ; かな定義
@@ -93,7 +100,9 @@ BeginTable := [1001, 20001, 300001] ; 定義の始め 1キー, 2キー同時, 3�
 EndTable := [1001, 20001, 300001]   ; 定義の終わり 1キー, 2キー同時, 3キー同時
 
 
+; ----------------------------------------------------------------------
 ; 関数
+; ----------------------------------------------------------------------
 
 ; 何キー同時か数える
 CountBit(KeyComb)
@@ -128,8 +137,50 @@ ConvTateYoko(Str)
     return Str
 }
 
+; 機能置き換え処理 - DvorakJ との互換用
+StrReplace(Str)
+{
+    StringReplace, Str, Str, {確定}{改行},  {Enter 2},      A
+    StringReplace, Str, Str, {確定},        n^{Enter}{BS},  A   ; かな配列専用
+;   StringReplace, Str, Str, {確定},        nn^{Enter}{BS}, A   ; 行段・かな配列共用
+
+    StringReplace, Str, Str, {→,           {Right,     A
+    StringReplace, Str, Str, {->,           {Right,     A
+    StringReplace, Str, Str, {右,           {Right,     A
+    StringReplace, Str, Str, {←,           {Left,      A
+    StringReplace, Str, Str, {<-,           {Left,      A
+    StringReplace, Str, Str, {左,           {Right,     A
+    StringReplace, Str, Str, {↑,           {Up,        A
+    StringReplace, Str, Str, {上,           {Up,        A
+    StringReplace, Str, Str, {↓,           {Down,      A
+    StringReplace, Str, Str, {下,           {Down,      A
+    StringReplace, Str, Str, {ペースト},    ^v,         A
+    StringReplace, Str, Str, {貼付},        ^v,         A
+    StringReplace, Str, Str, {貼り付け},    ^v,         A
+    StringReplace, Str, Str, {カット},      ^x,         A
+    StringReplace, Str, Str, {切取},        ^x,         A
+    StringReplace, Str, Str, {切り取り},    ^x,         A
+    StringReplace, Str, Str, {コピー},      ^c,         A
+    StringReplace, Str, Str, {無変換,       {vk1D,      A
+    StringReplace, Str, Str, {変換,         {vk1C,      A
+    StringReplace, Str, Str, {ひらがな,     {vkF2,      A
+    StringReplace, Str, Str, {改行,         {Enter,     A
+    StringReplace, Str, Str, {後退,         {BS,        A
+    StringReplace, Str, Str, {取消,         {Esc,       A
+    StringReplace, Str, Str, {削除,         {Del,       A
+    StringReplace, Str, Str, {全角,         {vkF3,      A
+    StringReplace, Str, Str, {タブ,         {Tab,       A
+    StringReplace, Str, Str, {空白          {Space,     A
+    StringReplace, Str, Str, {メニュー,     {AppsKey,   A
+
+    StringReplace, Str, Str, {Caps Lock,    {vkF0,      A
+    StringReplace, Str, Str, {Back Space,   {BS,        A
+
+    return Str
+}
+
 ; かな定義登録  (定義が多すぎても警告は出ません)
-SetKana(KeyComb, TateStr, Repeat:=0, Delay:=0)
+SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 {
     global Key, Kana, KanaYoko, Repeatable, KeyDelay
         , BeginTable, EndTable
@@ -137,8 +188,7 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=0)
 ;       , i         ; カウンタ
 ;       , YokoStr
 
-    ; 機能置き換え処理
-    StringReplace, TateStr, TateStr, {確定}, n{Enter}{BS}, A    ; {確定} → n{Enter}{BS}
+    TateStr := StrReplace(TateStr)  ; 機能置き換え処理
 
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
     i := BeginTable[nkeys]
@@ -159,7 +209,7 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=0)
 ;       i := EndTable[nkeys]
         Key[i] := KeyComb
         Kana[i] := TateStr
-        YokoStr := ConvTateYoko(TateStr)
+        YokoStr := ConvTateYoko(TateStr)    ; 縦横変換
         if (YokoStr != TateStr)
             KanaYoko[i] := YokoStr
         Repeatable[i] := Repeat
@@ -171,13 +221,15 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=0)
 }
 
 ; 英数定義登録  (定義が多すぎても警告は出ません)
-SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=0)
+SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 {
     global Key, Eisu, EisuYoko, Repeatable, KeyDelay
         , BeginTable, EndTable
 ;   local nkeys     ; 何キー同時押しか
 ;       , i         ; カウンタ
 ;       , YokoStr
+
+    TateStr := StrReplace(TateStr)  ; 機能置き換え処理
 
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
     i := BeginTable[nkeys]
@@ -198,7 +250,7 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=0)
 ;       i := EndTable[nkeys]
         Key[i] := KeyComb
         Eisu[i] := TateStr
-        YokoStr := ConvTateYoko(TateStr)
+        YokoStr := ConvTateYoko(TateStr)    ; 縦横変換
         if (YokoStr != TateStr)
             EisuYoko[i] := YokoStr
         Repeatable[i] := Repeat

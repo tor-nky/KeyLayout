@@ -12,16 +12,17 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-; ----------------------------------------------------------------------
+; **********************************************************************
 ;   3キー同時押し配列
 ;       ローマ字入力モード
 ;   ※MS-IME は初期設定のままでも使えます
 ;   ※ATOK を使う場合のキー設定
+;       Ctrl+Enter  → Enter と同じにする
 ;       変換        → [文字未入力]再変換
 ;       ひらがな    → 入力文字種全角ひらがな(あ)
 ;       カタカナ    → 入力文字種全角カタカナ(ア)
 ;       半角／全角  → [文字未入力]日本語入力ON/OFF [他]入力文字種半角無変換(A)
-; ----------------------------------------------------------------------
+; **********************************************************************
 
 SetWorkingDir %A_ScriptDir% ; スクリプトの作業ディレクトリを変更
 #SingleInstance force       ; 既存のプロセスを終了して実行開始
@@ -60,31 +61,95 @@ Yoko := 0       ; 0: 縦書き用, 1: 横書き用
 
     KanaSetting()   ; 出力確定する定義に印をつける
     EisuSetting()
-;   TrayTip, %A_ScriptName%, 準備完了, , 16
 
-exit    ; 初期設定はここまで
+; ----------------------------------------------------------------------
+; 関数
 ; ----------------------------------------------------------------------
 
-; 仮出力バッファの先頭から chars 文字出力する
-OutBuf(chars)
+; 文字列 Str を適宜ウェイトを入れながら出力する
+SendNeo(Str)
+{
+;   local Delay, len, Str2, i, j, c, bracket
+
+    IfWinActive, ahk_class CabinetWClass
+        Delay := 10 ; エクスプローラーにはゆっくり出力する
+    else
+        Delay := 0
+
+    ; 1文字ずつ出力
+    len := StrLen(Str)
+    Str2 := ""
+    bracket := 0
+    i := 1
+    while (i <= len)
+    {
+        c := SubStr(Str, i, 1)
+        if (c == "}" && bracket != 1)
+            bracket := 0
+        else if (c == "{" || bracket)
+            bracket++
+        Str2 .= c
+        if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
+            || i = len )
+        {
+            ; SendRaw(直接入力モード)にする時
+            if (SubStr(Str2, StrLen(Str2) - 4, 5) = "{Raw}")
+            {
+                Str2 := "{Raw}" . SubStr(Str, ++i, len) ; 残りを全て出力へ
+                i := len    ; カウンタは末尾へ
+            }
+
+            if (SubStr(Str2, 1, 6) = "{Enter")
+            {
+                j := SubStr(Str2, 8, StrLen(Str2) - 8)  ; "{Enter " の後の回数
+                Loop {
+                    Send {Enter Down}
+                    Sleep, (j = 1 ? 30 : 70)    ; 連続改行の最後の回のみ、時間をかける
+                    Send {Enter Up}
+                    Sleep, 10
+                    j--
+                } Until j < 1
+            }
+            else
+            {
+                SetKeyDelay, Delay
+                Send, % Str2
+                SetKeyDelay, 0
+            }
+            Str2 := ""
+        }
+        i++
+    }
+
+    return
+}
+
+; 仮出力バッファの先頭から i 回出力する
+OutBuf(i)
 {
     global _usc, OutStr, OutDelay
 
-    while (chars > 0 && _usc > 0)
+    while (i > 0 && _usc > 0)
     {
-        SetKeyDelay, OutDelay[1], 0
-        send, % OutStr[1]
+        if OutDelay[1] >= -1    ; Delay が -1 以上なら、その設定値で出力して終了
+        {
+            SetKeyDelay, OutDelay[1]
+            Send, % OutStr[1]
+            SetKeyDelay, 0
+        }
+        else
+            SendNeo(OutStr[1])
 
         OutStr[1] := OutStr[2]
         OutDelay[1] := OutDelay[2]
         _usc--
-        chars--
+        i--
     }
     return
 }
 
-; 仮出力バッファを最後から nBack の分だけ削除して、Str を保存
-StoreBuf(nBack, Str, Delay=0)
+; 仮出力バッファを最後から nBack 回分を削除して、Str を保存
+StoreBuf(nBack, Str, Delay:=-2)
 {
     global _usc, OutStr, OutDelay
 
@@ -303,7 +368,6 @@ Convert()
             _lks := nkeys
             if (Repeatable[i])
                 RepeatKey := RecentKey  ; キーリピートできる
-;MsgBox, , , Test: %RepeatKey%, 1   ; デバッグ用
         }
     }
 
@@ -319,7 +383,12 @@ Convert()
 }
 
 
+; ----------------------------------------------------------------------
+; ホットキー
+; ----------------------------------------------------------------------
+
 ; キー入力部(シフトなし)
+sc29::  ; (JIS)半角/全角    (US)`
 sc02::  ; 1
 sc03::  ; 2
 sc04::  ; 3
@@ -369,7 +438,16 @@ sc34::  ; .
 sc35::  ; /
 sc73::  ; (JIS)_
 sc39::  ; Space
+    ; 入力バッファへ保存
+    ; キーを押す方はいっぱいまで使わない
+    InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
+        , InBufWrite := InBufRest > 1 ? ((++InBufWrite) & 15) :
+        , InBufRest > 1 ? InBufRest-- :
+    Convert()   ; 変換ルーチン
+    return
+
 ; キー押上げ
+sc29 Up::   ; (JIS)半角/全角    (US)`
 sc02 Up::   ; 1
 sc03 Up::   ; 2
 sc04 Up::   ; 3
