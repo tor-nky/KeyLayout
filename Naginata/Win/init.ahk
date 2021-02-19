@@ -99,6 +99,10 @@ KeyDelay := []      ; 0以外: キーストローク間のディレイ(SetKeyDel
 BeginTable := [1001, 20001, 300001] ; 定義の始め 1キー, 2キー同時, 3キー同時
 EndTable := [1001, 20001, 300001]   ; 定義の終わり 1キー, 2キー同時, 3キー同時
 
+; キーボードドライバを調べて KeyDriver に格納する
+; 参考: https://ixsvr.dyndns.org/blog/764
+RegRead, KeyDriver, HKEY_LOCAL_MACHINE, SYSTEM\CurrentControlSet\Services\i8042prt\Parameters, LayerDriver JPN
+
 
 ; ----------------------------------------------------------------------
 ; 関数

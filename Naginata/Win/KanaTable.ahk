@@ -545,10 +545,9 @@
 
 
 ; ----------------------------------------------------------------------
-; 設定がUSキーボードの場合  ; 参考: https://ixsvr.dyndns.org/blog/764
+; 設定がUSキーボードの場合  参考: https://ixsvr.dyndns.org/blog/764
 ; ----------------------------------------------------------------------
- RegRead, Var, HKEY_LOCAL_MACHINE, SYSTEM\CurrentControlSet\Services\i8042prt\Parameters, LayerDriver JPN
-if (Var == "kbd101.dll")
+if (KeyDriver == "kbd101.dll")
 {
     SetKana( KC_NUHS | KC_SPC   ,""     )   ; ｜(デフォルトに戻す)
     SetKana( KC_LBRC | KC_SPC   ,"『"   )   ; 『
