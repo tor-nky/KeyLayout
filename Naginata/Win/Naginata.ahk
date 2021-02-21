@@ -350,7 +350,7 @@ Convert()
                         && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
                     {                                   ; かな入力中なら、かな定義が、英数入力中なら英数定義があること
                         nkeys := 3
-                        nBack := (_lks >= 2) ? 1 : 2
+                        nBack := _lks >= 2 ? 1 : 2
                             ; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
                             ; 前回が1キー入力だったら、2文字消して仮出力バッファへ
                         break
@@ -410,8 +410,8 @@ Convert()
             if ((KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
                 OutBuf(2)   ; 出力確定
 
-            Last2Keys := (nkeys >= 2) ? 0 : LastKeys    ; 1キー入力のときのみ、前々回のキービットを保存
-            LastKeys :=  (nkeys) ? Key[i] : RecentKey   ; 前回のキービットを保存
+            Last2Keys := nkeys >= 2 ? 0 : LastKeys  ; 1キー入力のときのみ、前々回のキービットを保存
+            LastKeys :=  nkeys ? Key[i] : RecentKey ; 前回のキービットを保存
             _lks := nkeys               ; 何キー同時押しだったかを保存
             LastGroup := KeyGroup[i]    ; 何グループだったか保存
             if (Repeatable[i])
@@ -495,8 +495,8 @@ sc39::  ; Space
     ; 入力バッファへ保存
     ; キーを押す方はいっぱいまで使わない
     InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
-        , InBufWrite := InBufRest > 1 ? ((++InBufWrite) & 15) :
-        , InBufRest > 1 ? InBufRest-- :
+        , InBufWrite := InBufRest > 6 ? ((++InBufWrite) & 15) :
+        , InBufRest > 6 ? InBufRest-- :
     Convert()   ; 変換ルーチン
     return
 
