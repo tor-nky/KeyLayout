@@ -1,6 +1,6 @@
 # Windows で薙刀式v13完成版 を使うスクリプト
 
-薙刀式を Autohotkey に実装しました。
+[薙刀式v13完成版](http://oookaworks.seesaa.net/article/479173898.html#gsc.tab=0) 2020年12月25日版を Autohotkey に実装しました。
 
 ### Naginata.ahk
 
