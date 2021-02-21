@@ -2,7 +2,7 @@
 
 薙刀式を Autohotkey に実装しました。
 
-* Naginata.ahk
+### Naginata.ahk
 
 Naginata.ahk、IME.ahk、init.ahk、KanaTable.ahk の計４ファイルを同じディレクトリに保存します。
 
@@ -14,7 +14,7 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 すぐに試してみたい方のために、コンパイルした物を用意しました。ウイルス対策ソフトが反応してしまう場合がありますので、その際はご自分でコンパイルしてください。
 
-* NaginataForNewMSIME.ahk (新MS-IME専用)
+### NaginataForNewMSIME.ahk (新MS-IME専用)
 
 NaginataForNewMSIME.ahk、IME.ahk、init.ahk、KanaTableForNewMSIME.ahk の計４ファイルを同じディレクトリに保存します。
 
@@ -24,6 +24,8 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 * NaginataForNewMSIME.ahk (新MS-IME専用)
 
+コンパイルした物
+
 ## IME の設定
 
 旧MS-IME では初期状態の設定のままでも使えますが、キー設定を行うことをおすすめします。
@@ -32,7 +34,7 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 ATOK の場合はソースコードにあるコメントをご覧ください。
 
-### 動作確認
+## 動作確認
 
 * Windows 10 Home version 20H2 + AutoHotkey (v1.1.33.02) + 旧MS-IME あるいは ATOK 2017
 
