@@ -42,11 +42,11 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 ソースコードにあるコメントをご覧ください。
 
-# 動作確認
+## 動作確認
 
 * Windows 10 Home version 20H2 + AutoHotkey (v1.1.33.02) + 旧MS-IME あるいは ATOK 2017
 
-## 不具合
+# 不具合
 
 * スペース、濁点、半濁点、拗音、編集モード などが入りっぱなしになる可能性がある。
 
@@ -62,6 +62,10 @@ Escキーを押すとリセットになります。
 * 新MS-IME で、かな変換中に英数入力に切り替え、確定しないでキーを押すと最初の文字が入力されない。
 
 新MS-IME の仕様です。
+
+# 参考
+
+* [【薙刀式】v13完成版、発表。](http://oookaworks.seesaa.net/article/479173898.html#gsc.tab=0)
 
 ## KanaTable.ahk で使えるキーや記号の書き方
 
@@ -89,10 +93,6 @@ Autohotkey の書き方に準じます。
 * 記号（改行を伴うもの）
 
 通常 94 〜 110 ms
-
-## 参考
-
-* [【薙刀式】v13完成版、発表。](http://oookaworks.seesaa.net/article/479173898.html#gsc.tab=0)
 
 ## おもな修正履歴
 
