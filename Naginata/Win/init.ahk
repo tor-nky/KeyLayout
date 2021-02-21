@@ -90,8 +90,10 @@ R := 1
 Key := []           ; キービットの集合
 Kana := []          ; かな定義
 KanaYoko := []      ; かな定義(横書き) ※縦書きと違う場合のみ使用
+KeyGroup := []      ; 定義のグループ番号 ※0はグループAll
 KanaSetted := []    ; 1: 出力確定となる「かな」
 Eisu := []          ; 英数定義
+EisuYoko := []      ; かな定義(横書き) ※縦書きと違う場合のみ使用
 EisuSetted := []    ; 1: 出力確定となる「英数」
 Repeatable := []    ; 1: リピートできる
 KeyDelay := []      ; 0以外: キーストローク間のディレイ(SetKeyDelay用)を登録
@@ -144,9 +146,9 @@ ConvTateYoko(Str)
 ; 機能置き換え処理 - DvorakJ との互換用
 StrReplace(Str)
 {
-    StringReplace, Str, Str, {確定}{改行},  {Enter 2},      A
-    StringReplace, Str, Str, {確定},        n^{Enter}{BS},  A   ; かな配列専用
-;   StringReplace, Str, Str, {確定},        nn^{Enter}{BS}, A   ; 行段・かな配列共用
+    StringReplace, Str, Str, {固定},        n^{Enter}{BS},  A   ; かな配列専用
+;   StringReplace, Str, Str, {固定},        nn^{Enter}{BS}, A   ; 行段・かな配列共用
+    StringReplace, Str, Str, {確定},        ^{Enter},       A
 
     StringReplace, Str, Str, {→,           {Right,     A
     StringReplace, Str, Str, {->,           {Right,     A
@@ -186,8 +188,8 @@ StrReplace(Str)
 ; かな定義登録  (定義が多すぎても警告は出ません)
 SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 {
-    global Key, Kana, KanaYoko, Repeatable, KeyDelay
-        , BeginTable, EndTable
+    global Key, KeyGroup, Kana, KanaYoko, Repeatable, KeyDelay
+        , BeginTable, EndTable, Group
 ;   local nkeys     ; 何キー同時押しか
 ;       , i         ; カウンタ
 ;       , YokoStr
@@ -201,6 +203,7 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
         if (Key[i] = KeyComb && Kana[i] != "")  ; 定義の重複があったら、古いのを消す
         {
             Key[i] := ""
+            KeyGroup[i] := ""
             Kana[i] := ""
             KanaYoko[i] := ""
             Repeatable[i] := ""
@@ -212,6 +215,7 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
     {
 ;       i := EndTable[nkeys]
         Key[i] := KeyComb
+        KeyGroup[i] := Group
         Kana[i] := TateStr
         YokoStr := ConvTateYoko(TateStr)    ; 縦横変換
         if (YokoStr != TateStr)
@@ -227,8 +231,8 @@ SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 ; 英数定義登録  (定義が多すぎても警告は出ません)
 SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 {
-    global Key, Eisu, EisuYoko, Repeatable, KeyDelay
-        , BeginTable, EndTable
+    global Key, KeyGroup, Eisu, EisuYoko, Repeatable, KeyDelay
+        , BeginTable, EndTable, Group
 ;   local nkeys     ; 何キー同時押しか
 ;       , i         ; カウンタ
 ;       , YokoStr
@@ -242,6 +246,7 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
         if (Key[i] = KeyComb && Eisu[i] != "")  ; 定義の重複があったら、古いのを消す
         {
             Key[i] := ""
+            KeyGroup[i] := ""
             Eisu[i] := ""
             EisuYoko[i] := ""
             Repeatable[i] := ""
@@ -253,6 +258,7 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
     {
 ;       i := EndTable[nkeys]
         Key[i] := KeyComb
+        KeyGroup[i] := Group
         Eisu[i] := TateStr
         YokoStr := ConvTateYoko(TateStr)    ; 縦横変換
         if (YokoStr != TateStr)

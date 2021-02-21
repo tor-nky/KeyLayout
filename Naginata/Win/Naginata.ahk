@@ -196,7 +196,7 @@ Convert()
     global KanaMode
         , InBuf, InBufRead, InBufRest
         , KC_SPC, JP_YEN, KC_INT1
-        , Key, Kana, KanaSetted, Eisu, EisuSetted, Repeatable, KeyDelay
+        , Key, KeyGroup, Kana, KanaSetted, Eisu, EisuSetted, Repeatable, KeyDelay
         , BeginTable, EndTable
         , Reset, Yoko
     static run      := 0    ; 多重起動防止フラグ
@@ -205,6 +205,7 @@ Convert()
         , LastKeys  := 0    ; 前回のキービット
         , Last2Keys := 0    ; 前々回のキービット
         , _lks      := 0    ; 前回、何キー同時押しだったか？
+        , LastGroup := 0    ; 前回、何グループだったか？ 0はグループAll
         , RepeatKey := 0    ; リピート中のキーのビット
 ;   local Str
 ;       , Term      ; 入力の末端2文字
@@ -262,6 +263,7 @@ Convert()
             RealKey &= RecentKey ^ (-1) ; RealKey &= ~RecentKey では
                                         ; 32ビット計算になることがあり、不適切
             LastKeys := RealKey
+            LastGroup := 0
             RepeatKey := 0  ; リピート解除
         }
         else if (RecentKey = KC_SPC)
@@ -269,6 +271,7 @@ Convert()
             spc := 1
             OutBuf(2)
             RealKey |= KC_SPC
+            LastGroup := 0
             RepeatKey := 0  ; リピート解除
         }
         ; スペース以外のキーが押された時
@@ -277,35 +280,86 @@ Convert()
             spc := 0
             RealKey |= RecentKey
             nkeys := 0  ; 何キー同時押しか、を入れる変数
+            nBack := 0
 
-            ; 3キー入力を検索
-            i := BeginTable[3]  ; 検索開始場所の設定
-            KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
-            while (i < EndTable[3])
+            ; グループありの3キー入力を検索
+            if (LastGroup)
             {
-                if ((Key[i] & RecentKey)            ; 今回のキーを含み
-                    && (Key[i] & KeyComb) = key[i]  ; 検索中のキー集合が、いま調べている定義にあり
-                    && (Key[i] & KC_SPC) = (KeyComb & KC_SPC)   ; ただしシフトの相違はなく
-                    && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
-                {                                   ; かな入力中なら、かな定義が、英数入力中なら英数定義があること
-                    nkeys := 3
-                    if _lks >= 2
-                        nBack := 1  ; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
-                    else
-                        nBack := 2  ; 前回が1キー入力だったら、2文字消して仮出力バッファへ
-                    ; 出力する文字列を選択
-                    Str := SelectStr(i)
-                    ; 仮出力バッファに入れる
-                    StoreBuf(nBack, Str, KeyDelay[i])
-                    OutBuf(2)   ; 3キー同時押しは全て出力が確定する
-                    Last2Keys := 0
-                    LastKeys :=  Key[i]
-                    break
+                i := BeginTable[3]  ; 検索開始場所の設定
+                KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
+                while (i < EndTable[3])
+                {
+                    if (KeyGroup[i] = LastGroup
+                        && (Key[i] & RecentKey)         ; 今回のキーを含み
+                        && (Key[i] & KeyComb) = key[i]  ; 検索中のキー集合が、いま調べている定義にあり
+                        && (Key[i] & KC_SPC) = (KeyComb & KC_SPC)   ; ただしシフトの相違はなく
+                        && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+                    {                                   ; かな入力中なら、かな定義が、英数入力中なら英数定義があること
+                        nkeys := 3
+                        break
+                    }
+                    i++
                 }
-                i++
+            }
+            ; グループありの2キー入力を検索
+            if (LastGroup && !nkeys)
+            {
+                i := BeginTable[2]  ; 検索開始場所の設定
+                KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
+                while (i < EndTable[2])
+                {
+                    if (KeyGroup[i] = LastGroup
+                        && (Key[i] & RecentKey)
+                        && (Key[i] & KeyComb) = key[i]
+                        && (Key[i] & KC_SPC) = (KeyComb & KC_SPC)
+                        && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+                    {
+                        nkeys := 2
+                        break
+                    }
+                    i++
+                }
+            }
+            ; グループありの1キー入力を検索
+            if (LastGroup && !nkeys)
+            {
+                i := BeginTable[1]  ; 検索開始場所の設定
+                KeyComb := (RealKey & KC_SPC) | RecentKey
+                while (i < EndTable[1])
+                {
+                    if (KeyGroup[i] = LastGroup
+                        && Key[i] = KeyComb
+                        && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+                    {
+                        nkeys := 1
+                        break
+                    }
+                    i++
+                }
+            }
+            ; 3キー入力を検索
+            if !(nkeys)
+            {
+                i := BeginTable[3]  ; 検索開始場所の設定
+                KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
+                while (i < EndTable[3])
+                {
+                    if ((Key[i] & RecentKey)            ; 今回のキーを含み
+                        && (Key[i] & KeyComb) = key[i]  ; 検索中のキー集合が、いま調べている定義にあり
+                        && (Key[i] & KC_SPC) = (KeyComb & KC_SPC)   ; ただしシフトの相違はなく
+                        && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+                    {                                   ; かな入力中なら、かな定義が、英数入力中なら英数定義があること
+                        nkeys := 3
+                        nBack := (_lks >= 2) ? 1 : 2
+                            ; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
+                            ; 前回が1キー入力だったら、2文字消して仮出力バッファへ
+                        break
+                    }
+                    i++
+                }
             }
             ; 2キー入力を検索
-            if nkeys = 0
+            if !(nkeys)
             {
                 i := BeginTable[2]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -319,21 +373,14 @@ Convert()
                         nkeys := 2
                         if _lks >= 2    ; 2キー同時→2キー同時 は出力確定
                             OutBuf(2)
-                        ; 出力する文字列を選択
-                        Str := SelectStr(i)
-                        ; 仮出力バッファに入れる
-                        StoreBuf(1, Str, KeyDelay[i])
-                        if ((KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
-                            OutBuf(2)   ; 出力確定
-                        Last2Keys := 0
-                        LastKeys :=  Key[i]
+                        nBack := 1
                         break
                     }
                     i++
                 }
             }
             ; 1キー入力を検索
-            if nkeys = 0
+            if !(nkeys)
             {
                 i := BeginTable[1]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey
@@ -343,29 +390,30 @@ Convert()
                         && ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
                     {
                         nkeys := 1
-                        ; 出力する文字列を選択
-                        Str := SelectStr(i)
-                        ; 仮出力バッファに入れる
-                        StoreBuf(0, Str, KeyDelay[i])
-                        if ((KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
-                            OutBuf(2)   ; 出力確定
-                        Last2Keys := LastKeys
-                        LastKeys := RecentKey
                         break
                     }
                     i++
                 }
             }
-            if nkeys = 0    ; 見つからなかった時
+            ; 見つからなかった時
+            if !(nkeys)
             {
-                nkeys := 1
                 if (RealKey & KC_SPC)   ; シフト
                     Str := "+" . Str
-                StoreBuf(0, Str)
-                Last2Keys := LastKeys
-                LastKeys := RecentKey
             }
-            _lks := nkeys
+            else    ; 出力する文字列を選択
+                Str := SelectStr(i)
+
+            ; 仮出力バッファに入れる
+            StoreBuf(nBack, Str, KeyDelay[i])
+            ; 出力確定文字か？
+            if ((KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
+                OutBuf(2)   ; 出力確定
+
+            Last2Keys := (nkeys >= 2) ? 0 : LastKeys    ; 1キー入力のときのみ、前々回のキービットを保存
+            LastKeys :=  (nkeys) ? Key[i] : RecentKey   ; 前回のキービットを保存
+            _lks := nkeys               ; 何キー同時押しだったかを保存
+            LastGroup := KeyGroup[i]    ; 何グループだったか保存
             if (Repeatable[i])
                 RepeatKey := RecentKey  ; キーリピートできる
         }

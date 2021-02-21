@@ -53,15 +53,15 @@ Group := 2
     SetKana( KC_E | KC_R | JP_YEN   ,"")
 
 Group := 1
-    SetKana( KC_U | KC_I | KC_Q     ,"臨兵闘者皆陣烈在前")
-    SetKana( KC_U | KC_I | KC_W     ,"ネムカケ")
-    SetKana( KC_U | KC_I | KC_E     ,"天狗")
-    SetKana( KC_U | KC_I | KC_R     ,"シンイチ")
+    SetKana( KC_U | KC_I | KC_Q     ,"{固定}臨兵闘者皆陣烈在前")
+    SetKana( KC_U | KC_I | KC_W     ,"{固定}ネムカケ")
+    SetKana( KC_U | KC_I | KC_E     ,"{固定}天狗")
+    SetKana( KC_U | KC_I | KC_R     ,"{固定}シンイチ")
     SetKana( KC_U | KC_I | KC_T     ,"")
 Group := 2
-    SetKana( KC_E | KC_R | KC_Y     ,"才一")
-    SetKana( KC_E | KC_R | KC_U     ,"さくら")
-    SetKana( KC_E | KC_R | KC_I     ,"妖怪")
+    SetKana( KC_E | KC_R | KC_Y     ,"{固定}才一")
+    SetKana( KC_E | KC_R | KC_U     ,"{固定}さくら")
+    SetKana( KC_E | KC_R | KC_I     ,"{固定}妖怪")
     SetKana( KC_E | KC_R | KC_O     ,"")
     SetKana( KC_E | KC_R | KC_P     ,"")
     SetKana( KC_E | KC_R | KC_LBRC  ,"")
@@ -71,11 +71,11 @@ Group := 1
     SetKana( KC_U | KC_I | KC_A     ,"")
     SetKana( KC_U | KC_I | KC_S     ,"")
     SetKana( KC_U | KC_I | KC_D     ,"")
-    SetKana( KC_U | KC_I | KC_F     ,"心の闇")
+    SetKana( KC_U | KC_I | KC_F     ,"{固定}心の闇")
     SetKana( KC_U | KC_I | KC_G     ,"")
 Group := 2
-    SetKana( KC_E | KC_R | KC_H     ,"鞍馬")
-    SetKana( KC_E | KC_R | KC_J     ,"青鬼")
+    SetKana( KC_E | KC_R | KC_H     ,"{固定}鞍馬")
+    SetKana( KC_E | KC_R | KC_J     ,"{固定}青鬼")
     SetKana( KC_E | KC_R | KC_K     ,"")
     SetKana( KC_E | KC_R | KC_L     ,"")
     SetKana( KC_E | KC_R | KC_SCLN  ,"")
@@ -84,17 +84,17 @@ Group := 2
     SetKana( KC_E | KC_R | KS_BSLS  ,"")
 
 Group := 1
-    SetKana( KC_U | KC_I | KC_Z     ,"火よ、在れ")
-    SetKana( KC_U | KC_I | KC_X     ,"火の剣")
-    SetKana( KC_U | KC_I | KC_C     ,"小鴉")
-    SetKana( KC_U | KC_I | KC_V     ,"光太郎")
-    SetKana( KC_U | KC_I | KC_B     ,"峯")
+    SetKana( KC_U | KC_I | KC_Z     ,"{固定}火よ、在れ")
+    SetKana( KC_U | KC_I | KC_X     ,"{固定}火の剣")
+    SetKana( KC_U | KC_I | KC_C     ,"{固定}小鴉")
+    SetKana( KC_U | KC_I | KC_V     ,"{固定}光太郎")
+    SetKana( KC_U | KC_I | KC_B     ,"{固定}峯")
 Group := 2
-    SetKana( KC_E | KC_R | KC_N     ,"鬼塚")
+    SetKana( KC_E | KC_R | KC_N     ,"{固定}鬼塚")
     SetKana( KC_E | KC_R | KC_M     ,"")
     SetKana( KC_E | KC_R | KC_COMM  ,"")
     SetKana( KC_E | KC_R | KC_DOT   ,"")
-    SetKana( KC_E | KC_R | KC_SLSH  ,"不動金縛りの術")
+    SetKana( KC_E | KC_R | KC_SLSH  ,"{固定}不動金縛りの術")
     SetKana( KC_E | KC_R | KC_INT1  ,"")
 
 
@@ -105,20 +105,20 @@ Group := 2
 ; 左手
 Group := 3
     SetKana( KC_J | KC_K | KC_Q     ,"^{End}"           )       ; ◀最末尾
-    SetKana( KC_J | KC_K | KC_W     ,"｜{確定}"         )       ; ｜
+    SetKana( KC_J | KC_K | KC_W     ,"{固定}｜"         )       ; ｜
 ;   SetKana( KC_J | KC_K | KC_E     ,"dhi"              )       ; でぃ
     SetKana( KC_J | KC_K | KC_R     ,"^s"               )       ; 保存
     SetKana( KC_J | KC_K | KC_T     ,"/"                )       ; ・
-    SetKana( KC_J | KC_K | KC_A     ,"……{確定}"       )       ; ……
-    SetKana( KC_J | KC_K | KC_S     ,"《{確定}"         )       ; 《
-    SetKana( KC_J | KC_K | KC_D     ,"？{確定}"         )       ; ？
-    SetKana( KC_J | KC_K | KC_F     ,"「{確定}"         )       ; 「
-    SetKana( KC_J | KC_K | KC_G     ,"（{確定}"         )       ; （
-    SetKana( KC_J | KC_K | KC_Z     ,"││{確定}"       )       ; ──
-    SetKana( KC_J | KC_K | KC_X     ,"》{確定}"         )       ; 》
-    SetKana( KC_J | KC_K | KC_C     ,"！{確定}"         )       ; ！
-    SetKana( KC_J | KC_K | KC_V     ,"」{確定}"         )       ; 」
-    SetKana( KC_J | KC_K | KC_B     ,"）{確定}"         )       ; ）
+    SetKana( KC_J | KC_K | KC_A     ,"{固定}……"       )       ; ……
+    SetKana( KC_J | KC_K | KC_S     ,"{固定}《"         )       ; 《
+    SetKana( KC_J | KC_K | KC_D     ,"{固定}？"         )       ; ？
+    SetKana( KC_J | KC_K | KC_F     ,"{固定}「"         )       ; 「
+    SetKana( KC_J | KC_K | KC_G     ,"{固定}（"         )       ; （
+    SetKana( KC_J | KC_K | KC_Z     ,"{固定}││"       )       ; ──
+    SetKana( KC_J | KC_K | KC_X     ,"{固定}》"         )       ; 》
+    SetKana( KC_J | KC_K | KC_C     ,"{固定}！"         )       ; ！
+    SetKana( KC_J | KC_K | KC_V     ,"{固定}」"         )       ; 」
+    SetKana( KC_J | KC_K | KC_B     ,"{固定}）"         )       ; ）
 
 ; 右手(R はリピート)
 Group := 4
@@ -181,21 +181,21 @@ Group := 4
 
 ; 左手(最後の数字はディレイの長さ[ms])
 Group := 5
-    SetKana( KC_M | KC_COMM | KC_Q  ,"／{確定}"                         )       ; ／
-    SetKana( KC_M | KC_COMM | KC_W  ,"｜{確定}{End}《》{確定}{↑}"      )       ; ルビマクロ
-    SetKana( KC_M | KC_COMM | KC_E  ,"{Home}{改行}　　　{確定}{End}"    )       ; トマクロ
-    SetKana( KC_M | KC_COMM | KC_R  ,"{Home}{改行}　{確定}{End}"        )       ; 台マクロ
-    SetKana( KC_M | KC_COMM | KC_T  ,"〇{確定}"                         )       ; ○
-    SetKana( KC_M | KC_COMM | KC_A  ,"【{確定}"                         )       ; 【
-    SetKana( KC_M | KC_COMM | KC_S  ,"〈{確定}"                         )       ; 〈
-    SetKana( KC_M | KC_COMM | KC_D  ,"『{確定}"                         )       ; 『
-    SetKana( KC_M | KC_COMM | KC_F  ,"」{確定}{改行}「{確定}"           )       ; 」「マクロ
-    SetKana( KC_M | KC_COMM | KC_G  ,"　　　{確定}"                     )       ; □□□
-    SetKana( KC_M | KC_COMM | KC_Z  ,"】{確定}"                         )       ; 】
-    SetKana( KC_M | KC_COMM | KC_X  ,"〉{確定}"                         )       ; 〉
-    SetKana( KC_M | KC_COMM | KC_C  ,"』{確定}"                         )       ; 』
-    SetKana( KC_M | KC_COMM | KC_V  ,"」{確定}{改行}　{確定}"           )       ; 」□マクロ
-    SetKana( KC_M | KC_COMM | KC_B  ,"　　　×　　　×　　　×{確定}{改行}" )   ; x  x   x
+    SetKana( KC_M | KC_COMM | KC_Q  ,"{固定}／"                         )       ; ／
+    SetKana( KC_M | KC_COMM | KC_W  ,"{固定}｜{End}《》{↑}"            )       ; ルビマクロ
+    SetKana( KC_M | KC_COMM | KC_E  ,"{Home}{改行}　　　{End}"          )       ; トマクロ
+    SetKana( KC_M | KC_COMM | KC_R  ,"{Home}{改行}　{End}"              )       ; 台マクロ
+    SetKana( KC_M | KC_COMM | KC_T  ,"{固定}〇"                         )       ; ○
+    SetKana( KC_M | KC_COMM | KC_A  ,"{固定}【"                         )       ; 【
+    SetKana( KC_M | KC_COMM | KC_S  ,"{固定}〈"                         )       ; 〈
+    SetKana( KC_M | KC_COMM | KC_D  ,"{固定}『"                         )       ; 『
+    SetKana( KC_M | KC_COMM | KC_F  ,"{固定}」{改行}「"                 )       ; 」「マクロ
+    SetKana( KC_M | KC_COMM | KC_G  ,"{固定}　　　"                     )       ; □□□
+    SetKana( KC_M | KC_COMM | KC_Z  ,"{固定}】"                         )       ; 】
+    SetKana( KC_M | KC_COMM | KC_X  ,"{固定}〉"                         )       ; 〉
+    SetKana( KC_M | KC_COMM | KC_C  ,"{固定}』"                         )       ; 』
+    SetKana( KC_M | KC_COMM | KC_V  ,"{固定}」{改行}　"                 )       ; 」□マクロ
+    SetKana( KC_M | KC_COMM | KC_B  ,"{固定}　　　×　　　×　　　×{改行}" )       ; x  x   x
 
 ; 右手(R はリピート)
 Group := 6
@@ -258,8 +258,8 @@ Group := 0
 
 ; IME ON/OFF
 ; HJ: ON / FG: OFF
-    SetKana( KC_H | KC_J            ,"{vkF2 2}"     )   ; IME ON
-    SetEisu( KC_H | KC_J            ,"{vkF2 2}"     )
+    SetKana( KC_H | KC_J            ,"{vkF2}"       )   ; IME ON
+    SetEisu( KC_H | KC_J            ,"{vkF2}"       )
     SetKana( KC_F | KC_G            ,"{vkF2}{vkF3}" )   ; IME OFF
     SetEisu( KC_F | KC_G            ,"{vkF2}{vkF3}" )
     SetKana( KC_V | KC_M            ,"{Enter}"      )   ; 行送り
