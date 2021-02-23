@@ -14,17 +14,7 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 すぐに試してみたい方のために、コンパイルした物を用意しました。ウイルス対策ソフトが反応してしまう場合がありますので、その際はご自分でコンパイルしてください。
 
-### NaginataForNewMSIME.ahk (新MS-IME専用)
-
-NaginataForNewMSIME.ahk、IME.ahk、init.ahk、KanaTableForNewMSIME.ahk の計４ファイルを同じディレクトリに保存します。
-
-Autohotkey をインストールし、NaginataForNewMSIME.ahk のスクリプトを実行してください。
-
-Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してください。
-
-* NaginataForNewMSIME.ahk (新MS-IME専用)
-
-コンパイルした物
+新旧MS-IMEに対応させましたが、そのせいで編集モードの一部の記号入力がゆっくりになり、また Shift+[ 、Shift+] で『』を入力したあとは文字確定になります。
 
 # IME の設定
 
@@ -92,7 +82,7 @@ Autohotkey の書き方に準じます。
 
 * 記号（改行を伴うもの）
 
-通常 94 〜 110 ms
+長いもので 260 ms
 
 ## おもな修正履歴
 
@@ -141,3 +131,9 @@ Autohotkey の書き方に準じます。
 すべてのファイルを入れ替えた場合のみ、修正が有効になります。
 
 (ここまで2021年2月21日追加)
+
+* (Naginata.ahk) スペースキーを押しながらのカーソルキー、Home、End、PageUp、PageDown をシフトキーを押しながらと同じ動作になるようにした
+* (init.ahk) ユニコード文字の前後でかな入力を確定する操作を入れた。「nn」→改行→BS
+* (init.ahk)(KanaTable.ahk) そのため、{確定} {固定} 機能を廃止
+
+(ここまで2021年2月23日追加)

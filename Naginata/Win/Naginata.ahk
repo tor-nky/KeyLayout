@@ -69,7 +69,7 @@ Yoko := 0       ; 0: 縦書き用, 1: 横書き用
 ; 文字列 Str を適宜ウェイトを入れながら出力する
 SendNeo(Str)
 {
-;   local Delay, len, Str2, i, j, c, bracket
+;   local Delay, len, Str2, len2, i, j, c, bracket
 
     IfWinActive, ahk_class CabinetWClass
         Delay := 10 ; エクスプローラーにはゆっくり出力する
@@ -92,27 +92,31 @@ SendNeo(Str)
         if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
             || i = len )
         {
+            len2 := StrLen(Str2)
             ; SendRaw(直接入力モード)にする時
-            if (SubStr(Str2, StrLen(Str2) - 4, 5) = "{Raw}")
+            if (SubStr(Str2, len2 - 4, 5) = "{Raw}")
             {
                 Str2 := "{Raw}" . SubStr(Str, ++i, len) ; 残りを全て出力へ
                 i := len    ; カウンタは末尾へ
             }
-
+            ; {Enter から始まる
             if (SubStr(Str2, 1, 6) = "{Enter")
             {
-                j := SubStr(Str2, 8, StrLen(Str2) - 8)  ; "{Enter " の後の回数
+                j := SubStr(Str2, 8, len2 - 8)  ; "{Enter " の後の回数
                 Loop {
-                    Send {Enter Down}
-                    Sleep, (j = 1 ? 30 : 70)    ; 連続改行の最後の回のみ、時間をかける
-                    Send {Enter Up}
+                    Send, {Enter down}
+                    Sleep, 30
+                    Send, {Enter up}
                     Sleep, 10
-                    j--
+                    j--, nEnter++
                 } Until j < 1
             }
             else
             {
-                SetKeyDelay, Delay
+                if (Str2 = "^{Enter}")
+                    SetKeyDelay, 30
+                else
+                    SetKeyDelay, Delay
                 Send, % Str2
                 SetKeyDelay, 0
             }
@@ -233,25 +237,30 @@ Convert()
             KanaMode := 0   ; 検出できない、または IME OFF の時
 
         StringRight, Term, Str, 2   ; Term に入力末尾の2文字を入れる
-        if (Term == "Up")   ; キーが離れた時
+        if (Term == "up")   ; キーが離れた時
             RecentKey := "0x" . SubStr(Str, StrLen(Str) - 4, 2)
-        else                ; キーが押された時
+        else if (SubStr(Str, StrLen(Str) - 3, 2) == "sc")   ; sc○○ で入力
         {
             RecentKey := "0x" . Term
             Str := "{sc" . Term . "}"
         }   ; いま RecentKey に sc○○ から 0x○○ に変換されたものが入っている。
             ; これを Autohotkey は十六進数の数値としてそのまま扱える
+        else
+        {
+            RecentKey := 0
+            Str := "{" . Str . "}"
+        }
 
         ; ビットに変換
         if RecentKey = 0x7D         ; (JIS)\
             RecentKey := JP_YEN
         else if RecentKey = 0x73    ; (JIS)_
             RecentKey := KC_INT1
-        else
+        else if (RecentKey)
             RecentKey := 1 << RecentKey
 
         ; キーリリース時
-        if (Term == "Up")
+        if (Term == "up")
         {
             if (spc = 1 && RecentKey = KC_SPC)  ; スペースキー単押しだったなら、空白出力
             {
@@ -283,7 +292,7 @@ Convert()
             nBack := 0
 
             ; グループありの3キー入力を検索
-            if (LastGroup)
+            if (LastGroup && RecentKey)
             {
                 i := BeginTable[3]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
@@ -302,7 +311,7 @@ Convert()
                 }
             }
             ; グループありの2キー入力を検索
-            if (LastGroup && !nkeys)
+            if (LastGroup && !nkeys && RecentKey)
             {
                 i := BeginTable[2]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -321,7 +330,7 @@ Convert()
                 }
             }
             ; グループありの1キー入力を検索
-            if (LastGroup && !nkeys)
+            if (LastGroup && !nkeys && RecentKey)
             {
                 i := BeginTable[1]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey
@@ -338,7 +347,7 @@ Convert()
                 }
             }
             ; 3キー入力を検索
-            if !(nkeys)
+            if (!nkeys && RecentKey)
             {
                 i := BeginTable[3]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
@@ -359,7 +368,7 @@ Convert()
                 }
             }
             ; 2キー入力を検索
-            if !(nkeys)
+            if (!nkeys && RecentKey)
             {
                 i := BeginTable[2]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -380,7 +389,7 @@ Convert()
                 }
             }
             ; 1キー入力を検索
-            if !(nkeys)
+            if (!nkeys && RecentKey)
             {
                 i := BeginTable[1]  ; 検索開始場所の設定
                 KeyComb := (RealKey & KC_SPC) | RecentKey
@@ -405,13 +414,13 @@ Convert()
                 Str := SelectStr(i)
 
             ; 仮出力バッファに入れる
-            StoreBuf(nBack, Str, KeyDelay[i])
+            StoreBuf(nBack, Str)
             ; 出力確定文字か？
-            if ((KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
+            if (!RecentKey || (KanaMode && KanaSetted[i]) || (!KanaMode && EisuSetted[i]))
                 OutBuf(2)   ; 出力確定
 
             Last2Keys := nkeys >= 2 ? 0 : LastKeys  ; 1キー入力のときのみ、前々回のキービットを保存
-            LastKeys :=  nkeys ? Key[i] : RecentKey ; 前回のキービットを保存
+            LastKeys := nkeys ? Key[i] : RecentKey  ; 前回のキービットを保存
             _lks := nkeys               ; 何キー同時押しだったかを保存
             LastGroup := KeyGroup[i]    ; 何グループだったか保存
             if (Repeatable[i])
@@ -492,6 +501,15 @@ sc34::  ; .
 sc35::  ; /
 sc73::  ; (JIS)_
 sc39::  ; Space
+; SandS 用
+Up::
+Left::
+Right::
+Down::
+Home::
+End::
+PgUp::
+PgDn::
     ; 入力バッファへ保存
     ; キーを押す方はいっぱいまで使わない
     InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
@@ -503,58 +521,58 @@ sc39::  ; Space
 ; キー押上げ
 
 #If (KeyDriver == "kbd101.dll") ; 設定がUSキーボードの場合
-sc29 Up::   ; (JIS)半角/全角    (US)`
+sc29 up::   ; (JIS)半角/全角    (US)`
 #If
 
-sc02 Up::   ; 1
-sc03 Up::   ; 2
-sc04 Up::   ; 3
-sc05 Up::   ; 4
-sc06 Up::   ; 5
-sc07 Up::   ; 6
-sc08 Up::   ; 7
-sc09 Up::   ; 8
-sc0A Up::   ; 9
-sc0B Up::   ; 0
-sc0C Up::   ; -
-sc0D Up::   ; (JIS)^    (US)=
-sc7D Up::   ; (JIS)\
-sc10 Up::   ; Q
-sc11 Up::   ; W
-sc12 Up::   ; E
-sc13 Up::   ; R
-sc14 Up::   ; T
-sc15 Up::   ; Y
-sc16 Up::   ; U
-sc17 Up::   ; I
-sc18 Up::   ; O
-sc19 Up::   ; P
-sc1A Up::   ; (JIS)@    (US)[
-sc1B Up::   ; (JIS)[    (US)]
-sc1E Up::   ; A
-sc1F Up::   ; S
-sc20 Up::   ; D
-sc21 Up::   ; F
-sc22 Up::   ; G
-sc23 Up::   ; H
-sc24 Up::   ; J
-sc25 Up::   ; K
-sc26 Up::   ; L
-sc27 Up::   ; ;
-sc28 Up::   ; (JIS):    (US)'
-sc2B Up::   ; (JIS)]    (US)＼
-sc2C Up::   ; Z
-sc2D Up::   ; X
-sc2E Up::   ; C
-sc2F Up::   ; V
-sc30 Up::   ; B
-sc31 Up::   ; N
-sc32 Up::   ; M
-sc33 Up::   ; ,
-sc34 Up::   ; .
-sc35 Up::   ; /
-sc73 Up::   ; (JIS)_
-sc39 Up::   ; Space
+sc02 up::   ; 1
+sc03 up::   ; 2
+sc04 up::   ; 3
+sc05 up::   ; 4
+sc06 up::   ; 5
+sc07 up::   ; 6
+sc08 up::   ; 7
+sc09 up::   ; 8
+sc0A up::   ; 9
+sc0B up::   ; 0
+sc0C up::   ; -
+sc0D up::   ; (JIS)^    (US)=
+sc7D up::   ; (JIS)\
+sc10 up::   ; Q
+sc11 up::   ; W
+sc12 up::   ; E
+sc13 up::   ; R
+sc14 up::   ; T
+sc15 up::   ; Y
+sc16 up::   ; U
+sc17 up::   ; I
+sc18 up::   ; O
+sc19 up::   ; P
+sc1A up::   ; (JIS)@    (US)[
+sc1B up::   ; (JIS)[    (US)]
+sc1E up::   ; A
+sc1F up::   ; S
+sc20 up::   ; D
+sc21 up::   ; F
+sc22 up::   ; G
+sc23 up::   ; H
+sc24 up::   ; J
+sc25 up::   ; K
+sc26 up::   ; L
+sc27 up::   ; ;
+sc28 up::   ; (JIS):    (US)'
+sc2B up::   ; (JIS)]    (US)＼
+sc2C up::   ; Z
+sc2D up::   ; X
+sc2E up::   ; C
+sc2F up::   ; V
+sc30 up::   ; B
+sc31 up::   ; N
+sc32 up::   ; M
+sc33 up::   ; ,
+sc34 up::   ; .
+sc35 up::   ; /
+sc73 up::   ; (JIS)_
+sc39 up::   ; Space
     ; 入力バッファへ保存
     InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := A_TickCount
         , InBufWrite := InBufRest ? ((++InBufWrite) & 15) :

@@ -146,10 +146,6 @@ ConvTateYoko(Str)
 ; 機能置き換え処理 - DvorakJ との互換用
 StrReplace(Str)
 {
-    StringReplace, Str, Str, {固定},        n^{Enter}{BS},  A   ; かな配列専用
-;   StringReplace, Str, Str, {固定},        nn^{Enter}{BS}, A   ; 行段・かな配列共用
-    StringReplace, Str, Str, {確定},        ^{Enter},       A
-
     StringReplace, Str, Str, {→,           {Right,     A
     StringReplace, Str, Str, {->,           {Right,     A
     StringReplace, Str, Str, {右,           {Right,     A
@@ -186,16 +182,63 @@ StrReplace(Str)
 }
 
 ; かな定義登録  (定義が多すぎても警告は出ません)
-SetKana(KeyComb, TateStr, Repeat:=0, Delay:=-2)
+SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
 {
     global Key, KeyGroup, Kana, KanaYoko, Repeatable, KeyDelay
         , BeginTable, EndTable, Group
 ;   local nkeys     ; 何キー同時押しか
-;       , i         ; カウンタ
-;       , YokoStr
+;       , i, j      ; カウンタ
+;       , TateStr, YokoStr
+;       , len, Str2, c, bracket
 
-    TateStr := StrReplace(TateStr)  ; 機能置き換え処理
+    ; 機能置き換え処理
+;   StringReplace, Str, Str, {確定}, n^{Enter}{BS}, A   ; かな配列専用
+;   StringReplace, Str, Str, {確定}, nn^{Enter}{BS}, A  ; 行段・かな配列共用
+    Str := StrReplace(Str)
+    ; ユニコードと他との切り替え個所にいわゆる"確定"を入れる
+    ; 1文字ずつ分析する
+    len := StrLen(Str)
+    TateStr := ""
+    Str2 := ""
+    bracket := 0
+    i := 1
+    while (i <= len)
+    {
+        c := SubStr(Str, i, 1)
+        if (c == "}" && bracket != 1)
+            bracket := 0
+        else if (c == "{" || bracket)
+            bracket++
+        Str2 .= c
+        if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
+            || i = len )
+        {
+            len2 := StrLen(Str2)
+            ; ユニコードである
+            if (Asc(Str2) > 255
+                || SubStr(Str2, 1, 3) = "{U+"
+                || (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 255))
+            {
+                if (!LastCode)                  ; ユニコード以外 → ユニコード
+                    TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
+                LastCode := 256
+            }
+            ; ユニコードでない
+            else
+            {
+                if (LastCode)                   ; ユニコード → それ以外
+                    TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
+                LastCode := 0
+            }
+            TateStr .= Str2
+            Str2 := ""
+        }
+        i++
+    }
+    if (LastCode)                   ; 最後の文字がユニコード
+        TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
 
+    ; 登録
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
     i := BeginTable[nkeys]
     while (i < EndTable[nkeys])
@@ -237,8 +280,10 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
 ;       , i         ; カウンタ
 ;       , YokoStr
 
-    TateStr := StrReplace(TateStr)  ; 機能置き換え処理
+    ; 機能置き換え処理
+    TateStr := StrReplace(TateStr)
 
+    ; 登録
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
     i := BeginTable[nkeys]
     while (i < EndTable[nkeys])
