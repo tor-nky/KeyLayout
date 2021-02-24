@@ -182,25 +182,25 @@ StrReplace(Str)
 }
 
 ; かな定義登録  (定義が多すぎても警告は出ません)
-SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
+SetKana(KeyComb, Str, Repeat:=0)
 {
-    global Key, KeyGroup, Kana, KanaYoko, Repeatable, KeyDelay
+    global Key, KeyGroup, Kana, KanaYoko, Repeatable
         , BeginTable, EndTable, Group
-;   local nkeys     ; 何キー同時押しか
-;       , i, j      ; カウンタ
+;   local nkeys                 ; 何キー同時押しか
+;       , i                     ; カウンタ
 ;       , TateStr, YokoStr
 ;       , len, Str2, c, bracket
+;       , nZenkaku              ; 全角文字が連続している数
 
     ; 機能置き換え処理
-;   StringReplace, Str, Str, {確定}, n^{Enter}{BS}, A   ; かな配列専用
-;   StringReplace, Str, Str, {確定}, nn^{Enter}{BS}, A  ; 行段・かな配列共用
     Str := StrReplace(Str)
-    ; ユニコードと他との切り替え個所にいわゆる"確定"を入れる
+    ; Str の文字列に"確定"を加えながら TateStr にコピーする
     ; 1文字ずつ分析する
     len := StrLen(Str)
     TateStr := ""
     Str2 := ""
     bracket := 0
+    nZenkaku := 0
     i := 1
     while (i <= len)
     {
@@ -214,29 +214,31 @@ SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
             || i = len )
         {
             len2 := StrLen(Str2)
-            ; ユニコードである
-            if (Asc(Str2) > 255
+            ; ASCIIコードでない
+            if (Asc(Str2) > 127
                 || SubStr(Str2, 1, 3) = "{U+"
-                || (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 255))
+                || (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127))
             {
-                if (!LastCode)                  ; ユニコード以外 → ユニコード
+                if (!nZenkaku)                  ; ASCIIコード → それ以外 に変わった
                     TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
-                LastCode := 256
+                nZenkaku++
             }
-            ; ユニコードでない
+            ; ASCIIコード
             else
             {
-                if (LastCode)                   ; ユニコード → それ以外
+                if (nZenkaku)                   ; ASCIIコード以外 → ASCIIコード に変わった
                     TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
-                LastCode := 0
+                                                ; ※新MS-IMEのみで使うなら、上２行は不要
+                nZenkaku := 0
             }
             TateStr .= Str2
             Str2 := ""
         }
         i++
     }
-    if (LastCode)                   ; 最後の文字がユニコード
+    if (nZenkaku)                   ; 最後の文字がASCIIコード以外
         TateStr .= "nn^{Enter}{BS}" ; "確定"を入れる
+                                    ; ※新MS-IMEのみで使うなら、上２行は不要
 
     ; 登録
     nkeys := CountBit(KeyComb)  ; 何キー同時押しか
@@ -250,7 +252,6 @@ SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
             Kana[i] := ""
             KanaYoko[i] := ""
             Repeatable[i] := ""
-            KeyDelay[i] := ""
         }
         i++
     }
@@ -264,7 +265,6 @@ SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
         if (YokoStr != TateStr)
             KanaYoko[i] := YokoStr
         Repeatable[i] := Repeat
-        KeyDelay[i] := Delay
         EndTable[nkeys]++
     }
 
@@ -272,9 +272,9 @@ SetKana(KeyComb, Str, Repeat:=0, Delay:=-2)
 }
 
 ; 英数定義登録  (定義が多すぎても警告は出ません)
-SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
+SetEisu(KeyComb, TateStr, Repeat:=0)
 {
-    global Key, KeyGroup, Eisu, EisuYoko, Repeatable, KeyDelay
+    global Key, KeyGroup, Eisu, EisuYoko, Repeatable
         , BeginTable, EndTable, Group
 ;   local nkeys     ; 何キー同時押しか
 ;       , i         ; カウンタ
@@ -295,7 +295,6 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
             Eisu[i] := ""
             EisuYoko[i] := ""
             Repeatable[i] := ""
-            KeyDelay[i] := ""
         }
         i++
     }
@@ -309,7 +308,6 @@ SetEisu(KeyComb, TateStr, Repeat:=0, Delay:=-2)
         if (YokoStr != TateStr)
             EisuYoko[i] := YokoStr
         Repeatable[i] := Repeat
-        KeyDelay[i] := Delay
         EndTable[nkeys]++
     }
 

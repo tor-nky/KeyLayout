@@ -113,8 +113,8 @@ SendNeo(Str)
             }
             else
             {
-                if (Str2 = "^{Enter}")
-                    SetKeyDelay, 30
+                if (Str2 = "{BS}" || Str2 = "Backspace")
+                    SetKeyDelay, 40
                 else
                     SetKeyDelay, Delay
                 Send, % Str2
