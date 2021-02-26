@@ -48,6 +48,7 @@ naginata_dictionary.plist
 
 > 文字種変換
 >>	全角ひらがな化変換		[ctrl]+[U]
+
 >>	全角カタカナ化連続変換	[ctrl]+[I]
 
 > 文節操作
@@ -103,10 +104,10 @@ macOS Mojave (10.14.6) + Karabiner-Elements (v12.10.0) + かわせみ2 (2.0.17) 
 
 ## 英語系配列
 
-英語系の配列は、Excel ワークシートの「キー設定」タブの JISキーボード の文字を入れ替え、上の方法でスクリプトを作成して登録してください。
+英語系の配列は、Excel ワークシートの「キー設定」タブの JISキーボード の文字を入れ替え、上の方法でスクリプトを作成して登録すれば使えます。
 
 なお、入れ替えにとどめてください。
-設定がない文字があると、いまのところ正しいスクリプトが作れませんので Karabiner-Elements に登録できません。
+設定されていない文字があると正しいスクリプトが作れませんので Karabiner-Elements に登録できません。
 
 パスワード入力時は無効、Command、Option、Controlキーと併用時も無効です。
 
@@ -159,6 +160,13 @@ A5. かわせみ2 のキー割り当て編集ツールで、「読み操作」�
 ## 参考
 
 * [【薙刀式】v13完成版、発表。](http://oookaworks.seesaa.net/article/479173898.html#gsc.tab=0)
+* [Karabiner-Elementsの設定項目をまとめました](https://qiita.com/s-show/items/a1fd228b04801477729c)
+* [Documentation | Karabiner-Elements](https://karabiner-elements.pqrs.org/docs/)
+* [Mac薙刀式v11 sorshi版](https://github.com/sorshi/KE-complex_modifications-NAGINATA)
+* [Mac 記号や特殊文字のキーボードショートカットまとめ](http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-use-special-characters-and-symbols-keyboard-shortcut-with-macos.html)
+* [Mac のキーボードショートカット](https://support.apple.com/ja-jp/HT201236)
+* [Mac で日本語の英字とかなの文字対応を調べる](https://support.apple.com/ja-jp/guide/japanese-input-method/jpim10277/6.2.1/mac/10.14)
+* [薙刀式v12 QMK版](https://github.com/eswai/qmk_firmware/tree/master/keyboards/crkbd/keymaps/naginata_v12)
 
 ## おもな修正履歴
 
@@ -180,5 +188,6 @@ A5. かわせみ2 のキー割り当て編集ツールで、「読み操作」�
 (ここまで2021年1月1日追加)
 
 * 「かわせみ2用」縦書き・横書き自動切り替え。英数編集モード。記号はすべて全角。
+*　「かわせみ2用」キー割り当て編集ツールで必要な設定を追加
 
 (ここまで2021年2月26日追加)
