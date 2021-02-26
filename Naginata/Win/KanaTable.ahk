@@ -325,7 +325,6 @@ Group := 0
     SetKana( KC_N | KC_SPC      ,"o"        )       ; お
     SetKana( KC_COMM | KC_SPC   ,"mu"       )       ; む
     SetKana( KC_DOT | KC_SPC    ,"hu"       )       ; ふ
-    SetKana( KC_INT1 | KC_SPC   ,"―"       )       ; ―
     SetKana( KC_Z | KC_SPC      ,"ho"       )       ; ほ
     SetKana( KC_X | KC_SPC      ,"hi"       )       ; ひ
     SetKana( KC_SLSH | KC_SPC   ,"re"       )       ; れ
