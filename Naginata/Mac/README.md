@@ -166,7 +166,7 @@ A5. かわせみ2 のキー割り当て編集ツールで、「読み操作」�
 * [Mac 記号や特殊文字のキーボードショートカットまとめ](http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-use-special-characters-and-symbols-keyboard-shortcut-with-macos.html)
 * [Mac のキーボードショートカット](https://support.apple.com/ja-jp/HT201236)
 * [Mac で日本語の英字とかなの文字対応を調べる](https://support.apple.com/ja-jp/guide/japanese-input-method/jpim10277/6.2.1/mac/10.14)
-* [薙刀式v12 QMK版](https://github.com/eswai/qmk_firmware/tree/master/keyboards/crkbd/keymaps/naginata_v12)
+* [薙刀式v13 QMK版](https://github.com/eswai/qmk_firmware/tree/master/keyboards/crkbd/keymaps/naginata_v13u)
 
 ## おもな修正履歴
 
