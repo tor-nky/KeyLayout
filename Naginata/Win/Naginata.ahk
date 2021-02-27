@@ -271,6 +271,7 @@ Convert()
             OutBuf(2)
             RealKey &= RecentKey ^ (-1) ; RealKey &= ~RecentKey では
                                         ; 32ビット計算になることがあり、不適切
+            Last2Keys := 0
             LastKeys := RealKey
             LastGroup := 0
             RepeatKey := 0  ; リピート解除
