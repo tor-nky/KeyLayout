@@ -34,7 +34,7 @@ Ahk2Exe.exe でコンパイルする場合は、Unicode版で出力してくだ�
 
 ## 動作確認
 
-* Windows 10 Home version 20H2 + AutoHotkey (v1.1.33.02) + 旧MS-IME あるいは ATOK 2017
+* Windows 10 Home version 20H2 + AutoHotkey (v1.1.33.02) + 新旧MS-IME あるいは ATOK 2017
 
 # 不具合
 
