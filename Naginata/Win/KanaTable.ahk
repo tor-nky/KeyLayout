@@ -1,18 +1,13 @@
-﻿; Copyright 2021 Satoru NAKAYA
+﻿; **********************************************************************
+; 【薙刀式】v13完成版、発表。
+; http://oookaworks.seesaa.net/article/479173898.html#gsc.tab=0
+; (2020年12月25日)より
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
-; you may not use this file except in compliance with the License.
-; You may obtain a copy of the License at
-;
-;     http://www.apache.org/licenses/LICENSE-2.0
-;
-; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
-; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-; See the License for the specific language governing permissions and
-; limitations under the License.
-
+; 変更部分：
+; 記号はすべて全角文字を出力する
 ; **********************************************************************
+
+; ----------------------------------------------------------------------
 ; 英数／かな配列の定義ファイル 【すべて縦書き用で書くこと】
 ;
 ; 例：  SetKana( KC_Q | KC_L | KC_SPC       ,"xwa"  , R)    ; (ゎ)
@@ -29,7 +24,7 @@
 ;   ※全角空白の違いが見えるエディタを使うことをおすすめします
 ;   ※UTF-8(BOM付)で保存してください
 ;   ※順序はグループ内で自由です。同じキーの組み合わせは、後の方が有効になります。
-; **********************************************************************
+; ----------------------------------------------------------------------
 
 ;#Include init.ahk
 
