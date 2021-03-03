@@ -14,7 +14,7 @@ Karabiner-Elements で動作します。
 
 JISキーボードにもUSキーボードにも対応しています。
 
-(インストール後サイズ: 274KB)
+(インストール後サイズ: 273KB)
 
 ## 仕様
 
@@ -23,6 +23,9 @@ JISキーボードにもUSキーボードにも対応しています。
 
 * 特殊キー(Q)の単独押し離しは、中点「・」に当てています。
 * 同時押しは50ミリ秒以内(Karabiner-Elementsの設定による)に押します。
+
+英数入力時もSandSを使いたい場合は、Change spacebar to left_shift. (Post spacebar if pressed alone)
+などの他のスクリプトを登録してください。
 
 ## おもな修正履歴
 
