@@ -4,10 +4,11 @@
 
 [【薙刀式】2キー同時版の提案](http://oookaworks.seesaa.net/article/479308905.html#gsc.tab=0)をご覧ください。
 
-* Naginata_2keys.json
+# 使い方
 
 Karabiner-Elements で動作します。
-* フォルダ ~/.config/karabiner/assets/complex_modifications にスクリプトをコピーします。
+
+* Naginata_2keys.json をフォルダ ~/.config/karabiner/assets/complex_modifications にコピーします。
 * Karabiner-Elements の Preferences を開き、Complex modifications 画面の下の方にある Add rule を押す。
 * スクリプトを選び、+Enable を押す。
 
