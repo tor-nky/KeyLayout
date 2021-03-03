@@ -1,7 +1,7 @@
 {"title":"薙刀式 2キー同時版","rules":[{"description":"薙刀式 2キー同時版 (左右シフト英数) +ローマ字入力","manipulators":[
 {"description":"[シンクロ] く & あ → IME ON","from":{"simultaneous":[{"key_code":"h"},{"key_code":"j"}]},"to":[{"key_code":"lang1"}],"type":"basic"},
 {"description":"[シンクロ] か & (っ) → IME OFF","from":{"simultaneous":[{"key_code":"f"},{"key_code":"g"}]},"to":[{"key_code":"lang2"}],"type":"basic"},
-{"description":"[シンクロ] こ & な → 行送り","conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],"from":{"simultaneous":[{"key_code":"v"},{"key_code":"m"}]},"to":[{"key_code":"return_or_enter"}],"type":"basic"},
+{"description":"[シンクロ] こ & な → 行送り","from":{"simultaneous":[{"key_code":"v"},{"key_code":"m"}]},"to":[{"key_code":"return_or_enter"}],"type":"basic"},
 {"description":"[シンクロ] 右濁 & き → ぎ","conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],"from":{"simultaneous":[{"key_code":"j"},{"key_code":"w"}]},"to":[{"key_code":"g"},{"key_code":"i"}],"type":"basic"},
 {"description":"[シンクロ] 右濁 & て → で","conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],"from":{"simultaneous":[{"key_code":"j"},{"key_code":"e"}]},"to":[{"key_code":"d"},{"key_code":"e"}],"type":"basic"},
 {"description":"[シンクロ] 右濁 & し → じ","conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_if"},{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_unless"}],"from":{"simultaneous":[{"key_code":"j"},{"key_code":"r"}]},"to":[{"key_code":"z"},{"key_code":"i"}],"type":"basic"},
