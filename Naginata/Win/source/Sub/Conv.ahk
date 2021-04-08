@@ -52,7 +52,8 @@ WinAPI_timeEndPeriod(uPeriod)	; http://msdn.microsoft.com/en-us/library/dd757626
 }
 
 ; タイマーの精度を調整
-WinAPI_timeBeginPeriod(1)
+if (ShiftDelay)		; 後置シフトあり
+	WinAPI_timeBeginPeriod(1)
 
 ; ----------------------------------------------------------------------
 ; 関数
@@ -206,6 +207,9 @@ Convert()
 	if (run)
 		return	; 多重起動防止で終了
 
+	; 縦書き検出
+;	Vertical := IME_GetVertical()
+
 	; 入力バッファが空になるまで
 	while (run := 15 - InBufRest)
 	{
@@ -264,7 +268,7 @@ Convert()
 		}
 		; スペースキー(通常シフト、キーリリース直後、設定時間経過後の後置シフト)が押された時
 		else if (!(RealKey & RecentKey) && RecentKey = KC_SPC
-		 && (LastStr == "" || LastKeyTime + ShiftDelay < KeyTime))
+		 && (LastStr == "" || LastKeyTime + ShiftDelay <= KeyTime))
 		{
 			spc := 1
 			OutBuf(2)
