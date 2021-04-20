@@ -81,30 +81,34 @@ IconTimer := 0
 exit    ; 初期設定はここまで
 ; ----------------------------------------------------------------------
 
-OnTimer:    ;タイマーに割り当てられるサブルーチンラベル
-    Detect := IME_GetConvMode() ; IME の状態を検出
-    if (Detect)
-    {
-        if (!IME_GET())         ; IME OFF の時
-            IMEMode := 0
-        else if (IMEMode != Detect)
-        {                       ; IME ON の時
-            IMEMode := Detect
-            Last := " "
-        }
-        ChangeIcon()
-        IconTimer := 8
-    }
-    else if IconTimer > 0       ; IME の状態が検出できない時、2秒間アイコンで表示
-    {
-        IMEMode := 0
-        LastIcon := -1
-        Menu, TRAY, Icon, x6004_UD.ico
-        IconTimer--
-    }
-    else if IconTimer = 0
-        ChangeIcon()
-    return      ;タイマーサブルーチンの終了
+OnTimer:	;タイマーに割り当てられるサブルーチンラベル
+	Detect := IME_GetConvMode() ; IME の状態を検出
+	if (Detect)
+	{
+		IMEState := IME_GET()
+		if (IMEState != "")
+		{
+			if IMEState = 0 		; IME OFF の時
+				IMEMode := 0
+			else if (IMEMode != Detect)
+			{						; IME ON の時
+				IMEMode := Detect
+				Last := " "
+			}
+			ChangeIcon()
+			IconTimer := 8
+		}
+	}
+	else if IconTimer > 0		; IME の状態が検出できない時、2秒間アイコンで表示
+	{
+		IMEMode := 0
+		LastIcon := -1
+		Menu, TRAY, Icon, x6004_UD.ico
+		IconTimer--
+	}
+	else if IconTimer = 0
+		ChangeIcon()
+	return		;タイマーサブルーチンの終了
 
 ChangeIcon()
 {
@@ -136,19 +140,20 @@ OnKeypress(keyName)
 {
     global Qwerty, Kana, KanaShift, ShiftState, IMEMode, Last
 
-    Detect := IME_GetConvMode() ; IME の状態を検出
-    if (Detect)
-    {
-        if (!IME_GET())         ; IME OFF の時
-            IMEMode := 0
-        else if (IMEMode != Detect)
-        {                       ; IME ON の時
-            IMEMode := Detect
-            Last := " "
-        }
-    }
-    else if IconTimer >= 0
-        IMEMode := 0
+	Detect := IME_GetConvMode() ; IME の状態を検出
+	if (Detect)
+	{
+		IMEState := IME_GET()
+		if IMEState = 0 		; IME OFF の時
+			IMEMode := 0
+		else if (IMEMode != Detect && IMEState = 1)
+		{						; IME ON の時
+			IMEMode := Detect
+			Last := " "
+		}
+	}
+	else if IconTimer >= 0
+		IMEMode := 0
 
     state := GetKeyState("Shift", "P")  ; Shiftを押しているか保存
     if (GetKeyState("LWin", "P")        ; Win, Alt, Ctrl を併用の場合

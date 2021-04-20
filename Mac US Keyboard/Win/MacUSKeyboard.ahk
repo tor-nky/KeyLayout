@@ -15,55 +15,55 @@ SetKeyDelay, 0, 0   ; キーストローク間のディレイを、不具合が�
 LastTickCount := A_TickCount    ; OSが起動してからの経過時間(ミリ秒)を保存
 
 $+sc0C::        ; (US)Shift - → ほ
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc0C}
     else
         send, {sc0C}
     return
 $sc0D::     ; (US)= → ゜
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, {sc0D}
     else
         send, {sc1B}
     return
 $+sc0D::    ; (US)Shift = → 「
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc0D}
     else
         send, +[
     return
 $+sc1A::    ; (US)[ → 」
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc1A}
     else
         send, +]
     return
 $sc1B::     ; (US)] → む
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, {sc1B}
     else
         send, {sc2B}
     return
 $+sc1B::    ; (US)Shift ] → ー
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc1B}
     else
         send, _
     return
 $+sc28::    ; (US)' → ろ
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc28}
     else
         send, ~
     return
 $sc2B::     ; (US)＼ → へ
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, {sc2B}
     else
         send, {sc0D}
     return
 $+sc2B::    ; (US)Shift ＼ → へ
-    if (!IME_GET()) ; IME OFF の時
+    if (IME_GET() = 0) ; IME OFF の時
         send, +{sc2B}
     else
         send, {sc0D}

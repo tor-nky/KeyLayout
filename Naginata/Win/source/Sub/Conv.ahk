@@ -212,7 +212,8 @@ Convert()
 		, _lks		:= 0	; 前回、何キー同時押しだったか？
 		, LastGroup := 0	; 前回、何グループだったか？ 0はグループAll
 		, RepeatKey	:= 0	; リピート中のキーのビット
-;	local Str1
+;	local Detect
+;		, Str1
 ;		, Term		; 入力の末端2文字
 ;		, RecentKey	; 今回のキービット
 ;		, KeyTime	; キーを押した時間
@@ -230,9 +231,15 @@ Convert()
 		Str1 := InBuf[InBufRead], KeyTime := InBufTime[InBufRead++], InBufRead &= 15, InBufRest++
 
 		; IME の状態を検出
-		KanaMode := IME_GetConvMode() & 1
-		if (!KanaMode || !IME_GET())
-			KanaMode := 0	; 検出できない、または IME OFF の時
+		Detect := IME_GET()
+		if Detect = 0 			; IME OFF の時
+			KanaMode := 0
+		else if Detect = 1		; IME ON の時
+		{
+			Detect := IME_GetConvMode()
+			if (Detect != "")
+				KanaMode := Detect & 1
+		}
 
 		nkeys := 0	; 何キー同時押しか、を入れる変数
 		StringRight, Term, Str1, 2	; Term に入力末尾の2文字を入れる
