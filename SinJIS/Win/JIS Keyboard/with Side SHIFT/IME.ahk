@@ -12,7 +12,7 @@
 履歴
     2008.07.11 v1.0.47以降の 関数ライブラリスクリプト対応用にファイル名を変更
     2008.12.10 コメント修正
-    2009.07.03 IME_GetConverting() 追加 
+    2009.07.03 IME_GetConverting() 追加
                Last Found Windowが有効にならない問題修正、他。
     2009.12.03
       ・IME 状態チェック GUIThreadInfo 利用版 入れ込み
@@ -27,7 +27,7 @@
       ・LongPtr対策：ポインタサイズをA_PtrSizeで見るようにした
 
                 ;==================================
-                ;  GUIThreadInfo 
+                ;  GUIThreadInfo
                 ;=================================
                 ; 構造体 GUITreadInfo
                 ;typedef struct tagGUITHREADINFO {(x86) (x64)
@@ -58,7 +58,7 @@
 ;-----------------------------------------------------------
 ; IMEの状態の取得
 ;   WinTitle="A"    対象Window
-;   戻り値          1:ON / 0:OFF
+;   戻り値          1:ON / 0:OFF / "":失敗
 ;-----------------------------------------------------------
 IME_GET(WinTitle="A")  {
 	ControlGet,hwnd,HWND,,,%WinTitle%
@@ -116,13 +116,13 @@ IME_SET(SetSts, WinTitle="A")    {
 
 ;  ※ 地域と言語のオプション - [詳細] - 詳細設定
 ;     - 詳細なテキストサービスのサポートをプログラムのすべてに拡張する
-;    が ONになってると値が取れない模様 
+;    が ONになってると値が取れない模様
 ;    (Google日本語入力βはここをONにしないと駄目なので値が取れないっぽい)
 
 ;-------------------------------------------------------
 ; IME 入力モード取得
 ;   WinTitle="A"    対象Window
-;   戻り値          入力モード
+;   戻り値          入力モード / "":失敗
 ;--------------------------------------------------------
 IME_GetConvMode(WinTitle="A")   {
 	ControlGet,hwnd,HWND,,,%WinTitle%
@@ -176,6 +176,7 @@ IME_SetConvMode(ConvMode,WinTitle="A")   {
 ;   戻り値 MS-IME  0:無変換 1:人名/地名               8:一般    16:話し言葉
 ;          ATOK系  0:固定   1:複合語           4:自動 8:連文節
 ;          WXG4             1:複合語  2:無変換 4:自動 8:連文節
+;		   共通				"":失敗
 ;------------------------------------------------------------------
 IME_GetSentenceMode(WinTitle="A")   {
 	ControlGet,hwnd,HWND,,,%WinTitle%
