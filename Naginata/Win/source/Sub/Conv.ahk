@@ -36,7 +36,6 @@ _usc := 0		; 保存されている文字数
 ; ----------------------------------------------------------------------
 ; タイマー関数、設定
 ; ----------------------------------------------------------------------
-
 ; 参照: https://www.autohotkey.com/boards/viewtopic.php?t=4667
 WinAPI_timeGetTime()	; http://msdn.microsoft.com/en-us/library/dd757629.aspx
 {
@@ -56,20 +55,36 @@ if (ShiftDelay)		; 後置シフトあり
 	WinAPI_timeBeginPeriod(1)
 
 ; ----------------------------------------------------------------------
-; メニュー
+; メニュー表示
 ; ----------------------------------------------------------------------
-
 menu, tray, NoStandard			; タスクトレイメニューの標準メニュー項目を解除
 menu, tray, add, 縦書きモード	; “縦書きモード”を追加
 menu, tray, Check, 縦書きモード	; “縦書きモード”にチェックを付ける
 menu, tray, add					; セパレーター
 menu, tray, Standard			; 標準メニュー項目を追加
-return
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+exit	; 起動時はここまで実行
+
+; ----------------------------------------------------------------------
+; メニュー動作
+; ----------------------------------------------------------------------
 縦書きモード:
 menu, tray, ToggleCheck, 縦書きモード
 	Vertical ^= 1
 return
+
+; ----------------------------------------------------------------------
+; サブルーチン
+; ----------------------------------------------------------------------
+OnTimer:	; 後置シフトの判定期限
+	SetTimer, OnTimer, Off	; タイマー停止
+	; 入力バッファへ保存
+	; いっぱいまで使わない
+	InBuf[InBufWrite] := "OnTimer", InBufTime[InBufWrite] := WinAPI_timeGetTime()
+		, InBufWrite := (InBufRest > 6) ? ++InBufWrite & 15 : InBufWrite
+		, (InBufRest > 6) ? InBufRest-- :
+	Convert()	; 変換ルーチン
+	return
 
 ; ----------------------------------------------------------------------
 ; 関数
@@ -212,6 +227,7 @@ Convert()
 		, _lks		:= 0	; 前回、何キー同時押しだったか？
 		, LastGroup := 0	; 前回、何グループだったか？ 0はグループAll
 		, RepeatKey	:= 0	; リピート中のキーのビット
+		, LastSetted := 0	; 出力確定したか(1 だと、後置シフトの判定期限到来で出力確定)
 ;	local Detect
 ;		, Str1
 ;		, Term		; 入力の末端2文字
@@ -227,8 +243,20 @@ Convert()
 	; 入力バッファが空になるまで
 	while (run := 15 - InBufRest)
 	{
+		; 後置シフトの判定タイマー停止
+		SetTimer, OnTimer, Off
+
 		; 入力バッファから読み出し
 		Str1 := InBuf[InBufRead], KeyTime := InBufTime[InBufRead++], InBufRead &= 15, InBufRest++
+
+		; 後置シフトの判定期限到来
+		if (Str1 == "OnTimer")
+		{
+			if (LastSetted = 1 && LastKeyTime + ShiftDelay <= WinAPI_timeGetTime())	; 割り込みの行き違いを防ぐ
+				OutBuf(2)
+			continue
+		}
+		LastSetted := 0
 
 		; IME の状態を検出
 		Detect := IME_GET()
@@ -272,7 +300,7 @@ Convert()
 		; キーリリース時
 		if (Term == "up")
 		{
-			if (spc = 1 && RecentKey = KC_SPC)	; スペースキー単押しだったなら、空白出力
+			if (spc = 1 && RecentKey = KC_SPC)	; スペースキー単独押しだったなら、空白出力
 			{
 				StoreBuf(0, "{Space}")
 				spc := 0
@@ -286,11 +314,11 @@ Convert()
 			LastGroup := 0
 			RepeatKey := 0	; リピート解除
 		}
-		; スペースキー(通常シフト、キーリリース直後、設定時間経過後の後置シフト)が押された時
+		; (キーリリース直後か、通常シフトまたは後置シフトの判定期限後に)スペースキーが押された時
 		else if (!(RealKey & RecentKey) && RecentKey = KC_SPC
 		 && (LastStr == "" || LastKeyTime + ShiftDelay <= KeyTime))
 		{
-			spc := 1
+			spc := 1	; 単独スペース判定フラグ
 			OutBuf(2)
 			LastStr	:= ""
 			RealKey |= KC_SPC
@@ -317,9 +345,12 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
 						nkeys := 3
-						nBack := (_lks >= 2) ? 1 : 2
-							; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
-							; 前回が1キー入力だったら、2文字消して仮出力バッファへ
+						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は出力確定
+							OutBuf(2)
+						else if _lks >= 2
+							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
+						else
+							nBack := 2	; 前回が1キー入力だったら、2文字消して仮出力バッファへ
 						break
 					}
 					i++
@@ -382,9 +413,12 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
 						nkeys := 3
-						nBack := (_lks >= 2) ? 1 : 2
-							; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
-							; 前回が1キー入力だったら、2文字消して仮出力バッファへ
+						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は出力確定
+							OutBuf(2)
+						else if _lks >= 2
+							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
+						else
+							nBack := 2	; 前回が1キー入力だったら、2文字消して仮出力バッファへ
 						break
 					}
 					i++
@@ -435,27 +469,35 @@ Convert()
 			; スペースを押したが、定義がなかった時
 			if (RecentKey = KC_SPC && !nkeys)
 			{
-				spc := 1
+				spc := 1	; 単独シフト判定フラグ
 ;				LastKeys |= KC_SPC	;
 				RepeatKey := 0
-				continue
+				continue	; 次の入力へ
 			}
-			; 見つからなかった時
-			if nkeys <= 0
-			{
-				if (RealKey & KC_SPC)	; シフト
-					Str1 := "+" . Str1
-			}
-			else	; 出力する文字列を選択
-				Str1 := SelectStr(i)
+			spc := 0	; 単独スペースではない
 
-			spc := 0
+			; 出力する文字列を選ぶ
+			if nkeys > 0	; 定義が見つかった時
+			{
+				Str1 := SelectStr(i)		; 出力する文字列
+				LastSetted := Setted[i]		; 出力確定するか検索
+			}
+			else	; 見つからなかった時
+			{
+				if (RealKey & KC_SPC)	; スペースキーが押されていたら、シフトを加える(SandSの実装)
+					Str1 := "+" . Str1
+				LastSetted := 0	; 出力確定はしない
+			}
 			; 仮出力バッファに入れる
 			StoreBuf(nBack, Str1)
 			; 出力確定文字か？
-			if (!RecentKey || Setted[i] > (ShiftDelay ? 1 : 0))
+			if (!RecentKey || LastSetted > (ShiftDelay ? 1 : 0))
 				OutBuf(2)	; 出力確定
+			else if (run = 1 && LastSetted = 1)
+				SetTimer, OnTimer, % ShiftDelay + 9
+					; 後置シフトの判定タイマー起動
 
+			; 次回に向けて変数を更新
 			LastStr	:= Str1
 			Last2Keys := (nkeys >= 2) ? 0 : LastKeys	; 2、3キー入力のときは、前々回のキービットを保存しない
 			LastKeys := (nkeys >= 1) ? Key[i] : RecentKey	; 前回のキービットを保存
