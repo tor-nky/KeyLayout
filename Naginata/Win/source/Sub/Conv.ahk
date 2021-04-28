@@ -76,6 +76,7 @@ return
 ; ----------------------------------------------------------------------
 ; サブルーチン
 ; ----------------------------------------------------------------------
+
 OnTimer:	; 後置シフトの判定期限
 	SetTimer, OnTimer, Off	; タイマー停止
 	; 入力バッファへ保存
@@ -258,15 +259,25 @@ Convert()
 		}
 		LastSetted := 0
 
-		; IME の状態を検出
-		Detect := IME_GET()
-		if Detect = 0 			; IME OFF の時
-			KanaMode := 0
-		else if Detect = 1		; IME ON の時
+		; IME の状態を検出(成功するまで３回実行)
+		Loop, 3
 		{
-			Detect := IME_GetConvMode()
-			if (Detect != "")
-				KanaMode := Detect & 1
+			Detect := IME_GET()
+			if Detect = 0 			; IME OFF の時
+			{
+				KanaMode := 0
+				break
+			}
+			else if Detect = 1		; IME ON の時
+			{
+				Detect := IME_GetConvMode()
+				if (Detect != "")
+				{
+					KanaMode := Detect & 1
+					break
+				}
+			}
+			Sleep, 10
 		}
 
 		nkeys := 0	; 何キー同時押しか、を入れる変数
