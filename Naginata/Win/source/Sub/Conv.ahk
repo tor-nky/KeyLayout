@@ -51,7 +51,7 @@ WinAPI_timeEndPeriod(uPeriod)	; http://msdn.microsoft.com/en-us/library/dd757626
 }
 
 ; タイマーの精度を調整
-if (ShiftDelay)		; 後置シフトあり
+if ShiftDelay > 0	; 後置シフトあり
 	WinAPI_timeBeginPeriod(1)
 
 ; ----------------------------------------------------------------------
@@ -82,8 +82,8 @@ OnTimer:	; 後置シフトの判定期限
 	; 入力バッファへ保存
 	; いっぱいまで使わない
 	InBuf[InBufWrite] := "OnTimer", InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest > 6) ? ++InBufWrite & 15 : InBufWrite
-		, (InBufRest > 6) ? InBufRest-- :
+		, InBufWrite := (InBufRest > 6 ? ++InBufWrite & 15 : InBufWrite)
+		, (InBufRest > 6 ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
 
@@ -91,10 +91,19 @@ OnTimer:	; 後置シフトの判定期限
 ; 関数
 ; ----------------------------------------------------------------------
 
+SendEnter()
+{
+	SetKeyDelay, 30
+	Send, {Enter}
+	return
+}
+
 ; 文字列 Str1 を適宜ウェイトを入れながら出力する
 SendNeo(Str1)
 {
-;	local Delay, len, Str2, len2, i, j, c, bracket
+;	local len, Str2, len2, i, c, bracket
+;		, UTFMode	; 0: 未調査, 1: ユニコードは確定必要, 2: ユニコードは確定不要
+	static LastOutTime := WinAPI_timeGetTime()
 
 	IfWinActive, ahk_class CabinetWClass
 		Delay := 10	; エクスプローラーにはゆっくり出力する
@@ -104,18 +113,17 @@ SendNeo(Str1)
 	; 1文字ずつ出力
 	len := StrLen(Str1)
 	Str2 := "", len2 := 0
-	bracket := 0
+	bracket := 0, UTFMode := 0
 	i := 1
 	while (i <= len)
 	{
 		c := SubStr(Str1, i, 1)
 		if (c == "}" && bracket != 1)
 			bracket := 0
-		else if (c == "{" || bracket)
+		else if (c == "{" || bracket > 0)
 			bracket++
 		Str2 .= c, len2++
-		if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
-			|| i = len )
+		if (i = len || !(bracket > 0 || c == "+" || c == "^" || c == "!" || c == "#"))
 		{
 			; SendRaw(直接入力モード)にする時
 			if (SubStr(Str2, len2 - 4, 5) = "{Raw}")
@@ -123,31 +131,35 @@ SendNeo(Str1)
 				Str2 := "{Raw}" . SubStr(Str1, ++i, len) ; 残りを全て出力へ
 				i := len	; カウンタは末尾へ
 			}
-			; {Enter から始まる
-			if (SubStr(Str2, 1, 6) = "{Enter")
+			; 出力部
+			if (Str2 == "{確}")
 			{
-				j := SubStr(Str2, 8, len2 - 8)	; "{Enter " の後の回数
-				Loop {
-					Send, {Enter down}
-					Sleep, 30
-					Send, {Enter up}
-					Sleep, 10
-					j--
-				} Until j < 1
+				Sleep, % 60 - (WinAPI_timeGetTime() - LastOutTime)
+				if (IME_GetConverting() > 0)	; IME窓が開いている
+					SendEnter()
+			}
+			else if (Str2 == "{替}")
+			{
+				if UTFMode = 0
+				{
+					if (IME_GET() != 0)
+						Sleep, 60
+					UTFMode := (IME_GetConverting() > 0 ? 1 : 2)
+						; 1: ユニコードは確定必要, 2: ユニコードは確定不要
+				}
+				if UTFMode = 1
+					SendEnter()
 			}
 			else
 			{
-				if (Str2 = "{BS}" || Str2 = "Backspace")
-					SetKeyDelay, 40
-				else
-					SetKeyDelay, Delay
+				SetKeyDelay, Delay
 				Send, % Str2
-				SetKeyDelay, 0
 			}
 			Str2 := "", len2 := 0
 		}
 		i++
 	}
+	LastOutTime := WinAPI_timeGetTime()
 
 	return
 }
@@ -177,9 +189,9 @@ StoreBuf(nBack, Str1)
 	{
 		_usc -= nBack
 		if _usc <= 0
-			_usc := 0
+			_usc := 0	; バッファが空になる以上は削除しない
 		else
-			OutBuf(1)	; nBack の分だけ戻って、残りのバッファは出力する
+			OutBuf(1)	; nBack の分だけ戻って、残ったバッファは出力する
 	}
 	else if _usc = 2	; バッファがいっぱいなので、1文字出力
 		OutBuf(1)
@@ -195,7 +207,7 @@ SelectStr(i)
 	global KanaMode, Eisu, EisuYoko, Kana, KanaYoko, Vertical
 ;	local Str1
 
-	if (!KanaMode)
+	if KanaMode = 0
 	{
 		if (Vertical || EisuYoko[i] == "")
 			Str1 := Eisu[i]
@@ -238,7 +250,7 @@ Convert()
 ;		, i			; カウンタ
 ;		, nkeys		; 今回は何キー同時押しか
 
-	if (run)
+	if run > 0
 		return	; 多重起動防止で終了
 
 	; 入力バッファが空になるまで
@@ -259,25 +271,15 @@ Convert()
 		}
 		LastSetted := 0
 
-		; IME の状態を検出(成功するまで３回実行)
-		Loop, 3
+		; IME の状態を検出(失敗したら書き換えない)
+		Detect := IME_GET()
+		if Detect = 0 			; IME OFF の時
+			KanaMode := 0
+		else if Detect = 1		; IME ON の時
 		{
-			Detect := IME_GET()
-			if Detect = 0 			; IME OFF の時
-			{
-				KanaMode := 0
-				break
-			}
-			else if Detect = 1		; IME ON の時
-			{
-				Detect := IME_GetConvMode()
-				if (Detect != "")
-				{
-					KanaMode := Detect & 1
-					break
-				}
-			}
-			Sleep, 10
+			Detect := IME_GetConvMode()
+			if (Detect != "")
+				KanaMode := Detect & 1
 		}
 
 		nkeys := 0	; 何キー同時押しか、を入れる変数
@@ -305,7 +307,7 @@ Convert()
 			RecentKey := JP_YEN
 		else if RecentKey = 0x73	; (JIS)_
 			RecentKey := KC_INT1
-		else if (RecentKey)
+		else if RecentKey != 0
 			RecentKey := 1 << RecentKey
 
 		; キーリリース時
@@ -343,7 +345,7 @@ Convert()
 			nBack := 0
 
 			; グループありの3キー入力を検索
-			if (LastGroup && !nkeys)
+			if (LastGroup && nkeys = 0)
 			{
 				i := BeginTable[3]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
@@ -368,7 +370,7 @@ Convert()
 				}
 			}
 			; グループありの2キー入力を検索
-			if (LastGroup && !nkeys)
+			if (LastGroup && nkeys = 0)
 			{
 				i := BeginTable[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -390,7 +392,7 @@ Convert()
 				}
 			}
 			; グループありの1キー入力を検索
-			if (LastGroup && !nkeys)
+			if (LastGroup && nkeys = 0)
 			{
 				i := BeginTable[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
@@ -412,7 +414,7 @@ Convert()
 				}
 			}
 			; 3キー入力を検索
-			if (!nkeys)
+			if nkeys = 0
 			{
 				i := BeginTable[3]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
@@ -436,7 +438,7 @@ Convert()
 				}
 			}
 			; 2キー入力を検索
-			if (!nkeys)
+			if nkeys = 0
 			{
 				i := BeginTable[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -457,7 +459,7 @@ Convert()
 				}
 			}
 			; 1キー入力を検索
-			if (!nkeys)
+			if nkeys = 0
 			{
 				i := BeginTable[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
@@ -478,10 +480,10 @@ Convert()
 				}
 			}
 			; スペースを押したが、定義がなかった時
-			if (RecentKey = KC_SPC && !nkeys)
+			if (RecentKey = KC_SPC && nkeys = 0)
 			{
 				spc := 1	; 単独シフト判定フラグ
-;				LastKeys |= KC_SPC	;
+;				LastKeys |= KC_SPC
 				RepeatKey := 0
 				continue	; 次の入力へ
 			}
@@ -502,7 +504,7 @@ Convert()
 			; 仮出力バッファに入れる
 			StoreBuf(nBack, Str1)
 			; 出力確定文字か？
-			if (!RecentKey || LastSetted > (ShiftDelay ? 1 : 0))
+			if (!RecentKey || LastSetted > (ShiftDelay > 0 ? 1 : 0))
 				OutBuf(2)	; 出力確定
 			else if (run = 1 && LastSetted = 1)
 				SetTimer, OnTimer, % ShiftDelay + 9
@@ -510,12 +512,12 @@ Convert()
 
 			; 次回に向けて変数を更新
 			LastStr	:= Str1
-			Last2Keys := (nkeys >= 2) ? 0 : LastKeys	; 2、3キー入力のときは、前々回のキービットを保存しない
-			LastKeys := (nkeys >= 1) ? Key[i] : RecentKey	; 前回のキービットを保存
+			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)	; 2、3キー入力のときは、前々回のキービットを保存しない
+			LastKeys := (nkeys >= 1 ? Key[i] : RecentKey)	; 前回のキービットを保存
 			LastKeyTime := KeyTime		; 有効なキーを押した時間を保存
 			_lks := nkeys				; 何キー同時押しだったかを保存
 			LastGroup := KeyGroup[i]	; 何グループだったか保存
-			if (Repeatable[i])
+			if (Repeatable[i] = 1)
 				RepeatKey := RecentKey	; キーリピートできる
 		}
 	}
@@ -597,8 +599,8 @@ PgDn::
 	; 入力バッファへ保存
 	; キーを押す方はいっぱいまで使わない
 	InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest > 6) ? ++InBufWrite & 15 : InBufWrite
-		, (InBufRest > 6) ? InBufRest-- :
+		, InBufWrite := (InBufRest > 6 ? ++InBufWrite & 15 : InBufWrite)
+		, (InBufRest > 6 ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
 
@@ -659,8 +661,8 @@ sc73 up::	; (JIS)_
 sc39 up::	; Space
 	; 入力バッファへ保存
 	InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := InBufRest ? ++InBufWrite & 15 : InBufWrite
-		, InBufRest ? InBufRest-- :
+		, InBufWrite := (InBufRest ? ++InBufWrite & 15 : InBufWrite)
+		, (InBufRest ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
 

@@ -124,7 +124,7 @@ Group := 5
 	SetKana( KC_M | KC_COMM | KC_X	,"〉"								)		; 〉
 	SetKana( KC_M | KC_COMM | KC_C	,"』"								)		; 』
 	SetKana( KC_M | KC_COMM | KC_V	,"」{改行}　"						)		; 」□マクロ
-	SetKana( KC_M | KC_COMM | KC_B	,"　　　×　　　×　　　×{改行}"	)	; x  x	 x
+	SetKana( KC_M | KC_COMM | KC_B	,"　　　×　　　×　　　×{改行}"	)		; x   x   x
 
 ; 右手(R はリピート)
 Group := 6

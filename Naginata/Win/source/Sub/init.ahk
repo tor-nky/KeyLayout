@@ -19,7 +19,7 @@
 #NoEnv						; 変数名を解釈するとき、環境変数を無視する
 SetBatchLines, -1			; 自動Sleepなし
 ListLines, Off				; スクリプトの実行履歴を取らない
-SetKeyDelay, 0, 0			; キーストローク間のディレイを変更
+SetKeyDelay, 10, 0			; キーストローク間のディレイを変更
 #MenuMaskKey vk07			; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
 #UseHook					; ホットキーはすべてフックを使用する
 ; Process, Priority, , High	; プロセスの優先度を変更
@@ -247,6 +247,71 @@ StrReplace(Str1)
 	return Str1
 }
 
+; 文字列に必要に応じて"確定"と"切り替え"を加える
+Analysis(Str1)
+{
+;	local i 					; カウンタ
+;		, TateStr
+;		, len, Str2, c, bracket
+;		, ZenkakuCount			; 連続している全角文字を数える
+;		, KaeCount				; 入れた"切り替え"を数える
+
+	; Str1 の文字列に"確定"を加えながら TateStr にコピーする
+	; 1文字ずつ分析する
+	len := StrLen(Str1)
+	TateStr := ""
+	Str2 := "", len2 := 0
+	bracket := 0
+	ZenkakuCount := 0, KaeCount := 0
+	i := 1
+	while (i <= len)
+	{
+		c := SubStr(Str1, i, 1)
+		if (c == "}" && bracket != 1)
+			bracket := 0
+		else if (c == "{" || bracket > 0)
+			bracket++
+		Str2 .= c, len2++
+		if (i = len || !(bracket > 0 || c == "+" || c == "^" || c == "!" || c == "#"))
+		{
+			; ASCIIコードでない
+			if (Asc(Str2) > 127
+				|| SubStr(Str2, 1, 3) = "{U+"
+				|| (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127))			{
+				if ZenkakuCount = 0		; ASCIIコード → それ以外 に変わった
+					TateStr .= "{確}"	; "確定"を入れる
+
+				; ATOK は全角空白が入力されると、文字入力中か検出できないので対策
+				if (KaeCount = 0
+					&& (Asc(Str2) = 0x3000 || SubStr(Str2, 1, 7) = "{U+3000"
+					|| (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127)))
+				{
+					if ZenkakuCount = 0
+						TateStr .= "・{替}{BS}"
+					else
+						TateStr .= "{替}"
+					KaeCount++
+				}
+
+				ZenkakuCount++
+			}
+			; ASCIIコード
+			else if ZenkakuCount > 0	; ASCIIコード以外 → ASCIIコード に変わった
+			{
+				TateStr .= "{替}"		; "切り替え"を入れる
+				ZenkakuCount := 0, KaeCount++
+			}
+			TateStr .= Str2
+			Str2 := "", len2 := 0
+		}
+		i++
+	}
+	if ZenkakuCount > 0			; 最後の文字がASCIIコード以外
+		TateStr .= "{替}"	; "切り替え"を入れる
+
+	return TateStr
+}
+
 ; かな定義登録	(定義が多すぎても警告は出ません)
 SetKana(KeyComb, Str1, Repeat:=0)
 {
@@ -255,53 +320,12 @@ SetKana(KeyComb, Str1, Repeat:=0)
 ;	local nkeys 				; 何キー同時押しか
 ;		, i 					; カウンタ
 ;		, TateStr, YokoStr
-;		, len, Str2, c, bracket
-;		, nZenkaku				; 全角文字が連続している数
 
 	; 機能置き換え処理
 	Str1 := StrReplace(Str1)
-	; Str1 の文字列に"確定"を加えながら TateStr にコピーする
-	; 1文字ずつ分析する
-	len := StrLen(Str1)
-	TateStr := ""
-	Str2 := "", len2 := 0
-	bracket := 0
-	nZenkaku := 0
-	i := 1
-	while (i <= len)
-	{
-		c := SubStr(Str1, i, 1)
-		if (c == "}" && bracket != 1)
-			bracket := 0
-		else if (c == "{" || bracket)
-			bracket++
-		Str2 .= c, len2++
-		if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
-			|| i = len )
-		{
-			; ASCIIコードでない
-			if (Asc(Str2) > 127
-				|| SubStr(Str2, 1, 3) = "{U+"
-				|| (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127))
-			{
-				if (!nZenkaku)					; ASCIIコード → それ以外 に変わった
-					TateStr .= "nn^{Enter}{BS}"	; "確定"を入れる
-				nZenkaku++
-			}
-			; ASCIIコード
-			else if (nZenkaku)					; ASCIIコード以外 → ASCIIコード に変わった
-			{
-				TateStr .= "nn^{Enter}{BS}"		; "確定"を入れる
-				nZenkaku := 0					; ※新MS-IMEのみで使うなら、	else
-			}									;									nZenkaku := 0
-			TateStr .= Str2
-			Str2 := "", len2 := 0
-		}
-		i++
-	}
-	if (nZenkaku)					; 最後の文字がASCIIコード以外
-		TateStr .= "nn^{Enter}{BS}"	; "確定"を入れる
-									; ※新MS-IMEのみで使うなら、上２行は不要
+
+	; Str1 の文字列に必要に応じて"確定"を加える
+	TateStr := Analysis(Str1)
 
 	; 登録
 	nkeys := CountBit(KeyComb)	; 何キー同時押しか
@@ -335,16 +359,19 @@ SetKana(KeyComb, Str1, Repeat:=0)
 }
 
 ; 英数定義登録	(定義が多すぎても警告は出ません)
-SetEisu(KeyComb, TateStr, Repeat:=0)
+SetEisu(KeyComb, Str1, Repeat:=0)
 {
 	global Key, KeyGroup, Eisu, EisuYoko, Repeatable
 		, BeginTable, EndTable, Group
-;	local nkeys 	; 何キー同時押しか
-;		, i 		; カウンタ
-;		, YokoStr
+;	local nkeys 				; 何キー同時押しか
+;		, i 					; カウンタ
+;		, TateStr, YokoStr
 
 	; 機能置き換え処理
-	TateStr := StrReplace(TateStr)
+	Str1 := StrReplace(Str1)
+
+	; Str1 の文字列に必要に応じて"確定"を加える
+	TateStr := Analysis(Str1)
 
 	; 登録
 	nkeys := CountBit(KeyComb)	; 何キー同時押しか
@@ -429,7 +456,7 @@ KanaSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3] && !flag)
+			if (j >= EndTable[3] && flag = 0)
 			{
 				j := BeginTable[2]
 				while (j < EndTable[2])
@@ -446,7 +473,7 @@ KanaSetting()
 				if (j >= BeginTable[2])
 					Setted[i] := 2	; どちらのシフトも出力確定
 			}
-			if (flag)
+			if flag > 0
 				Setted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
@@ -497,7 +524,7 @@ KanaSetting()
 					}
 					j++
 				}
-				if (j >= EndTable[2] && !flag)
+				if (j >= EndTable[2] && flag = 0)
 				{
 					j := BeginTable[1]
 					while (j < EndTable[1])
@@ -515,7 +542,7 @@ KanaSetting()
 						Setted[i] := 2	; どちらのシフトも出力確定
 				}
 			}
-			if (flag)
+			if flag > 0
 				Setted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
@@ -576,7 +603,7 @@ EisuSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3] && !flag)
+			if (j >= EndTable[3] && flag = 0)
 			{
 				j := BeginTable[2]
 				while (j < EndTable[2])
@@ -593,7 +620,7 @@ EisuSetting()
 				if (j >= BeginTable[2])
 					Setted[i] := 2	; どちらのシフトも出力確定
 			}
-			if (flag)
+			if flag > 0
 				Setted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
@@ -644,7 +671,7 @@ EisuSetting()
 					}
 					j++
 				}
-				if (j >= EndTable[2] && !flag)
+				if (j >= EndTable[2] && flag = 0)
 				{
 					j := BeginTable[1]
 					while (j < EndTable[1])
@@ -662,7 +689,7 @@ EisuSetting()
 						Setted[i] := 2	; どちらのシフトも出力確定
 				}
 			}
-			if (flag)
+			if flag > 0
 				Setted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
