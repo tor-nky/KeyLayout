@@ -91,75 +91,109 @@ OnTimer:	; 後置シフトの判定期限
 ; 関数
 ; ----------------------------------------------------------------------
 
-SendEnter()
+; 文字列 Str1 を適宜ディレイを入れながら出力する
+SendNeo(Str1, Delay:=0)
 {
-	SetKeyDelay, 30
-	Send, {Enter}
-	return
-}
-
-; 文字列 Str1 を適宜ウェイトを入れながら出力する
-SendNeo(Str1)
-{
-;	local len, Str2, len2, i, c, bracket
-;		, UTFMode	; 0: 未調査, 1: ユニコードは確定必要, 2: ユニコードは確定不要
+;	local len						; Str1 の長さ
+;		, StrChopped, LenChopped	; 細切れにした文字列と、その長さを入れる変数
+;		, i, j, c, bracket
+;		, IMECheck, IMEConvMode		; IME入力モードの保存、復元に関するフラグと変数
+;		, PreDelay, PostDelay		; 出力前後のディレイの値
 	static LastOutTime := WinAPI_timeGetTime()
+		, ATOK
 
 	IfWinActive, ahk_class CabinetWClass
-		Delay := 10	; エクスプローラーにはゆっくり出力する
-	else
-		Delay := 0
+		Delay := (Delay < 10 ? 10 : Delay)	; エクスプローラーにはゆっくり出力する
+	SetKeyDelay, -1, -1
 
-	; 1文字ずつ出力
+	; 文字列を細切れにして出力
 	len := StrLen(Str1)
-	Str2 := "", len2 := 0
-	bracket := 0, UTFMode := 0
+	StrChopped := "", LenChopped := 0
+	PreDelay := 0, PostDelay := Delay	; ディレイの初期値
+	IMECheck := 0
+	bracket := 0
 	i := 1
 	while (i <= len)
 	{
 		c := SubStr(Str1, i, 1)
 		if (c == "}" && bracket != 1)
 			bracket := 0
-		else if (c == "{" || bracket > 0)
+		else if (c == "{" || bracket)
 			bracket++
-		Str2 .= c, len2++
-		if (i = len || !(bracket > 0 || c == "+" || c == "^" || c == "!" || c == "#"))
+		StrChopped .= c, LenChopped++
+		if (!(bracket || c == "+" || c == "^" || c == "!" || c == "#")
+			|| i = len )
 		{
 			; SendRaw(直接入力モード)にする時
-			if (SubStr(Str2, len2 - 4, 5) = "{Raw}")
+			if (SubStr(StrChopped, LenChopped - 4, 5) = "{Raw}")
 			{
-				Str2 := "{Raw}" . SubStr(Str1, ++i, len) ; 残りを全て出力へ
+				StrChopped := "{Raw}" . SubStr(Str1, ++i, len) ; 残りを全て出力へ
 				i := len	; カウンタは末尾へ
 			}
-			; 出力部
-			if (Str2 == "{確}")
+			; (ATOK)出力するキーに応じて、ディレイの数値を設定
+			else if (StrChopped == "{確定}")
 			{
-				Sleep, % 60 - (WinAPI_timeGetTime() - LastOutTime)
-				if (IME_GetConverting() > 0)	; IME窓が開いている
-					SendEnter()
-			}
-			else if (Str2 == "{替}")
-			{
-				if UTFMode = 0
+				StrChopped := "{Enter}"
+				if ATOK = 1
 				{
-					if (IME_GET() != 0)
-						Sleep, 60
-					UTFMode := (IME_GetConverting() > 0 ? 1 : 2)
-						; 1: ユニコードは確定必要, 2: ユニコードは確定不要
+					PreDelay := 30, PostDelay := 20
 				}
-				if UTFMode = 1
-					SendEnter()
 			}
-			else
+			else if (ATOK = 1 && (StrChopped = "{BS}" || StrChopped = "{Backspace}"))
+				PostDelay := 20
+			else if (StrChopped = "{IMEOff}")
 			{
-				SetKeyDelay, Delay
-				Send, % Str2
+				IMECheck := 1	; IME入力モードを保存する必要あり
+				StrChopped := "{vkF3}"
+				if ATOK = 1
+					PostDelay := 30
 			}
-			Str2 := "", len2 := 0
+			else if (ATOK = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
+			{
+				PreDelay := 50, PostDelay := 90
+			}
+
+			; 前回の出力からの時間が短ければ、ディレイを入れる
+			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
+			if PreDelay >= 10
+				Sleep, PreDelay
+			; キー出力
+			if IMECheck = 1		; IME入力モードを保存する
+			{
+				IMEConvMode := IME_GetConvMode()
+				IMECheck := 2	; 後で IME入力モードを回復する
+			}
+			Send, % StrChopped
+			LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+			; 出力直後のディレイ
+			Sleep, PostDelay
+
+			StrChopped := "", LenChopped := 0
+			PreDelay := 0, PostDelay := Delay	; ディレイの初期値
 		}
 		i++
 	}
-	LastOutTime := WinAPI_timeGetTime()
+
+	if IMECheck = 2	; IME入力モードを回復する
+	{
+		if ATOK = 1
+		{
+			PreDelay := 80, PostDelay := 60
+			; 前回の出力からの時間が短ければ、ディレイを入れる
+			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
+			if PreDelay >= 10
+				Sleep, PreDelay
+		}
+		; キー出力
+		Send, {vkF3}
+		LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+		; 出力直後のディレイ
+		Sleep, PostDelay
+
+		IME_SetConvMode(IMEConvMode)
+		if (ATOK != 1 && IME_GET() = 0)	; IMEの切替が遅ければ、ATOKモードにする
+			ATOK := 1
+	}
 
 	return
 }
@@ -168,10 +202,30 @@ SendNeo(Str1)
 OutBuf(i)
 {
 	global _usc, OutStr
+;	local Str1, StrBegin
 
 	while (i > 0 && _usc > 0)
 	{
-		SendNeo(OutStr[1])
+		Str1 := OutStr[1]
+		StrBegin := SubStr(Str1, 1, 4)
+		if (StrBegin == "{記号}" || StrBegin == "{直接}")
+		{
+			StringTrimLeft, Str1, Str1, 4
+			if (IME_GET() = 1)		; IME ON の時
+			{
+				if (StrBegin == "{直接}")
+					Str1 := "{IMEOff}{Raw}" . Str1
+				else if (IME_GetSentenceMode() = 0)
+					Str1 := "{IMEOff}" . Str1
+				else
+					Str1 := "-{確定}{BS}{IMEOff}" . Str1
+			}
+			else if (StrBegin == "{直接}")
+				Str1 := "{Raw}" . Str1
+			SendNeo(Str1, 10)
+		}
+		else
+			SendNeo(Str1)
 
 		OutStr[1] := OutStr[2]
 		_usc--
@@ -226,7 +280,7 @@ Convert()
 {
 	global KanaMode
 		, InBuf, InBufRead, InBufTime, InBufRest
-		, KC_SPC, JP_YEN, KC_INT1
+		, KC_SPC, JP_YEN, KC_INT1, R
 		, Key, KeyGroup, Kana, Eisu, Setted, Repeatable
 		, BeginTable, EndTable
 		, Vertical, ShiftDelay
@@ -324,6 +378,7 @@ Convert()
 										; 32ビット計算になることがあり、不適切
 			Last2Keys := 0
 			LastKeys := RealKey
+;			LastKeys &= RecentKey ^ (-1)	; 上の式の方が操作しやすい
 			LastGroup := 0
 			RepeatKey := 0	; リピート解除
 		}
@@ -345,7 +400,7 @@ Convert()
 			nBack := 0
 
 			; グループありの3キー入力を検索
-			if (LastGroup && nkeys = 0)
+			if (LastGroup != 0 && nkeys = 0)
 			{
 				i := BeginTable[3]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
@@ -370,7 +425,7 @@ Convert()
 				}
 			}
 			; グループありの2キー入力を検索
-			if (LastGroup && nkeys = 0)
+			if (LastGroup != 0 && nkeys = 0)
 			{
 				i := BeginTable[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
@@ -392,7 +447,7 @@ Convert()
 				}
 			}
 			; グループありの1キー入力を検索
-			if (LastGroup && nkeys = 0)
+			if (LastGroup != 0 && nkeys = 0)
 			{
 				i := BeginTable[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
@@ -501,6 +556,7 @@ Convert()
 					Str1 := "+" . Str1
 				LastSetted := 0	; 出力確定はしない
 			}
+
 			; 仮出力バッファに入れる
 			StoreBuf(nBack, Str1)
 			; 出力確定文字か？
@@ -517,7 +573,7 @@ Convert()
 			LastKeyTime := KeyTime		; 有効なキーを押した時間を保存
 			_lks := nkeys				; 何キー同時押しだったかを保存
 			LastGroup := KeyGroup[i]	; 何グループだったか保存
-			if (Repeatable[i] = 1)
+			if (Repeatable[i] & R)
 				RepeatKey := RecentKey	; キーリピートできる
 		}
 	}

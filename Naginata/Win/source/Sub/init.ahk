@@ -19,7 +19,7 @@
 #NoEnv						; 変数名を解釈するとき、環境変数を無視する
 SetBatchLines, -1			; 自動Sleepなし
 ListLines, Off				; スクリプトの実行履歴を取らない
-SetKeyDelay, 10, 0			; キーストローク間のディレイを変更
+;SetKeyDelay, 10, 0			; キーストローク間のディレイを変更
 #MenuMaskKey vk07			; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
 #UseHook					; ホットキーはすべてフックを使用する
 ; Process, Priority, , High	; プロセスの優先度を変更
@@ -160,7 +160,7 @@ R := 1
 Key := []			; キービットの集合
 Kana := []			; かな定義
 KanaYoko := []		; かな定義(横書き) ※縦書きと違う場合のみ使用
-KeyGroup := []		; 定義のグループ番号 ※0はグループAll
+KeyGroup := []		; 定義のグループ番号 ※0以下はグループAll
 Eisu := []			; 英数定義
 EisuYoko := []		; かな定義(横書き) ※縦書きと違う場合のみ使用
 Setted := []		; 0: 出力確定しない, 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
@@ -244,25 +244,27 @@ StrReplace(Str1)
 	StringReplace, Str1, Str1, {Caps Lock,	{vkF0,		A
 	StringReplace, Str1, Str1, {Back Space,	{BS,		A
 
+	StringReplace, Str1, Str1, {固有},		{直接},		A
+
 	return Str1
 }
 
-; 文字列に必要に応じて"確定"と"切り替え"を加える
 Analysis(Str1)
 {
-;	local i 					; カウンタ
-;		, TateStr
-;		, len, Str2, c, bracket
-;		, ZenkakuCount			; 連続している全角文字を数える
-;		, KaeCount				; 入れた"切り替え"を数える
+;	local StrBegin
+;		, i			; カウンタ
+;		, len, StrChopped, c, bracket
 
-	; Str1 の文字列に"確定"を加えながら TateStr にコピーする
+	if (Str1 == "{記号}" || Str1 == "{直接}")
+		return ""
+
+	StrBegin := SubStr(Str1, 1, 4)
+	if (StrBegin == "{記号}" || StrBegin == "{直接}")
+		return Str1	; そのまま返す
+
 	; 1文字ずつ分析する
 	len := StrLen(Str1)
-	TateStr := ""
-	Str2 := "", len2 := 0
-	bracket := 0
-	ZenkakuCount := 0, KaeCount := 0
+	StrChopped := "", len2 := 0, bracket := 0
 	i := 1
 	while (i <= len)
 	{
@@ -271,45 +273,21 @@ Analysis(Str1)
 			bracket := 0
 		else if (c == "{" || bracket > 0)
 			bracket++
-		Str2 .= c, len2++
+		StrChopped .= c, len2++
 		if (i = len || !(bracket > 0 || c == "+" || c == "^" || c == "!" || c == "#"))
 		{
 			; ASCIIコードでない
-			if (Asc(Str2) > 127
-				|| SubStr(Str2, 1, 3) = "{U+"
-				|| (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127))			{
-				if ZenkakuCount = 0		; ASCIIコード → それ以外 に変わった
-					TateStr .= "{確}"	; "確定"を入れる
-
-				; ATOK は全角空白が入力されると、文字入力中か検出できないので対策
-				if (KaeCount = 0
-					&& (Asc(Str2) = 0x3000 || SubStr(Str2, 1, 7) = "{U+3000"
-					|| (SubStr(Str2, 1, 5) = "{ASC " && SubStr(Str2, 6, len2 - 6) > 127)))
-				{
-					if ZenkakuCount = 0
-						TateStr .= "・{替}{BS}"
-					else
-						TateStr .= "{替}"
-					KaeCount++
-				}
-
-				ZenkakuCount++
-			}
-			; ASCIIコード
-			else if ZenkakuCount > 0	; ASCIIコード以外 → ASCIIコード に変わった
-			{
-				TateStr .= "{替}"		; "切り替え"を入れる
-				ZenkakuCount := 0, KaeCount++
-			}
-			TateStr .= Str2
-			Str2 := "", len2 := 0
+			if (Asc(StrChopped) > 127
+			 || SubStr(StrChopped, 1, 3) = "{U+"
+			 || (SubStr(StrChopped, 1, 5) = "{ASC " && SubStr(StrChopped, 6, len2 - 6) > 127))
+				return "{記号}" . Str1	; 先頭に"記号"を書き足して終了
+			StrChopped := "", len2 := 0
 		}
 		i++
 	}
-	if ZenkakuCount > 0			; 最後の文字がASCIIコード以外
-		TateStr .= "{替}"	; "切り替え"を入れる
 
-	return TateStr
+	; すべて ASCIIコードだった
+	return Str1	; そのまま返す
 }
 
 ; かな定義登録	(定義が多すぎても警告は出ません)

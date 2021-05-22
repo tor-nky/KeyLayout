@@ -183,7 +183,7 @@ Group := 6
 
 
 ; ここからはすべてグループなし
-Group := 0
+Group := 0	; 0 はグループAll
 
 ; IME ON/OFF
 ; HJ: ON / FG: OFF
