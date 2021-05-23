@@ -100,7 +100,7 @@ SendNeo(Str1, Delay:=0)
 ;		, IMECheck, IMEConvMode		; IME入力モードの保存、復元に関するフラグと変数
 ;		, PreDelay, PostDelay		; 出力前後のディレイの値
 	static LastOutTime := WinAPI_timeGetTime()
-		, ATOK
+		, Slow
 
 	IfWinActive, ahk_class CabinetWClass
 		Delay := (Delay < 10 ? 10 : Delay)	; エクスプローラーにはゆっくり出力する
@@ -127,30 +127,37 @@ SendNeo(Str1, Delay:=0)
 			; SendRaw(直接入力モード)にする時
 			if (SubStr(StrChopped, LenChopped - 4, 5) = "{Raw}")
 			{
-				StrChopped := "{Raw}" . SubStr(Str1, ++i, len) ; 残りを全て出力へ
+				StrChopped := SubStr(Str1, i - LenChopped + 1, len) ; 残りを全て出力へ
 				i := len	; カウンタは末尾へ
+				if Slow = 1
+					PostDelay := 230
 			}
-			; (ATOK)出力するキーに応じて、ディレイの数値を設定
+			; 出力するキーを変換
 			else if (StrChopped == "{確定}")
 			{
 				StrChopped := "{Enter}"
-				if ATOK = 1
+				if Slow = 1
 				{
-					PreDelay := 30, PostDelay := 20
+					PreDelay := 30, PostDelay := 30
 				}
 			}
-			else if (ATOK = 1 && (StrChopped = "{BS}" || StrChopped = "{Backspace}"))
-				PostDelay := 20
 			else if (StrChopped = "{IMEOff}")
 			{
 				IMECheck := 1	; IME入力モードを保存する必要あり
 				StrChopped := "{vkF3}"
-				if ATOK = 1
+				if Slow = 1
 					PostDelay := 30
 			}
-			else if (ATOK = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
+			else if (StrChopped = "{Null}")		; ダミー
 			{
-				PreDelay := 50, PostDelay := 90
+				StrChopped := ""
+				PostDelay := 0
+			}
+			else if (Slow = 1 && (StrChopped = "{BS}" || StrChopped = "{Backspace}"))
+				PostDelay := 30
+			else if (Slow = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
+			{
+				PreDelay := 60, PostDelay := 90
 			}
 
 			; 前回の出力からの時間が短ければ、ディレイを入れる
@@ -176,14 +183,16 @@ SendNeo(Str1, Delay:=0)
 
 	if IMECheck = 2	; IME入力モードを回復する
 	{
-		if ATOK = 1
+		if Slow = 1
 		{
-			PreDelay := 80, PostDelay := 60
+			PreDelay := 80, PostDelay := 80
 			; 前回の出力からの時間が短ければ、ディレイを入れる
 			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
 			if PreDelay >= 10
 				Sleep, PreDelay
 		}
+		else
+			PostDelay := 30		; これを短くすると、SLOWモードになりやすい
 		; キー出力
 		Send, {vkF3}
 		LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
@@ -191,8 +200,8 @@ SendNeo(Str1, Delay:=0)
 		Sleep, PostDelay
 
 		IME_SetConvMode(IMEConvMode)
-		if (ATOK != 1 && IME_GET() = 0)	; IMEの切替が遅ければ、ATOKモードにする
-			ATOK := 1
+		if (Slow != 1 && IME_GET() = 0)	; IMEの切替が遅ければ、SLOWモードにする
+			Slow := 1
 	}
 
 	return
@@ -211,17 +220,15 @@ OutBuf(i)
 		if (StrBegin == "{記号}" || StrBegin == "{直接}")
 		{
 			StringTrimLeft, Str1, Str1, 4
+			if (StrBegin == "{直接}")
+				Str1 := "{Raw}" . Str1
 			if (IME_GET() = 1)		; IME ON の時
 			{
-				if (StrBegin == "{直接}")
-					Str1 := "{IMEOff}{Raw}" . Str1
-				else if (IME_GetSentenceMode() = 0)
+				if (IME_GetSentenceMode() = 0)
 					Str1 := "{IMEOff}" . Str1
 				else
 					Str1 := "-{確定}{BS}{IMEOff}" . Str1
 			}
-			else if (StrBegin == "{直接}")
-				Str1 := "{Raw}" . Str1
 			SendNeo(Str1, 10)
 		}
 		else

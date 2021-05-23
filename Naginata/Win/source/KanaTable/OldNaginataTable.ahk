@@ -263,8 +263,8 @@ Group := 0	; 0 はグループAll
 	SetKana( KC_RBRC | KC_SPC	,"『"		)		; 『
 	SetKana( KC_NUHS | KC_SPC	,"』"		)		; 』
 
-	SetKana( KC_Q				,"{sc72}"	)		; ダミー (KC_LANG1)
-	SetKana( KC_Q | KC_SPC		,"{sc72}"	)		; ダミー (KC_LANG1)
+	SetKana( KC_Q				,"{Null}"	)		; ダミー
+	SetKana( KC_Q | KC_SPC		,"{Null}"	)		; ダミー
 
 ; スペースキーの定義は不要
 
@@ -489,6 +489,12 @@ Group := 0	; 0 はグループAll
 	SetKana( KC_V | KC_SCLN | KC_O | KC_SPC	,"tse"		)
 	SetKana( KC_V | KC_SCLN | KC_N			,"tso"		)	; つぉ
 	SetKana( KC_V | KC_SCLN | KC_N | KC_SPC	,"tso"		)
+
+; ----------------------------------------------------------------------
+; 固有名詞ショートカット(U+I)を押し続けて
+; 前文字削除(U)のリピートが起きる場合があるので対策
+; ----------------------------------------------------------------------
+	SetKana( KC_U | KC_I					,"{Null}"	)	; ダミー
 
 
 ; ----------------------------------------------------------------------

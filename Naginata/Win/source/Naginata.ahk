@@ -23,70 +23,71 @@ SetWorkingDir %A_ScriptDir%		; スクリプトの作業ディレクトリを変�
 ShiftDelay := 0		; 0: 通常シフト, >1: 後置シフトの待ち時間(ミリ秒)
 
 
-; ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-; ☆☆☆ 固有名詞ショートカット				☆☆☆
-; ☆☆☆	上段人差指＋中指				☆☆☆
-; ☆☆☆		書き方: ""の中に入力します	☆☆☆
-; ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+; ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+; ☆☆☆ 固有名詞ショートカット						☆☆☆
+; ☆☆☆	上段人差指＋中指						☆☆☆
+; ☆☆☆		書き方: "{固有} に続けて入力します	☆☆☆
+; ☆☆☆ 	例： SetKana(KOYU_E, "{固有}天狗")		☆☆☆
+; ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
 
 Group := 1	; 左手側
-	SetKana(KOYU_1		,"")
-	SetKana(KOYU_2		,"")
-	SetKana(KOYU_3		,"")
-	SetKana(KOYU_4		,"")
-	SetKana(KOYU_5		,"")
+	SetKana(KOYU_1		,"{固有}")
+	SetKana(KOYU_2		,"{固有}")
+	SetKana(KOYU_3		,"{固有}")
+	SetKana(KOYU_4		,"{固有}")
+	SetKana(KOYU_5		,"{固有}")
 
-	SetKana(KOYU_Q		,"臨兵闘者皆陣烈在前")
-	SetKana(KOYU_W		,"ネムカケ")
-	SetKana(KOYU_E		,"天狗")
-	SetKana(KOYU_R		,"シンイチ")
-	SetKana(KOYU_T		,"")
+	SetKana(KOYU_Q		,"{固有}臨兵闘者皆陣烈在前")
+	SetKana(KOYU_W		,"{固有}ネムカケ")
+	SetKana(KOYU_E		,"{固有}天狗")
+	SetKana(KOYU_R		,"{固有}シンイチ")
+	SetKana(KOYU_T		,"{固有}")
 
-	SetKana(KOYU_A		,"")
-	SetKana(KOYU_S		,"")
-	SetKana(KOYU_D		,"")
-	SetKana(KOYU_F		,"心の闇")
-	SetKana(KOYU_G		,"")
+	SetKana(KOYU_A		,"{固有}")
+	SetKana(KOYU_S		,"{固有}")
+	SetKana(KOYU_D		,"{固有}")
+	SetKana(KOYU_F		,"{固有}心の闇")
+	SetKana(KOYU_G		,"{固有}")
 
-	SetKana(KOYU_Z		,"火よ、在れ")
-	SetKana(KOYU_X		,"火の剣")
-	SetKana(KOYU_C		,"小鴉")
-	SetKana(KOYU_V		,"光太郎")
-	SetKana(KOYU_B		,"峯")
+	SetKana(KOYU_Z		,"{固有}火よ、在れ")
+	SetKana(KOYU_X		,"{固有}火の剣")
+	SetKana(KOYU_C		,"{固有}小鴉")
+	SetKana(KOYU_V		,"{固有}光太郎")
+	SetKana(KOYU_B		,"{固有}峯")
 
 Group := 2	; 右手側
-	SetKana(KOYU_6		,"")
-	SetKana(KOYU_7		,"")
-	SetKana(KOYU_8		,"")
-	SetKana(KOYU_9		,"")
-	SetKana(KOYU_0		,"")
-	SetKana(KOYU_MINS	,"")
-	SetKana(KOYU_EQL	,"")
-	SetKana(KOYU_YEN	,"")
+	SetKana(KOYU_6		,"{固有}")
+	SetKana(KOYU_7		,"{固有}")
+	SetKana(KOYU_8		,"{固有}")
+	SetKana(KOYU_9		,"{固有}")
+	SetKana(KOYU_0		,"{固有}")
+	SetKana(KOYU_MINS	,"{固有}")
+	SetKana(KOYU_EQL	,"{固有}")
+	SetKana(KOYU_YEN	,"{固有}")
 
-	SetKana(KOYU_Y		,"才一")
-	SetKana(KOYU_U		,"さくら")
-	SetKana(KOYU_I		,"妖怪")
-	SetKana(KOYU_O		,"")
-	SetKana(KOYU_P		,"")
-	SetKana(KOYU_LBRC	,"")
-	SetKana(KOYU_RBRC	,"")
+	SetKana(KOYU_Y		,"{固有}才一")
+	SetKana(KOYU_U		,"{固有}さくら")
+	SetKana(KOYU_I		,"{固有}妖怪")
+	SetKana(KOYU_O		,"{固有}")
+	SetKana(KOYU_P		,"{固有}")
+	SetKana(KOYU_LBRC	,"{固有}")
+	SetKana(KOYU_RBRC	,"{固有}")
 
-	SetKana(KOYU_H		,"鞍馬")
-	SetKana(KOYU_J		,"青鬼")
-	SetKana(KOYU_K		,"")
-	SetKana(KOYU_L		,"")
-	SetKana(KOYU_SCLN	,"")
-	SetKana(KOYU_QUOT	,"")
-	SetKana(KOYU_NUHS	,"")
-	SetKana(KOYU_BSLS	,"")
+	SetKana(KOYU_H		,"{固有}鞍馬")
+	SetKana(KOYU_J		,"{固有}青鬼")
+	SetKana(KOYU_K		,"{固有}")
+	SetKana(KOYU_L		,"{固有}")
+	SetKana(KOYU_SCLN	,"{固有}")
+	SetKana(KOYU_QUOT	,"{固有}")
+	SetKana(KOYU_NUHS	,"{固有}")
+	SetKana(KOYU_BSLS	,"{固有}")
 
-	SetKana(KOYU_N		,"鬼塚")
-	SetKana(KOYU_M		,"")
-	SetKana(KOYU_COMM	,"")
-	SetKana(KOYU_DOT	,"不動金縛りの術")
-	SetKana(KOYU_SLSH	,"")
-	SetKana(KOYU_INT1	,"")
+	SetKana(KOYU_N		,"{固有}鬼塚")
+	SetKana(KOYU_M		,"{固有}")
+	SetKana(KOYU_COMM	,"{固有}")
+	SetKana(KOYU_DOT	,"{固有}不動金縛りの術")
+	SetKana(KOYU_SLSH	,"{固有}")
+	SetKana(KOYU_INT1	,"{固有}")
 
 
 ; --------〈起動処理２〉------------------------------------------------
