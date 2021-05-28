@@ -94,16 +94,18 @@ OnTimer:	; 後置シフトの判定期限
 ; 文字列 Str1 を適宜ディレイを入れながら出力する
 SendNeo(Str1, Delay:=0)
 {
+	global Slow
+	static LastOutTime := WinAPI_timeGetTime()
 ;	local len						; Str1 の長さ
 ;		, StrChopped, LenChopped	; 細切れにした文字列と、その長さを入れる変数
 ;		, i, j, c, bracket
 ;		, IMECheck, IMEConvMode		; IME入力モードの保存、復元に関するフラグと変数
 ;		, PreDelay, PostDelay		; 出力前後のディレイの値
-	static LastOutTime := WinAPI_timeGetTime()
-		, Slow
 
 	IfWinActive, ahk_class CabinetWClass
 		Delay := (Delay < 10 ? 10 : Delay)	; エクスプローラーにはゆっくり出力する
+;	if Slow = 1
+;		Delay := (Delay < 30 ? 30 : Delay)
 	SetKeyDelay, -1, -1
 
 	; 文字列を細切れにして出力
@@ -148,35 +150,34 @@ SendNeo(Str1, Delay:=0)
 				if Slow = 1
 					PostDelay := 30
 			}
-			else if (StrChopped = "{Null}")		; ダミー
-			{
-				StrChopped := ""
-				PostDelay := 0
-			}
 			else if (Slow = 1 && (StrChopped = "{BS}" || StrChopped = "{Backspace}"))
 				PostDelay := 30
 			else if (Slow = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
 			{
-				PreDelay := 60, PostDelay := 90
+				PreDelay := 60, PostDelay := 100
 			}
 
 			; 前回の出力からの時間が短ければ、ディレイを入れる
 			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
 			if PreDelay >= 10
 				Sleep, PreDelay
-			; キー出力
-			if IMECheck = 1		; IME入力モードを保存する
+			; IME入力モードを保存する
+			if IMECheck = 1
 			{
 				IMEConvMode := IME_GetConvMode()
 				IMECheck := 2	; 後で IME入力モードを回復する
 			}
-			Send, % StrChopped
-			LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+			; キー出力
+			if (StrChopped != "{Null}")
+			{
+				Send, % StrChopped
+				LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+			}
 			; 出力直後のディレイ
 			Sleep, PostDelay
 
 			StrChopped := "", LenChopped := 0
-			PreDelay := 0, PostDelay := Delay	; ディレイの初期値
+			PreDelay := Delay, PostDelay := Delay	; ディレイの初期値
 		}
 		i++
 	}
@@ -184,24 +185,20 @@ SendNeo(Str1, Delay:=0)
 	if IMECheck = 2	; IME入力モードを回復する
 	{
 		if Slow = 1
-		{
-			PreDelay := 80, PostDelay := 80
-			; 前回の出力からの時間が短ければ、ディレイを入れる
-			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
-			if PreDelay >= 10
-				Sleep, PreDelay
-		}
+			PreDelay := 60, PostDelay := 90
 		else
-			PostDelay := 30		; これを短くすると、SLOWモードになりやすい
+			PostDelay := 30
+		; 前回の出力からの時間が短ければ、ディレイを入れる
+		PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
+		if PreDelay >= 10
+			Sleep, PreDelay
 		; キー出力
 		Send, {vkF3}
 		LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
 		; 出力直後のディレイ
 		Sleep, PostDelay
-
-		IME_SetConvMode(IMEConvMode)
-		if (Slow != 1 && IME_GET() = 0)	; IMEの切替が遅ければ、SLOWモードにする
-			Slow := 1
+		if IMEConvMode > 0
+			IME_SetConvMode(IMEConvMode)
 	}
 
 	return
@@ -227,7 +224,7 @@ OutBuf(i)
 				if (IME_GetSentenceMode() = 0)
 					Str1 := "{IMEOff}" . Str1
 				else
-					Str1 := "{!}{確定}{BS}{IMEOff}" . Str1
+					Str1 := "/{確定}{BS}{IMEOff}" . Str1
 			}
 			SendNeo(Str1, 10)
 		}
