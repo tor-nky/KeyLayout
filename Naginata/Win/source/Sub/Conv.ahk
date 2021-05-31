@@ -154,7 +154,7 @@ SendNeo(Str1, Delay:=0)
 				PostDelay := 30
 			else if (Slow = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
 			{
-				PreDelay := 60, PostDelay := 100
+				PreDelay := 80, PostDelay := 100
 			}
 
 			; 前回の出力からの時間が短ければ、ディレイを入れる
