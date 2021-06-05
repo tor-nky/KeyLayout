@@ -185,7 +185,7 @@ SendNeo(Str1, Delay:=0)
 	if IMECheck = 2	; IME入力モードを回復する
 	{
 		if Slow = 1
-			PreDelay := 60, PostDelay := 90
+			PreDelay := 80, PostDelay := 90
 		else
 			PostDelay := 30
 		; 前回の出力からの時間が短ければ、ディレイを入れる
