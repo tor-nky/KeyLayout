@@ -79,11 +79,10 @@ return
 
 OnTimer:	; 後置シフトの判定期限
 	SetTimer, OnTimer, Off	; タイマー停止
-	; 入力バッファへ保存
-	; いっぱいまで使わない
+	; 入力バッファが空の時、保存
 	InBuf[InBufWrite] := "OnTimer", InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest > 6 ? ++InBufWrite & 15 : InBufWrite)
-		, (InBufRest > 6 ? InBufRest-- : )
+		, InBufWrite := (InBufRest = 15 ? ++InBufWrite & 15 : InBufWrite)
+		, (InBufRest = 15 ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
 
@@ -98,7 +97,7 @@ SendNeo(Str1, Delay:=0)
 	static LastOutTime := WinAPI_timeGetTime()
 ;	local len						; Str1 の長さ
 ;		, StrChopped, LenChopped	; 細切れにした文字列と、その長さを入れる変数
-;		, i, j, c, bracket
+;		, i, c, bracket
 ;		, IMECheck, IMEConvMode		; IME入力モードの保存、復元に関するフラグと変数
 ;		, PreDelay, PostDelay		; 出力前後のディレイの値
 
@@ -129,33 +128,32 @@ SendNeo(Str1, Delay:=0)
 			; SendRaw(直接入力モード)にする時
 			if (SubStr(StrChopped, LenChopped - 4, 5) = "{Raw}")
 			{
-				StrChopped := SubStr(Str1, i - LenChopped + 1, len) ; 残りを全て出力へ
-				i := len	; カウンタは末尾へ
-				if Slow = 1
-					PostDelay := 230
+				while (i++ < len)
+				{
+					SendRaw, % SubStr(Str1, i, 1)
+					LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+					; 出力直後のディレイ
+					Sleep, PostDelay
+				}
+				break
 			}
 			; 出力するキーを変換
 			else if (StrChopped == "{確定}")
 			{
 				StrChopped := "{Enter}"
 				if Slow = 1
-				{
 					PreDelay := 30, PostDelay := 30
-				}
 			}
 			else if (StrChopped = "{IMEOff}")
 			{
 				IMECheck := 1	; IME入力モードを保存する必要あり
 				StrChopped := "{vkF3}"
-				if Slow = 1
-					PostDelay := 30
+				PostDelay := 30
 			}
 			else if (Slow = 1 && (StrChopped = "{BS}" || StrChopped = "{Backspace}"))
 				PostDelay := 30
 			else if (Slow = 1 && SubStr(StrChopped, 1, 6) = "{Enter")
-			{
 				PreDelay := 80, PostDelay := 100
-			}
 
 			; 前回の出力からの時間が短ければ、ディレイを入れる
 			PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
@@ -172,9 +170,9 @@ SendNeo(Str1, Delay:=0)
 			{
 				Send, % StrChopped
 				LastOutTime := WinAPI_timeGetTime()	; 出力した時間を記録
+				; 出力直後のディレイ
+				Sleep, PostDelay
 			}
-			; 出力直後のディレイ
-			Sleep, PostDelay
 
 			StrChopped := "", LenChopped := 0
 			PreDelay := Delay, PostDelay := Delay	; ディレイの初期値
@@ -187,7 +185,7 @@ SendNeo(Str1, Delay:=0)
 		if Slow = 1
 			PreDelay := 80, PostDelay := 90
 		else
-			PostDelay := 30
+			PostDelay := 40
 		; 前回の出力からの時間が短ければ、ディレイを入れる
 		PreDelay += 9 - (WinAPI_timeGetTime() - LastOutTime)
 		if PreDelay >= 10
@@ -344,7 +342,7 @@ Convert()
 		StringRight, Term, Str1, 2	; Term に入力末尾の2文字を入れる
 		; キーが離れた時
 		if (Term == "up")
-			RecentKey := "0x" . SubStr(Str1, StrLen(Str1) - 4, 2)
+			RecentKey := "0x" . SubStr(Str1, 3, 2)
 		; sc○○ で入力
 		else if (SubStr(Str1, 1, 2) == "sc")
 		{
@@ -417,7 +415,7 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
 						nkeys := 3
-						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は出力確定
+						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は仮出力バッファを全て出力
 							OutBuf(2)
 						else if _lks >= 2
 							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
@@ -442,7 +440,7 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
 						nkeys := 2
-						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は出力確定
+						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は仮出力バッファを全て出力
 							OutBuf(2)
 						nBack := 1
 						break
@@ -485,7 +483,7 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
 						nkeys := 3
-						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は出力確定
+						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は仮出力バッファを全て出力
 							OutBuf(2)
 						else if _lks >= 2
 							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
@@ -509,7 +507,7 @@ Convert()
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
 						nkeys := 2
-						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は出力確定
+						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は仮出力バッファを全て出力
 							OutBuf(2)
 						nBack := 1
 						break
@@ -572,8 +570,8 @@ Convert()
 
 			; 次回に向けて変数を更新
 			LastStr	:= Str1
-			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)	; 2、3キー入力のときは、前々回のキービットを保存しない
-			LastKeys := (nkeys >= 1 ? Key[i] : RecentKey)	; 前回のキービットを保存
+			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)		; 2、3キー入力のときは、この前のキービットを保存しない
+			LastKeys := (nkeys >= 1 ? Key[i] : RecentKey)	; 今回のキービットを保存
 			LastKeyTime := KeyTime		; 有効なキーを押した時間を保存
 			_lks := nkeys				; 何キー同時押しだったかを保存
 			LastGroup := KeyGroup[i]	; 何グループだったか保存
