@@ -192,9 +192,11 @@ Group := 0	; 0 はグループAll
 	SetKana( KC_F | KC_G			,"{vkF2}{vkF3}"	)	; IME OFF
 	SetEisu( KC_F | KC_G			,"{vkF2}{vkF3}"	)
 	SetKana( KC_V | KC_M			,"{Enter}"		)	; 行送り
+	SetKana( KC_V | KC_M | KC_SPC	,"{Enter}"		)
 
 ; 英数編集モード
 	SetEisu( KC_V | KC_M			,"{Enter}"		)	; 行送り
+	SetEisu( KC_V | KC_M | KC_SPC	,"{Enter}"		)
 
 
 ; 1キー
@@ -271,115 +273,222 @@ Group := 0	; 0 はグループAll
 	SetKana( KC_Q | KC_L				,"xu"	)	; (ぅ)
 	SetKana( KC_Q | KC_L | KC_SPC		,"xwa"	)	; (ゎ)
 	SetKana( KC_F | KC_U				,"za"	)	; ざ
+	SetKana( KC_F | KC_U | KC_SPC		,"za"	)
 	SetKana( KC_F | KC_O				,"zu"	)	; ず
+	SetKana( KC_F | KC_O | KC_SPC		,"zu"	)
 	SetKana( KC_F | KC_H				,"gu"	)	; ぐ
+	SetKana( KC_F | KC_H | KC_SPC		,"gu"	)
 	SetKana( KC_F | KC_SCLN				,"du"	)	; づ
+	SetKana( KC_F | KC_SCLN | KC_SPC	,"du"	)
 	SetKana( KC_F | KC_N				,"da"	)	; だ
+	SetKana( KC_F | KC_N | KC_SPC		,"da"	)
 	SetKana( KC_F | KC_DOT				,"bu"	)	; ぶ
+	SetKana( KC_F | KC_DOT | KC_SPC		,"bu"	)
 	SetKana( KC_F | KC_L				,"vu"	)	; ヴ
+	SetKana( KC_F | KC_L | KC_SPC		,"vu"	)
 	SetKana( KC_F | KC_P				,"be"	)	; べ
+	SetKana( KC_F | KC_P | KC_SPC		,"be"	)
 	SetKana( KC_J | KC_S				,"ge"	)	; げ
+	SetKana( KC_J | KC_S | KC_SPC		,"ge"	)
 	SetKana( KC_J | KC_E				,"de"	)	; で
+	SetKana( KC_J | KC_E | KC_SPC		,"de"	)
 	SetKana( KC_J | KC_R				,"zi"	)	; じ
+	SetKana( KC_J | KC_R | KC_SPC		,"zi"	)
 	SetKana( KC_J | KC_A				,"ze"	)	; ぜ
+	SetKana( KC_J | KC_A | KC_SPC		,"ze"	)
 	SetKana( KC_J | KC_W				,"gi"	)	; ぎ
+	SetKana( KC_J | KC_W | KC_SPC		,"gi"	)
 	SetKana( KC_J | KC_D				,"do"	)	; ど
+	SetKana( KC_J | KC_D | KC_SPC		,"do"	)
 	SetKana( KC_J | KC_F				,"ga"	)	; が
+	SetKana( KC_J | KC_F | KC_SPC		,"ga"	)
 	SetKana( KC_J | KC_G				,"di"	)	; ぢ
+	SetKana( KC_J | KC_G | KC_SPC		,"di"	)
 	SetKana( KC_J | KC_Z				,"bo"	)	; ぼ
+	SetKana( KC_J | KC_Z | KC_SPC		,"bo"	)
 	SetKana( KC_J | KC_X				,"bi"	)	; び
+	SetKana( KC_J | KC_X | KC_SPC		,"bi"	)
 	SetKana( KC_J | KC_C				,"ba"	)	; ば
+	SetKana( KC_J | KC_C | KC_SPC		,"ba"	)
 	SetKana( KC_J | KC_V				,"go"	)	; ご
+	SetKana( KC_J | KC_V | KC_SPC		,"go"	)
 	SetKana( KC_J | KC_B				,"zo"	)	; ぞ
+	SetKana( KC_J | KC_B | KC_SPC		,"zo"	)
 	SetKana( KC_V | KC_DOT				,"pu"	)	; ぷ
+	SetKana( KC_V | KC_DOT | KC_SPC		,"pu"	)
 	SetKana( KC_V | KC_P				,"pe"	)	; ぺ
+	SetKana( KC_V | KC_P | KC_SPC		,"pe"	)
 	SetKana( KC_M | KC_Z				,"po"	)	; ぽ
+	SetKana( KC_M | KC_Z | KC_SPC		,"po"	)
 	SetKana( KC_M | KC_X				,"pi"	)	; ぴ
+	SetKana( KC_M | KC_X | KC_SPC		,"pi"	)
 	SetKana( KC_M | KC_C				,"pa"	)	; ぱ
+	SetKana( KC_M | KC_C | KC_SPC		,"pa"	)
 	SetKana( KC_Q | KC_H				,"xya"	)	; (ゃ)
+	SetKana( KC_Q | KC_H | KC_SPC		,"xya"	)
 	SetKana( KC_Q | KC_P				,"xyu"	)	; (ゅ)
+	SetKana( KC_Q | KC_P | KC_SPC		,"xyu"	)
 	SetKana( KC_Q | KC_I				,"xyo"	)	; (ょ)
+	SetKana( KC_Q | KC_I | KC_SPC		,"xyo"	)
 	SetKana( KC_Q | KC_J				,"xa"	)	; (ぁ)
+	SetKana( KC_Q | KC_J | KC_SPC		,"xa"	)
 	SetKana( KC_Q | KC_K				,"xi"	)	; (ぃ)
+	SetKana( KC_Q | KC_K | KC_SPC		,"xi"	)
 	SetKana( KC_Q | KC_O				,"xe"	)	; (ぇ)
+	SetKana( KC_Q | KC_O | KC_SPC		,"xe"	)
 	SetKana( KC_Q | KC_N				,"xo"	)	; (ぉ)
+	SetKana( KC_Q | KC_N | KC_SPC		,"xo"	)
 	SetKana( KC_B | KC_H				,"mya"	)	; みゃ
+	SetKana( KC_B | KC_H | KC_SPC		,"mya"	)
 	SetKana( KC_B | KC_P				,"myu"	)	; みゅ
+	SetKana( KC_B | KC_P | KC_SPC		,"myu"	)
 	SetKana( KC_B | KC_I				,"myo"	)	; みょ
+	SetKana( KC_B | KC_I | KC_SPC		,"myo"	)
 	SetKana( KC_E | KC_H				,"rya"	)	; りゃ
+	SetKana( KC_E | KC_H | KC_SPC		,"rya"	)
 	SetKana( KC_E | KC_P				,"ryu"	)	; りゅ
+	SetKana( KC_E | KC_P | KC_SPC		,"ryu"	)
 	SetKana( KC_E | KC_I				,"ryo"	)	; りょ
+	SetKana( KC_E | KC_I | KC_SPC		,"ryo"	)
 	SetKana( KC_R | KC_H				,"sya"	)	; しゃ
+	SetKana( KC_R | KC_H | KC_SPC		,"sya"	)
 	SetKana( KC_R | KC_P				,"syu"	)	; しゅ
+	SetKana( KC_R | KC_P | KC_SPC		,"syu"	)
 	SetKana( KC_R | KC_I				,"syo"	)	; しょ
+	SetKana( KC_R | KC_I | KC_SPC		,"syo"	)
 	SetKana( KC_W | KC_H				,"kya"	)	; きゃ
+	SetKana( KC_W | KC_H | KC_SPC		,"kya"	)
 	SetKana( KC_W | KC_P				,"kyu"	)	; きゅ
+	SetKana( KC_W | KC_P | KC_SPC		,"kyu"	)
 	SetKana( KC_W | KC_I				,"kyo"	)	; きょ
+	SetKana( KC_W | KC_I | KC_SPC		,"kyo"	)
 	SetKana( KC_D | KC_H				,"nya"	)	; にゃ
+	SetKana( KC_D | KC_H | KC_SPC		,"nya"	)
 	SetKana( KC_D | KC_P				,"nyu"	)	; にゅ
+	SetKana( KC_D | KC_P | KC_SPC		,"nyu"	)
 	SetKana( KC_D | KC_I				,"nyo"	)	; にょ
+	SetKana( KC_D | KC_I | KC_SPC		,"nyo"	)
 	SetKana( KC_G | KC_H				,"tya"	)	; ちゃ
+	SetKana( KC_G | KC_H | KC_SPC		,"tya"	)
 	SetKana( KC_G | KC_P				,"tyu"	)	; ちゅ
+	SetKana( KC_G | KC_P | KC_SPC		,"tyu"	)
 	SetKana( KC_G | KC_I				,"tyo"	)	; ちょ
+	SetKana( KC_G | KC_I | KC_SPC		,"tyo"	)
 	SetKana( KC_X | KC_H				,"hya"	)	; ひゃ
+	SetKana( KC_X | KC_H | KC_SPC		,"hya"	)
 	SetKana( KC_X | KC_P				,"hyu"	)	; ひゅ
+	SetKana( KC_X | KC_P | KC_SPC		,"hyu"	)
 	SetKana( KC_X | KC_I				,"hyo"	)	; ひょ
+	SetKana( KC_X | KC_I | KC_SPC		,"hyo"	)
 
 
 ; 3キー同時押し
 	SetKana( KC_J | KC_R | KC_H				,"ja"		)	; じゃ
+	SetKana( KC_J | KC_R | KC_H | KC_SPC	,"ja"		)
 	SetKana( KC_J | KC_R | KC_P				,"ju"		)	; じゅ
+	SetKana( KC_J | KC_R | KC_P | KC_SPC	,"ju"		)
 	SetKana( KC_J | KC_R | KC_I				,"jo"		)	; じょ
+	SetKana( KC_J | KC_R | KC_I | KC_SPC	,"jo"		)
 	SetKana( KC_J | KC_W | KC_H				,"gya"		)	; ぎゃ
+	SetKana( KC_J | KC_W | KC_H | KC_SPC	,"gya"		)
 	SetKana( KC_J | KC_W | KC_P				,"gyu"		)	; ぎゅ
+	SetKana( KC_J | KC_W | KC_P | KC_SPC	,"gyu"		)
 	SetKana( KC_J | KC_W | KC_I				,"gyo"		)	; ぎょ
+	SetKana( KC_J | KC_W | KC_I | KC_SPC	,"gyo"		)
 	SetKana( KC_J | KC_G | KC_H				,"dya"		)	; ぢゃ
+	SetKana( KC_J | KC_G | KC_H | KC_SPC	,"dya"		)
 	SetKana( KC_J | KC_G | KC_P				,"dyu"		)	; ぢゅ
+	SetKana( KC_J | KC_G | KC_P | KC_SPC	,"dyu"		)
 	SetKana( KC_J | KC_G | KC_I				,"dyo"		)	; ぢょ
+	SetKana( KC_J | KC_G | KC_I | KC_SPC	,"dyo"		)
 	SetKana( KC_J | KC_X | KC_H				,"bya"		)	; びゃ
+	SetKana( KC_J | KC_X | KC_H | KC_SPC	,"bya"		)
 	SetKana( KC_J | KC_X | KC_P				,"byu"		)	; びゅ
+	SetKana( KC_J | KC_X | KC_P | KC_SPC	,"byu"		)
 	SetKana( KC_J | KC_X | KC_I				,"byo"		)	; びょ
+	SetKana( KC_J | KC_X | KC_I | KC_SPC	,"byo"		)
 	SetKana( KC_M | KC_X | KC_H				,"pya"		)	; ぴゃ
+	SetKana( KC_M | KC_X | KC_H | KC_SPC	,"pya"		)
 	SetKana( KC_M | KC_X | KC_P				,"pyu"		)	; ぴゅ
+	SetKana( KC_M | KC_X | KC_P | KC_SPC	,"pyu"		)
 	SetKana( KC_M | KC_X | KC_I				,"pyo"		)	; ぴょ
+	SetKana( KC_M | KC_X | KC_I | KC_SPC	,"pyo"		)
 	SetKana( KC_M | KC_E | KC_K				,"thi"		)	; てぃ
+	SetKana( KC_M | KC_E | KC_K | KC_SPC	,"thi"		)
 	SetKana( KC_M | KC_E | KC_P				,"thu"		)	; てゅ
+	SetKana( KC_M | KC_E | KC_P | KC_SPC	,"thu"		)
 	SetKana( KC_J | KC_E | KC_K				,"dhi"		)	; でぃ
+	SetKana( KC_J | KC_E | KC_K | KC_SPC	,"dhi"		)
 	SetKana( KC_J | KC_E | KC_P				,"dhu"		)	; でゅ
+	SetKana( KC_J | KC_E | KC_P | KC_SPC	,"dhu"		)
 	SetKana( KC_M | KC_D | KC_L				,"twu"		)	; とぅ
+	SetKana( KC_M | KC_D | KC_L | KC_SPC	,"twu"		)
 	SetKana( KC_J | KC_D | KC_L				,"dwu"		)	; どぅ
+	SetKana( KC_J | KC_D | KC_L | KC_SPC	,"dwu"		)
 	SetKana( KC_M | KC_R | KC_O				,"sye"		)	; しぇ
+	SetKana( KC_M | KC_R | KC_O | KC_SPC	,"sye"		)
 	SetKana( KC_M | KC_G | KC_O				,"tye"		)	; ちぇ
+	SetKana( KC_M | KC_G | KC_O | KC_SPC	,"tye"		)
 	SetKana( KC_J | KC_R | KC_O				,"je"		)	; じぇ
+	SetKana( KC_J | KC_R | KC_O | KC_SPC	,"je"		)
 	SetKana( KC_J | KC_G | KC_O				,"dye"		)	; ぢぇ
+	SetKana( KC_J | KC_G | KC_O | KC_SPC	,"dye"		)
 	SetKana( KC_V | KC_DOT | KC_J			,"fa"		)	; ふぁ
+	SetKana( KC_V | KC_DOT | KC_J | KC_SPC	,"fa"		)
 	SetKana( KC_V | KC_DOT | KC_K			,"fi"		)	; ふぃ
+	SetKana( KC_V | KC_DOT | KC_K | KC_SPC	,"fi"		)
 	SetKana( KC_V | KC_DOT | KC_O			,"fe"		)	; ふぇ
+	SetKana( KC_V | KC_DOT | KC_O | KC_SPC	,"fe"		)
 	SetKana( KC_V | KC_DOT | KC_N			,"fo"		)	; ふぉ
+	SetKana( KC_V | KC_DOT | KC_N | KC_SPC	,"fo"		)
 	SetKana( KC_V | KC_DOT | KC_P			,"fyu"		)	; ふゅ
+	SetKana( KC_V | KC_DOT | KC_P | KC_SPC	,"fyu"		)
 	SetKana( KC_F | KC_L | KC_J				,"va"		)	; ヴぁ
+	SetKana( KC_F | KC_L | KC_J | KC_SPC	,"va"		)
 	SetKana( KC_F | KC_L | KC_K				,"vi"		)	; ヴぃ
+	SetKana( KC_F | KC_L | KC_K | KC_SPC	,"vi"		)
 	SetKana( KC_F | KC_L | KC_O				,"ve"		)	; ヴぇ
+	SetKana( KC_F | KC_L | KC_O | KC_SPC	,"ve"		)
 	SetKana( KC_F | KC_L | KC_N				,"vo"		)	; ヴぉ
+	SetKana( KC_F | KC_L | KC_N | KC_SPC	,"vo"		)
 	SetKana( KC_F | KC_L | KC_P				,"vuxyu"	)	; ヴゅ
+	SetKana( KC_F | KC_L | KC_P | KC_SPC	,"vuxyu"	)
 	SetKana( KC_V | KC_L | KC_K				,"wi"		)	; うぃ
+	SetKana( KC_V | KC_L | KC_K | KC_SPC	,"wi"		)
 	SetKana( KC_V | KC_L | KC_O				,"we"		)	; うぇ
+	SetKana( KC_V | KC_L | KC_O | KC_SPC	,"we"		)
 	SetKana( KC_V | KC_L | KC_N				,"uxo"		)	; うぉ
+	SetKana( KC_V | KC_L | KC_N | KC_SPC	,"uxo"		)
 	SetKana( KC_V | KC_K | KC_O				,"ye"		)	; いぇ
+	SetKana( KC_V | KC_K | KC_O | KC_SPC	,"ye"		)
 	SetKana( KC_V | KC_H | KC_J				,"kuxa"		)	; くぁ
+	SetKana( KC_V | KC_H | KC_J | KC_SPC	,"kuxa"		)
 	SetKana( KC_V | KC_H | KC_K				,"kuxi"		)	; くぃ
+	SetKana( KC_V | KC_H | KC_K | KC_SPC	,"kuxi"		)
 	SetKana( KC_V | KC_H | KC_O				,"kuxe"		)	; くぇ
+	SetKana( KC_V | KC_H | KC_O | KC_SPC	,"kuxe"		)
 	SetKana( KC_V | KC_H | KC_N				,"kuxo"		)	; くぉ
+	SetKana( KC_V | KC_H | KC_N | KC_SPC	,"kuxo"		)
 	SetKana( KC_V | KC_H | KC_L				,"kuxwa"	)	; くゎ
+	SetKana( KC_V | KC_H | KC_L | KC_SPC	,"kuxwa"	)
 	SetKana( KC_F | KC_H | KC_J				,"gwa"		)	; ぐぁ
+	SetKana( KC_F | KC_H | KC_J | KC_SPC	,"gwa"		)
 	SetKana( KC_F | KC_H | KC_K				,"guxi"		)	; ぐぃ
+	SetKana( KC_F | KC_H | KC_K | KC_SPC	,"guxi"		)
 	SetKana( KC_F | KC_H | KC_O				,"guxe"		)	; ぐぇ
+	SetKana( KC_F | KC_H | KC_O | KC_SPC	,"guxe"		)
 	SetKana( KC_F | KC_H | KC_N				,"guxo"		)	; ぐぉ
+	SetKana( KC_F | KC_H | KC_N | KC_SPC	,"guxo"		)
 	SetKana( KC_F | KC_H | KC_L				,"guxwa"	)	; ぐゎ
+	SetKana( KC_F | KC_H | KC_L | KC_SPC	,"guxwa"	)
 	SetKana( KC_V | KC_SCLN | KC_J			,"tsa"		)	; つぁ
+	SetKana( KC_V | KC_SCLN | KC_J | KC_SPC	,"tsa"		)
 	SetKana( KC_V | KC_SCLN | KC_K			,"tsi"		)	; つぃ
+	SetKana( KC_V | KC_SCLN | KC_K | KC_SPC	,"tsi"		)
 	SetKana( KC_V | KC_SCLN | KC_O			,"tse"		)	; つぇ
+	SetKana( KC_V | KC_SCLN | KC_O | KC_SPC	,"tse"		)
 	SetKana( KC_V | KC_SCLN | KC_N			,"tso"		)	; つぉ
+	SetKana( KC_V | KC_SCLN | KC_N | KC_SPC	,"tso"		)
 
 ; ----------------------------------------------------------------------
 ; 固有名詞ショートカット(U+I)を押し続けて
