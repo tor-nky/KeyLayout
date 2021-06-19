@@ -166,8 +166,8 @@ EisuYoko := []		; かな定義(横書き) ※縦書きと違う場合のみ使�
 Setted := []		; 0: 出力確定しない, 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
 Repeatable := []	; 1: リピートできる
 
-BeginTable := [1001, 20001, 300001]	; 定義の始め 1キー, 2キー同時, 3キー同時
-EndTable := [1001, 20001, 300001]	; 定義の終わり+1 1キー, 2キー同時, 3キー同時
+BeginTable	:= [1, 1, 1]	; 定義の始め 1キー, 2キー同時, 3キー同時
+EndTable	:= [1, 1, 1]	; 定義の終わり+1 1キー, 2キー同時, 3キー同時
 
 ; キーボードドライバを調べて KeyDriver に格納する
 ; 参考: https://ixsvr.dyndns.org/blog/764
@@ -290,95 +290,88 @@ Analysis(Str1)
 	return Str1	; そのまま返す
 }
 
-; かな定義登録	(定義が多すぎても警告は出ません)
-SetKana(KeyComb, Str1, Repeat:=0)
+; 定義登録
+SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 {
-	global Key, KeyGroup, Kana, KanaYoko, Repeatable
+	global Key, KeyGroup, Kana, KanaYoko, Eisu, EisuYoko, Repeatable
 		, BeginTable, EndTable, Group
-;	local nkeys 				; 何キー同時押しか
-;		, i 					; カウンタ
-;		, TateStr, YokoStr
+;	local nkeys		; 何キー同時押しか
+;		, i, n		; カウンタ用
 
 	; 機能置き換え処理
 	Str1 := StrReplace(Str1)
 
 	; Str1 の文字列に必要に応じて"確定"を加える
-	TateStr := Analysis(Str1)
+	Str1 := Analysis(Str1)
 
 	; 登録
 	nkeys := CountBit(KeyComb)	; 何キー同時押しか
-	i := BeginTable[nkeys]
-	while (i < EndTable[nkeys])
+	i := BeginTable[nkeys]		; 始まり
+	n := EndTable[nkeys]		; 終わり
+	while (i < n)
 	{
-		if (Key[i] = KeyComb && Kana[i] != "")	; 定義の重複があったら、古いのを消す
+		; 定義の重複があったら、古いのを消す
+		if (Key[i] = KeyComb
+			&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 		{
-			Key[i] := ""
-			KeyGroup[i] := ""
-			Kana[i] := ""
-			KanaYoko[i] := ""
-			Repeatable[i] := ""
+			Key.RemoveAt(i)
+			KeyGroup.RemoveAt(i)
+			Kana.RemoveAt(i)
+			KanaYoko.RemoveAt(i)
+			Eisu.RemoveAt(i)
+			EisuYoko.RemoveAt(i)
+			Repeatable.RemoveAt(i)
+
+			EndTable[1]--
+			if nkeys > 1
+				BeginTable[1]--, EndTable[2]--
+			if nkeys > 2
+				BeginTable[2]--, EndTable[3]--
+			break
 		}
 		i++
 	}
-	if (TateStr != "")	; 定義あり
+	if (Str1 != "")		; 定義あり
 	{
-;		i := EndTable[nkeys]
-		Key[i] := KeyComb
-		KeyGroup[i] := Group
-		Kana[i] := TateStr
-		YokoStr := ConvTateYoko(TateStr)	; 縦横変換
-		if (YokoStr != TateStr)
-			KanaYoko[i] := YokoStr
-		Repeatable[i] := Repeat
-		EndTable[nkeys]++
+		i := EndTable[nkeys]
+		Key.InsertAt(i, KeyComb)
+		KeyGroup.InsertAt(i, Group)
+		if (KanaMode)
+		{
+			Kana.InsertAt(i, Str1)
+			KanaYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
+			Eisu.InsertAt(i, "")
+			EisuYoko.InsertAt(i, "")
+		}
+		else
+		{
+			Kana.InsertAt(i, "")
+			KanaYoko.InsertAt(i, "")
+			Eisu.InsertAt(i, Str1)
+			EisuYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
+		}
+		Repeatable.InsertAt(i, Repeat)
+
+		EndTable[1]++
+		if nkeys > 1
+			BeginTable[1]++, EndTable[2]++
+		if nkeys > 2
+			BeginTable[2]++, EndTable[3]++
 	}
 
 	return
 }
 
-; 英数定義登録	(定義が多すぎても警告は出ません)
+; かな定義登録
+SetKana(KeyComb, Str1, Repeat:=0)
+{
+	SetDefinition(1, KeyComb, Str1, Repeat:=0)
+	return
+}
+; 英数定義登録
 SetEisu(KeyComb, Str1, Repeat:=0)
 {
-	global Key, KeyGroup, Eisu, EisuYoko, Repeatable
-		, BeginTable, EndTable, Group
-;	local nkeys 				; 何キー同時押しか
-;		, i 					; カウンタ
-;		, TateStr, YokoStr
-
-	; 機能置き換え処理
-	Str1 := StrReplace(Str1)
-
-	; Str1 の文字列に必要に応じて"確定"を加える
-	TateStr := Analysis(Str1)
-
-	; 登録
-	nkeys := CountBit(KeyComb)	; 何キー同時押しか
-	i := BeginTable[nkeys]
-	while (i < EndTable[nkeys])
-	{
-		if (Key[i] = KeyComb && Eisu[i] != "")	; 定義の重複があったら、古いのを消す
-		{
-			Key[i] := ""
-			KeyGroup[i] := ""
-			Eisu[i] := ""
-			EisuYoko[i] := ""
-			Repeatable[i] := ""
-		}
-		i++
-	}
-	if (TateStr != "")	; 定義あり
-	{
-;		i := EndTable[nkeys]
-		Key[i] := KeyComb
-		KeyGroup[i] := Group
-		Eisu[i] := TateStr
-		YokoStr := ConvTateYoko(TateStr)	; 縦横変換
-		if (YokoStr != TateStr)
-			EisuYoko[i] := YokoStr
-		Repeatable[i] := Repeat
-		EndTable[nkeys]++
-	}
-
+	SetDefinition(0, KeyComb, Str1, Repeat:=0)
 	return
 }
 
@@ -396,6 +389,7 @@ KanaSetting()
 	{
 		if (Kana[i] != "")
 		{
+			Setted[i] := 0
 			j := BeginTable[3]
 			while (j < EndTable[3])
 			{
@@ -404,17 +398,18 @@ KanaSetting()
 					break	; 後置シフトは出力確定しない
 				j++
 			}
-			Setted[i] := (j >= EndTable[3]) ? 2 : 1
+			Setted[i] := (j >= EndTable[3] ? 2 : 1)
 		}
 		i++
 	}
 
 	; 2キー同時押し
-	i := BeginTable[2]
+;	i := BeginTable[2]
 	while (i < EndTable[2])
 	{
 		if (Kana[i] != "")
 		{
+			Setted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
 			j := BeginTable[3]
@@ -436,7 +431,7 @@ KanaSetting()
 			}
 			if (j >= EndTable[3] && flag = 0)
 			{
-				j := BeginTable[2]
+;				j := BeginTable[2]
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
@@ -458,11 +453,12 @@ KanaSetting()
 	}
 
 	; 1キー押し
-	i := BeginTable[1]
+;	i := BeginTable[1]
 	while (i < EndTable[1])
 	{
 		if (Kana[i] != "")
 		{
+			Setted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
 			j := BeginTable[3]
@@ -485,7 +481,7 @@ KanaSetting()
 			if (j >= EndTable[3])
 			{
 				; 2キー同時押しで使われているキーは出力が確定しない
-				j := BeginTable[2]
+;				j := BeginTable[2]
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
@@ -504,7 +500,7 @@ KanaSetting()
 				}
 				if (j >= EndTable[2] && flag = 0)
 				{
-					j := BeginTable[1]
+;					j := BeginTable[1]
 					while (j < EndTable[1])
 					{
 						; Key[i] は Key[j] に内包されているか
@@ -543,6 +539,7 @@ EisuSetting()
 	{
 		if (Eisu[i] != "")
 		{
+			Setted[i] := 0
 			j := BeginTable[3]
 			while (j < EndTable[3])
 			{
@@ -551,17 +548,18 @@ EisuSetting()
 					break	; 後置シフトは出力確定しない
 				j++
 			}
-			Setted[i] := (j >= EndTable[3]) ? 2 : 1
+			Setted[i] := (j >= EndTable[3] ? 2 : 1)
 		}
 		i++
 	}
 
 	; 2キー同時押し
-	i := BeginTable[2]
+;	i := BeginTable[2]
 	while (i < EndTable[2])
 	{
 		if (Eisu[i] != "")
 		{
+			Setted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
 			j := BeginTable[3]
@@ -583,7 +581,7 @@ EisuSetting()
 			}
 			if (j >= EndTable[3] && flag = 0)
 			{
-				j := BeginTable[2]
+;				j := BeginTable[2]
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
@@ -605,11 +603,12 @@ EisuSetting()
 	}
 
 	; 1キー押し
-	i := BeginTable[1]
+;	i := BeginTable[1]
 	while (i < EndTable[1])
 	{
 		if (Eisu[i] != "")
 		{
+			Setted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
 			j := BeginTable[3]
@@ -632,7 +631,7 @@ EisuSetting()
 			if (j >= EndTable[3])
 			{
 				; 2キー同時押しで使われているキーは出力が確定しない
-				j := BeginTable[2]
+;				j := BeginTable[2]
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
@@ -651,7 +650,7 @@ EisuSetting()
 				}
 				if (j >= EndTable[2] && flag = 0)
 				{
-					j := BeginTable[1]
+;					j := BeginTable[1]
 					while (j < EndTable[1])
 					{
 						; Key[i] は Key[j] に内包されているか
