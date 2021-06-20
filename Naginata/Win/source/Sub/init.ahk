@@ -365,13 +365,13 @@ SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 ; かな定義登録
 SetKana(KeyComb, Str1, Repeat:=0)
 {
-	SetDefinition(1, KeyComb, Str1, Repeat:=0)
+	SetDefinition(1, KeyComb, Str1, Repeat)
 	return
 }
 ; 英数定義登録
 SetEisu(KeyComb, Str1, Repeat:=0)
 {
-	SetDefinition(0, KeyComb, Str1, Repeat:=0)
+	SetDefinition(0, KeyComb, Str1, Repeat)
 	return
 }
 

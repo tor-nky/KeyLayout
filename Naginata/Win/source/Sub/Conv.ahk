@@ -350,11 +350,14 @@ Convert()
 		}
 		LastSetted := 0
 
-		; 同時押しの判定期限到来
+		; 同時押しの判定期限到来(シフト時のみ)
 		if (Str1 == "CombTimer")
 		{
 			if ((RealKey & KC_SPC) && LastKeyTime + CombDelay <= WinAPI_timeGetTime())	; 割り込みの行き違いを防ぐ
+			{
 				OutBuf()
+				Last2Keys := 0, LastKeys := 0
+			}
 			continue
 		}
 
@@ -429,8 +432,12 @@ Convert()
 		; 押されていなかったキーか、リピートできるキーが押された時
 		else if (!(RealKey & RecentKey) || RecentKey = RepeatKey)
 		{
+			; 同時押しの判定期限到来(シフト時のみ)
 			if (CombDelay > 0 && (RealKey & KC_SPC) && LastKeyTime + CombDelay <= KeyTime)
-				OutBuf()	; 同時押しの判定期限到来
+			{
+				OutBuf()	
+				Last2Keys := 0, LastKeys := 0
+			}
 
 			RealKey |= RecentKey
 			nBack := 0
@@ -448,13 +455,18 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
-						nkeys := 3
+						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC))
+						{
+							LastKeys := 0
+							break
+						}
 						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は仮出力バッファを全て出力
 							OutBuf()
 						else if _lks >= 2
 							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
 						else
 							nBack := 2	; 前回が1キー入力だったら、2文字消して仮出力バッファへ
+						nkeys := 3
 						break
 					}
 					i++
@@ -463,7 +475,7 @@ Convert()
 			; グループありの2キー入力を検索
 			if (LastGroup != 0 && nkeys = 0)
 			{
-;				i := BeginTable[2]	; 検索開始場所の設定
+				i := BeginTable[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
 				while (i < EndTable[2])
 				{
@@ -473,10 +485,15 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						nkeys := 2
+						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC))
+						{
+							LastKeys := 0
+							break
+						}
 						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は仮出力バッファを全て出力
 							OutBuf()
 						nBack := 1
+						nkeys := 2
 						break
 					}
 					i++
@@ -485,7 +502,7 @@ Convert()
 			; グループありの1キー入力を検索
 			if (LastGroup != 0 && nkeys = 0)
 			{
-;				i := BeginTable[1]	; 検索開始場所の設定
+				i := BeginTable[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
 					KeyComb := KC_SPC | LastKeys
 				else
@@ -496,9 +513,9 @@ Convert()
 						&& Key[i] = KeyComb
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						nkeys := 1
 						if (RecentKey = KC_SPC)
 							nBack := 1
+						nkeys := 1
 						break
 					}
 					i++
@@ -516,13 +533,18 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
-						nkeys := 3
+						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC))
+						{
+							LastKeys := 0
+							break
+						}
 						if (_lks = 3 && RecentKey != KC_SPC)	; 3キー同時→3キー同時 は仮出力バッファを全て出力
 							OutBuf()
 						else if _lks >= 2
 							nBack := 1	; 前回が2キー、3キー同時押しだったら、1文字消して仮出力バッファへ
 						else
 							nBack := 2	; 前回が1キー入力だったら、2文字消して仮出力バッファへ
+						nkeys := 3
 						break
 					}
 					i++
@@ -531,7 +553,7 @@ Convert()
 			; 2キー入力を検索
 			if nkeys = 0
 			{
-;				i := BeginTable[2]	; 検索開始場所の設定
+				i := BeginTable[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
 				while (i < EndTable[2])
 				{
@@ -540,10 +562,15 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						nkeys := 2
+						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC))
+						{
+							LastKeys := 0
+							break
+						}
 						if (_lks >= 2 && RecentKey != KC_SPC)	; 2キー同時→2キー同時 は仮出力バッファを全て出力
 							OutBuf()
 						nBack := 1
+						nkeys := 2
 						break
 					}
 					i++
@@ -552,7 +579,7 @@ Convert()
 			; 1キー入力を検索
 			if nkeys = 0
 			{
-;				i := BeginTable[1]	; 検索開始場所の設定
+				i := BeginTable[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
 					KeyComb := KC_SPC | LastKeys
 				else
@@ -562,9 +589,9 @@ Convert()
 					if (Key[i] = KeyComb
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						nkeys := 1
 						if (RecentKey = KC_SPC)
 							nBack := 1
+						nkeys := 1
 						break
 					}
 					i++
@@ -603,8 +630,8 @@ Convert()
 				; 後置シフトの判定期限タイマー起動
 				if LastSetted = 1
 					SetTimer, PSTimer, % ShiftDelay + 9
-				; 同時押しの判定期限タイマー起動
-				if (CombDelay >= 0 && (RealKey & KC_SPC))
+				; 同時押しの判定期限タイマー起動(シフト時のみ)
+				if (CombDelay > 0 && (RealKey & KC_SPC))
 					SetTimer, CombTimer, % CombDelay + 9
 			}
 
