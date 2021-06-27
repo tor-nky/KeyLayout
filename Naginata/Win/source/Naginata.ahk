@@ -13,6 +13,7 @@
 SetWorkingDir %A_ScriptDir%		; スクリプトの作業ディレクトリを変更	;
 #SingleInstance force			; 既存のプロセスを終了して実行開始		;
 #Include Sub/init.ahk			; 初期設定								;
+#Include KanaTable/StandardTable.ahk	; キーボード初期配列の読み込み	;
 #Include KanaTable/NaginataTable.ahk	; かな定義の読み込み			;
 ; ----------------------------------------------------------------------
 
