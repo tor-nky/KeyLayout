@@ -112,8 +112,8 @@ SendNeo(Str1, Delay:=0)
 	SlowCopied := Slow
 	IfWinActive, ahk_class CabinetWClass	; エクスプローラーにはゆっくり出力する
 		Delay := (Delay < 10 ? 10 : Delay)
-	else (SlowCopied = 1 && WinActive(ahk_class Hidemaru32Class))
-		SlowCopied := 0x11		; 秀丸エディタ
+	else IfWinActive, ahk_class Hidemaru32Class	; 秀丸エディタ
+		SlowCopied := (SlowCopied = 1 ? 0x11 : SlowCopied)
 	SetKeyDelay, -1, -1
 
 	NowTickCount := WinAPI_timeGetTime()
