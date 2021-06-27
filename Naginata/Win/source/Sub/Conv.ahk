@@ -455,7 +455,7 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
-						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC))
+						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
 							break
@@ -485,7 +485,7 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC))
+						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
 							break
@@ -533,7 +533,7 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
-						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC))
+						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
 							break
@@ -562,7 +562,7 @@ Convert()
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
 						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
 					{
-						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC))
+						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
 							break
