@@ -268,13 +268,10 @@ StoreBuf(nBack, Str1)
 ; 出力する文字列を選択
 SelectStr(i)
 {
-	global KanaMode, Eisu, EisuYoko, Kana, KanaYoko, Vertical
+	global OutTate, OutYoko, Vertical
 ;	local Str1
 
-	if KanaMode = 0
-		Str1 := (Vertical ? Eisu[i] : EisuYoko[i])
-	else
-		Str1 := (Vertical ? Kana[i] : KanaYoko[i])
+	Str1 := (Vertical ? OutTate[i] : OutYoko[i])
 
 	return Str1
 }
@@ -284,12 +281,11 @@ Convert()
 	global KanaMode
 		, InBuf, InBufRead, InBufTime, InBufRest
 		, KC_SPC, JP_YEN, KC_INT1, R
-		, Key, KeyGroup, Kana, Eisu, Setted, Repeatable
-		, BeginTable, EndTable
-		, Vertical, ShiftDelay, CombDelay
+		, Key, KeyGroup, OutMode, Setted, Repeatable, BeginTable, EndTable
+		, _usc
+		, ShiftDelay, CombDelay
 	static run		:= 0	; 多重起動防止フラグ
 		, spc		:= 0	; スペースキーの単押しを空白入力にするためのフラグ
-		, LastStr	:= ""	; 前回の文字列
 		, RealKey	:= 0	; 今押している全部のキービットの集合
 		, LastKeys	:= 0	; 前回のキービット
 		, Last2Keys	:= 0	; 前々回のキービット
@@ -323,7 +319,7 @@ Convert()
 		{
 			if shift = 0		; Shiftなし→あり
 			{
-				LastStr := ""
+				OutBuf()
 				Str1 := "sc39"	; ここで Space 押す
 				shift := 1
 			}
@@ -409,7 +405,6 @@ Convert()
 				spc := 0
 			}
 			OutBuf()
-			LastStr	:= ""
 			RealKey &= RecentKey ^ (-1)	; RealKey &= ~RecentKey では
 										; 32ビット計算になることがあり、不適切
 			Last2Keys := 0
@@ -420,11 +415,10 @@ Convert()
 		}
 		; (キーリリース直後か、通常シフトまたは後置シフトの判定期限後に)スペースキーが押された時
 		else if (!(RealKey & RecentKey) && RecentKey = KC_SPC
-			&& (LastStr == "" || LastKeyTime + ShiftDelay <= KeyTime))
+			&& (_usc = 0 || LastKeyTime + ShiftDelay <= KeyTime))
 		{
 			spc := 1	; 単独スペース判定フラグ
 			OutBuf()
-			LastStr	:= ""
 			RealKey |= KC_SPC
 			LastGroup := 0
 			RepeatKey := 0	; リピート解除
@@ -435,7 +429,7 @@ Convert()
 			; 同時押しの判定期限到来(シフト時のみ)
 			if (CombDelay > 0 && (RealKey & KC_SPC) && LastKeyTime + CombDelay <= KeyTime)
 			{
-				OutBuf()	
+				OutBuf()
 				Last2Keys := 0, LastKeys := 0
 			}
 
@@ -453,8 +447,8 @@ Convert()
 						&& (Key[i] & RecentKey) 		; 今回のキーを含み
 						&& (Key[i] & KeyComb) = key[i]	; 検索中のキー集合が、いま調べている定義内にあり
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
-					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
+						&& OutMode[i] = KanaMode)		; 英数用、かな用の種別が一致していること
+					{
 						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
@@ -483,7 +477,7 @@ Convert()
 						&& (Key[i] & RecentKey)
 						&& (Key[i] & KeyComb) = key[i]
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+						&& OutMode[i] = KanaMode)
 					{
 						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -511,7 +505,7 @@ Convert()
 				{
 					if (KeyGroup[i] = LastGroup
 						&& Key[i] = KeyComb
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+						&& OutMode[i] = KanaMode)
 					{
 						if (RecentKey = KC_SPC)
 							nBack := 1
@@ -531,8 +525,8 @@ Convert()
 					if ((Key[i] & RecentKey)			; 今回のキーを含み
 						&& (Key[i] & KeyComb) = key[i]	; 検索中のキー集合が、いま調べている定義内にあり
 						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
-					{									; かな入力中なら、かな定義が、英数入力中なら英数定義があること
+						&& OutMode[i] = KanaMode)		; 英数用、かな用の種別が一致していること
+					{
 						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
 							LastKeys := 0
@@ -560,7 +554,7 @@ Convert()
 					if ((Key[i] & RecentKey)
 						&& (Key[i] & KeyComb) = key[i]
 						&& !((Key[i] ^ KeyComb) & KC_SPC)
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+						&& OutMode[i] = KanaMode)
 					{
 						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -587,7 +581,7 @@ Convert()
  				while (i < EndTable[1])
 				{
 					if (Key[i] = KeyComb
-						&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+						&& OutMode[i] = KanaMode)
 					{
 						if (RecentKey = KC_SPC)
 							nBack := 1
@@ -619,7 +613,7 @@ Convert()
 					Str1 := "+" . Str1
 				LastSetted := 0	; 出力確定はしない
 			}
-
+;MsgBox, , , %i% %LastSetted%, 1
 			; 仮出力バッファに入れる
 			StoreBuf(nBack, Str1)
 			; 出力確定文字か？
@@ -636,7 +630,6 @@ Convert()
 			}
 
 			; 次回に向けて変数を更新
-			LastStr	:= Str1
 			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)		; 2、3キー入力のときは、この前のキービットを保存しない
 			LastKeys := (nkeys >= 1 ? Key[i] : RecentKey)	; 今回のキービットを保存
 			LastKeyTime := KeyTime		; 有効なキーを押した時間を保存

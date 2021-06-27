@@ -74,7 +74,9 @@ KC_K	:= 1 << 0x25
 KC_L	:= 1 << 0x26
 KC_SCLN	:= 1 << 0x27
 KC_QUOT	:= 1 << 0x28
+KC_GRV	:= 1 << 0x29
 KC_NUHS	:= 1 << 0x2B
+KC_BSLS	:= 1 << 0x2B
 
 KC_Z	:= 1 << 0x2C
 KC_X	:= 1 << 0x2D
@@ -158,13 +160,12 @@ R := 1
 ; ----------------------------------------------------------------------
 ; 入れ物の定義
 Key := []			; キービットの集合
-Kana := []			; かな定義
-KanaYoko := []		; かな定義(横書き) ※縦書きと違う場合のみ使用
 KeyGroup := []		; 定義のグループ番号 ※0はグループAll
-Eisu := []			; 英数定義
-EisuYoko := []		; かな定義(横書き) ※縦書きと違う場合のみ使用
-Setted := []		; 0: 出力確定しない, 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
+OutMode := []		; 0: 英数入力用, 1: かな入力用
+OutTate := []		; 縦書き用定義
+OutYoko := []		; 横書き用定義
 Repeatable := []	; 1: リピートできる
+Setted := []		; 0: 出力確定しない, 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
 
 BeginTable	:= [1, 1, 1]	; 定義の始め 1キー, 2キー同時, 3キー同時
 EndTable	:= [1, 1, 1]	; 定義の終わり+1 1キー, 2キー同時, 3キー同時
@@ -293,8 +294,9 @@ Analysis(Str1)
 ; 定義登録
 SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 {
-	global Key, KeyGroup, Kana, KanaYoko, Eisu, EisuYoko, Repeatable
-		, BeginTable, EndTable, Group
+	global Key, KeyGroup, OutMode, OutTate, OutYoko, Repeatable
+		, BeginTable, EndTable
+		, Group
 ;	local nkeys		; 何キー同時押しか
 ;		, i, n		; カウンタ用
 
@@ -311,15 +313,13 @@ SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 	while (i < n)
 	{
 		; 定義の重複があったら、古いのを消す
-		if (Key[i] = KeyComb
-			&& ((KanaMode && Kana[i] != "") || (!KanaMode && Eisu[i] != "")))
+		if (Key[i] = KeyComb && OutMode[i] = KanaMode)
 		{
 			Key.RemoveAt(i)
 			KeyGroup.RemoveAt(i)
-			Kana.RemoveAt(i)
-			KanaYoko.RemoveAt(i)
-			Eisu.RemoveAt(i)
-			EisuYoko.RemoveAt(i)
+			OutMode.RemoveAt(i)
+			OutTate.RemoveAt(i)
+			OutYoko.RemoveAt(i)
 			Repeatable.RemoveAt(i)
 
 			EndTable[1]--
@@ -336,20 +336,9 @@ SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 		i := EndTable[nkeys]
 		Key.InsertAt(i, KeyComb)
 		KeyGroup.InsertAt(i, Group)
-		if (KanaMode)
-		{
-			Kana.InsertAt(i, Str1)
-			KanaYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
-			Eisu.InsertAt(i, "")
-			EisuYoko.InsertAt(i, "")
-		}
-		else
-		{
-			Kana.InsertAt(i, "")
-			KanaYoko.InsertAt(i, "")
-			Eisu.InsertAt(i, Str1)
-			EisuYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
-		}
+		OutMode.InsertAt(i, KanaMode)
+		OutTate.InsertAt(i, Str1)
+		OutYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
 		Repeatable.InsertAt(i, Repeat)
 
 		EndTable[1]++
@@ -379,26 +368,27 @@ SetEisu(KeyComb, Str1, Repeat:=0)
 ; 0: 確定しない, 1: 通常シフトのみ確定, 2: 後置シフトでも確定
 KanaSetting()
 {
-	global Key, Kana, Setted
-		, BeginTable, EndTable
+	global Key, OutMode, Setted, BeginTable, EndTable
 ;	local i, j, flag	; カウンタ
 
 	; 3キー同時押し
 	i := BeginTable[3]
 	while (i < EndTable[3])
 	{
-		if (Kana[i] != "")
+		if (OutMode[i] = 1)
 		{
-			Setted[i] := 0
+			Setted[i] := 2
 			j := BeginTable[3]
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (i != j && Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+				{
+					Setted[i] := 1
 					break	; 後置シフトは出力確定しない
+				}
 				j++
 			}
-			Setted[i] := (j >= EndTable[3] ? 2 : 1)
 		}
 		i++
 	}
@@ -407,7 +397,7 @@ KanaSetting()
 ;	i := BeginTable[2]
 	while (i < EndTable[2])
 	{
-		if (Kana[i] != "")
+		if (OutMode[i] = 1)
 		{
 			Setted[i] := 0
 			flag := 0
@@ -416,7 +406,7 @@ KanaSetting()
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
 				{
 					; シフトも一致
 					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -435,7 +425,7 @@ KanaSetting()
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
-					if (i != j && Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+					if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
 					{
 						flag := 1
 						break	; 後置シフトは出力確定しない
@@ -456,7 +446,7 @@ KanaSetting()
 ;	i := BeginTable[1]
 	while (i < EndTable[1])
 	{
-		if (Kana[i] != "")
+		if (OutMode[i] = 1)
 		{
 			Setted[i] := 0
 			flag := 0
@@ -465,7 +455,7 @@ KanaSetting()
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
 				{
 					; シフトも一致
 					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -485,7 +475,7 @@ KanaSetting()
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
-					if (Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+					if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
 					{
 						; シフトも一致
 						if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -504,7 +494,7 @@ KanaSetting()
 					while (j < EndTable[1])
 					{
 						; Key[i] は Key[j] に内包されているか
-						if (i != j && Kana[j] != "" && (Key[i] & Key[j]) = Key[i])
+						if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
 						{
 							flag := 1
 							break	; 後置シフトは出力確定しない
@@ -525,30 +515,31 @@ KanaSetting()
 	return
 }
 
-; 出力確定する英数定義を調べて Setted[] に記録
+; 出力確定するかな定義を調べて Setted[] に記録
 ; 0: 確定しない, 1: 通常シフトのみ確定, 2: 後置シフトでも確定
 EisuSetting()
 {
-	global Key, Eisu, Setted
-		, BeginTable, EndTable
+	global Key, OutMode, Setted, BeginTable, EndTable
 ;	local i, j, flag	; カウンタ
 
 	; 3キー同時押し
 	i := BeginTable[3]
 	while (i < EndTable[3])
 	{
-		if (Eisu[i] != "")
+		if (OutMode[i] = 0)
 		{
-			Setted[i] := 0
+			Setted[i] := 2
 			j := BeginTable[3]
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (i != j && Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+				{
+					Setted[i] := 1
 					break	; 後置シフトは出力確定しない
+				}
 				j++
 			}
-			Setted[i] := (j >= EndTable[3] ? 2 : 1)
 		}
 		i++
 	}
@@ -557,7 +548,7 @@ EisuSetting()
 ;	i := BeginTable[2]
 	while (i < EndTable[2])
 	{
-		if (Eisu[i] != "")
+		if (OutMode[i] = 0)
 		{
 			Setted[i] := 0
 			flag := 0
@@ -566,7 +557,7 @@ EisuSetting()
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
 				{
 					; シフトも一致
 					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -585,7 +576,7 @@ EisuSetting()
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
-					if (i != j && Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+					if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
 					{
 						flag := 1
 						break	; 後置シフトは出力確定しない
@@ -606,7 +597,7 @@ EisuSetting()
 ;	i := BeginTable[1]
 	while (i < EndTable[1])
 	{
-		if (Eisu[i] != "")
+		if (OutMode[i] = 0)
 		{
 			Setted[i] := 0
 			flag := 0
@@ -615,7 +606,7 @@ EisuSetting()
 			while (j < EndTable[3])
 			{
 				; Key[i] は Key[j] に内包されているか
-				if (Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+				if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
 				{
 					; シフトも一致
 					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -635,7 +626,7 @@ EisuSetting()
 				while (j < EndTable[2])
 				{
 					; Key[i] は Key[j] に内包されているか
-					if (Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+					if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
 					{
 						; シフトも一致
 						if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
@@ -654,7 +645,7 @@ EisuSetting()
 					while (j < EndTable[1])
 					{
 						; Key[i] は Key[j] に内包されているか
-						if (i != j && Eisu[j] != "" && (Key[i] & Key[j]) = Key[i])
+						if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
 						{
 							flag := 1
 							break	; 後置シフトは出力確定しない
