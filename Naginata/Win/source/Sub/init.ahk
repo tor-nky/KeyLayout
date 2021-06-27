@@ -22,7 +22,6 @@ ListLines, Off				; スクリプトの実行履歴を取らない
 ;SetKeyDelay, 10, 0			; キーストローク間のディレイを変更
 #MenuMaskKey vk07			; Win または Alt の押下解除時のイベントを隠蔽するためのキーを変更する
 #UseHook					; ホットキーはすべてフックを使用する
-; Process, Priority, , High	; プロセスの優先度を変更
 ;Thread, interrupt, 15, 6	; スレッド開始から15ミリ秒ないし1行以内の割り込みを、絶対禁止
 SetStoreCapslockMode, off	; Sendコマンド実行時にCapsLockの状態を自動的に変更しない
 
@@ -159,16 +158,16 @@ R := 1
 ; 共通変数
 ; ----------------------------------------------------------------------
 ; 入れ物の定義
-Key := []			; キービットの集合
-KeyGroup := []		; 定義のグループ番号 ※0はグループAll
-OutMode := []		; 0: 英数入力用, 1: かな入力用
-OutTate := []		; 縦書き用定義
-OutYoko := []		; 横書き用定義
-Repeatable := []	; 1: リピートできる
-Setted := []		; 0: 出力確定しない, 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
-
-BeginTable	:= [1, 1, 1]	; 定義の始め 1キー, 2キー同時, 3キー同時
-EndTable	:= [1, 1, 1]	; 定義の終わり+1 1キー, 2キー同時, 3キー同時
+DefsKey := []		; キービットの集合
+DefsGroup := []		; 定義のグループ番号 ※0はグループAll
+DefsKanaMode := []	; 0: 英数入力用, 1: かな入力用
+DefsTateStr := []	; 縦書き用定義
+DefsYokoStr := []	; 横書き用定義
+DefsRepeat := []	; 1: リピートできる
+DefsSetted := []	; 0: 出力確定しない,
+					; 1: 通常シフトのみ出力確定, 2: どちらのシフトも出力確定
+DefBegin	:= [1, 1, 1]	; 定義の始め 1キー, 2キー同時, 3キー同時
+DefEnd	:= [1, 1, 1]		; 定義の終わり+1 1キー, 2キー同時, 3キー同時
 
 ; キーボードドライバを調べて KeyDriver に格納する
 ; 参考: https://ixsvr.dyndns.org/blog/764
@@ -294,8 +293,8 @@ Analysis(Str1)
 ; 定義登録
 SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 {
-	global Key, KeyGroup, OutMode, OutTate, OutYoko, Repeatable
-		, BeginTable, EndTable
+	global DefsKey, DefsGroup, DefsKanaMode, DefsTateStr, DefsYokoStr, DefsRepeat
+		, DefBegin, DefEnd
 		, Group
 ;	local nkeys		; 何キー同時押しか
 ;		, i, n		; カウンタ用
@@ -308,44 +307,44 @@ SetDefinition(KanaMode, KeyComb, Str1, Repeat:=0)
 
 	; 登録
 	nkeys := CountBit(KeyComb)	; 何キー同時押しか
-	i := BeginTable[nkeys]		; 始まり
-	n := EndTable[nkeys]		; 終わり
+	i := DefBegin[nkeys]		; 始まり
+	n := DefEnd[nkeys]		; 終わり
 	while (i < n)
 	{
 		; 定義の重複があったら、古いのを消す
-		if (Key[i] = KeyComb && OutMode[i] = KanaMode)
+		if (DefsKey[i] = KeyComb && DefsKanaMode[i] = KanaMode)
 		{
-			Key.RemoveAt(i)
-			KeyGroup.RemoveAt(i)
-			OutMode.RemoveAt(i)
-			OutTate.RemoveAt(i)
-			OutYoko.RemoveAt(i)
-			Repeatable.RemoveAt(i)
+			DefsKey.RemoveAt(i)
+			DefsGroup.RemoveAt(i)
+			DefsKanaMode.RemoveAt(i)
+			DefsTateStr.RemoveAt(i)
+			DefsYokoStr.RemoveAt(i)
+			DefsRepeat.RemoveAt(i)
 
-			EndTable[1]--
+			DefEnd[1]--
 			if nkeys > 1
-				BeginTable[1]--, EndTable[2]--
+				DefBegin[1]--, DefEnd[2]--
 			if nkeys > 2
-				BeginTable[2]--, EndTable[3]--
+				DefBegin[2]--, DefEnd[3]--
 			break
 		}
 		i++
 	}
 	if (Str1 != "")		; 定義あり
 	{
-		i := EndTable[nkeys]
-		Key.InsertAt(i, KeyComb)
-		KeyGroup.InsertAt(i, Group)
-		OutMode.InsertAt(i, KanaMode)
-		OutTate.InsertAt(i, Str1)
-		OutYoko.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
-		Repeatable.InsertAt(i, Repeat)
+		i := DefEnd[nkeys]
+		DefsKey.InsertAt(i, KeyComb)
+		DefsGroup.InsertAt(i, Group)
+		DefsKanaMode.InsertAt(i, KanaMode)
+		DefsTateStr.InsertAt(i, Str1)
+		DefsYokoStr.InsertAt(i, ConvTateYoko(Str1))	; 縦横変換
+		DefsRepeat.InsertAt(i, Repeat)
 
-		EndTable[1]++
+		DefEnd[1]++
 		if nkeys > 1
-			BeginTable[1]++, EndTable[2]++
+			DefBegin[1]++, DefEnd[2]++
 		if nkeys > 2
-			BeginTable[2]++, EndTable[3]++
+			DefBegin[2]++, DefEnd[3]++
 	}
 
 	return
@@ -364,27 +363,27 @@ SetEisu(KeyComb, Str1, Repeat:=0)
 	return
 }
 
-; 出力確定するかな定義を調べて Setted[] に記録
+; 出力確定するかな定義を調べて DefsSetted[] に記録
 ; 0: 確定しない, 1: 通常シフトのみ確定, 2: 後置シフトでも確定
 KanaSetting()
 {
-	global Key, OutMode, Setted, BeginTable, EndTable
+	global DefsKey, DefsKanaMode, DefsSetted, DefBegin, DefEnd
 ;	local i, j, flag	; カウンタ
 
 	; 3キー同時押し
-	i := BeginTable[3]
-	while (i < EndTable[3])
+	i := DefBegin[3]
+	while (i < DefEnd[3])
 	{
-		if (OutMode[i] = 1)
+		if (DefsKanaMode[i] = 1)
 		{
-			Setted[i] := 2
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			DefsSetted[i] := 2
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (i != j && DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
-					Setted[i] := 1
+					DefsSetted[i] := 1
 					break	; 後置シフトは出力確定しない
 				}
 				j++
@@ -394,22 +393,22 @@ KanaSetting()
 	}
 
 	; 2キー同時押し
-;	i := BeginTable[2]
-	while (i < EndTable[2])
+;	i := DefBegin[2]
+	while (i < DefEnd[2])
 	{
-		if (OutMode[i] = 1)
+		if (DefsKanaMode[i] = 1)
 		{
-			Setted[i] := 0
+			DefsSetted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
 					; シフトも一致
-					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+					if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 					{
 						flag := 0
 						break		; 出力確定しない
@@ -419,46 +418,46 @@ KanaSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3] && flag = 0)
+			if (j >= DefEnd[3] && flag = 0)
 			{
-;				j := BeginTable[2]
-				while (j < EndTable[2])
+;				j := DefBegin[2]
+				while (j < DefEnd[2])
 				{
-					; Key[i] は Key[j] に内包されているか
-					if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+					; DefsKey[i] は DefsKey[j] に内包されているか
+					if (i != j && DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 					{
 						flag := 1
-						break	; 後置シフトは出力確定しない
+						break		; 後置シフトは出力確定しない
 					}
 					j++
 				}
 				; 検索してもなかった
-				if (j >= BeginTable[2])
-					Setted[i] := 2	; どちらのシフトも出力確定
+				if (j >= DefBegin[2])
+					DefsSetted[i] := 2	; どちらのシフトも出力確定
 			}
 			if flag > 0
-				Setted[i] := 1	; 通常シフトのみ出力確定
+				DefsSetted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
 	}
 
 	; 1キー押し
-;	i := BeginTable[1]
-	while (i < EndTable[1])
+;	i := DefBegin[1]
+	while (i < DefEnd[1])
 	{
-		if (OutMode[i] = 1)
+		if (DefsKanaMode[i] = 1)
 		{
-			Setted[i] := 0
+			DefsSetted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
 					; シフトも一致
-					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+					if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 					{
 						flag := 0
 						break		; 出力確定しない
@@ -468,17 +467,17 @@ KanaSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3])
+			if (j >= DefEnd[3])
 			{
 				; 2キー同時押しで使われているキーは出力が確定しない
-;				j := BeginTable[2]
-				while (j < EndTable[2])
+;				j := DefBegin[2]
+				while (j < DefEnd[2])
 				{
-					; Key[i] は Key[j] に内包されているか
-					if (OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+					; DefsKey[i] は DefsKey[j] に内包されているか
+					if (DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 					{
 						; シフトも一致
-						if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+						if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 						{
 							flag := 0
 							break		; 出力確定しない
@@ -488,13 +487,13 @@ KanaSetting()
 					}
 					j++
 				}
-				if (j >= EndTable[2] && flag = 0)
+				if (j >= DefEnd[2] && flag = 0)
 				{
-;					j := BeginTable[1]
-					while (j < EndTable[1])
+;					j := DefBegin[1]
+					while (j < DefEnd[1])
 					{
-						; Key[i] は Key[j] に内包されているか
-						if (i != j && OutMode[j] = 1 && (Key[i] & Key[j]) = Key[i])
+						; DefsKey[i] は DefsKey[j] に内包されているか
+						if (i != j && DefsKanaMode[j] = 1 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 						{
 							flag := 1
 							break	; 後置シフトは出力確定しない
@@ -502,12 +501,12 @@ KanaSetting()
 						j++
 					}
 					; 検索してもなかった
-					if (j >= BeginTable[1])
-						Setted[i] := 2	; どちらのシフトも出力確定
+					if (j >= DefBegin[1])
+						DefsSetted[i] := 2	; どちらのシフトも出力確定
 				}
 			}
 			if flag > 0
-				Setted[i] := 1	; 通常シフトのみ出力確定
+				DefsSetted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
 	}
@@ -515,27 +514,27 @@ KanaSetting()
 	return
 }
 
-; 出力確定するかな定義を調べて Setted[] に記録
+; 出力確定する英数定義を調べて DefsSetted[] に記録
 ; 0: 確定しない, 1: 通常シフトのみ確定, 2: 後置シフトでも確定
 EisuSetting()
 {
-	global Key, OutMode, Setted, BeginTable, EndTable
+	global DefsKey, DefsKanaMode, DefsSetted, DefBegin, DefEnd
 ;	local i, j, flag	; カウンタ
 
 	; 3キー同時押し
-	i := BeginTable[3]
-	while (i < EndTable[3])
+	i := DefBegin[3]
+	while (i < DefEnd[3])
 	{
-		if (OutMode[i] = 0)
+		if (DefsKanaMode[i] = 0)
 		{
-			Setted[i] := 2
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			DefsSetted[i] := 2
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (i != j && DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
-					Setted[i] := 1
+					DefsSetted[i] := 1
 					break	; 後置シフトは出力確定しない
 				}
 				j++
@@ -545,22 +544,22 @@ EisuSetting()
 	}
 
 	; 2キー同時押し
-;	i := BeginTable[2]
-	while (i < EndTable[2])
+;	i := DefBegin[2]
+	while (i < DefEnd[2])
 	{
-		if (OutMode[i] = 0)
+		if (DefsKanaMode[i] = 0)
 		{
-			Setted[i] := 0
+			DefsSetted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
 					; シフトも一致
-					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+					if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 					{
 						flag := 0
 						break		; 出力確定しない
@@ -570,46 +569,46 @@ EisuSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3] && flag = 0)
+			if (j >= DefEnd[3] && flag = 0)
 			{
-;				j := BeginTable[2]
-				while (j < EndTable[2])
+;				j := DefBegin[2]
+				while (j < DefEnd[2])
 				{
-					; Key[i] は Key[j] に内包されているか
-					if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+					; DefsKey[i] は DefsKey[j] に内包されているか
+					if (i != j && DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 					{
 						flag := 1
-						break	; 後置シフトは出力確定しない
+						break		; 後置シフトは出力確定しない
 					}
 					j++
 				}
 				; 検索してもなかった
-				if (j >= BeginTable[2])
-					Setted[i] := 2	; どちらのシフトも出力確定
+				if (j >= DefBegin[2])
+					DefsSetted[i] := 2	; どちらのシフトも出力確定
 			}
 			if flag > 0
-				Setted[i] := 1	; 通常シフトのみ出力確定
+				DefsSetted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
 	}
 
 	; 1キー押し
-;	i := BeginTable[1]
-	while (i < EndTable[1])
+;	i := DefBegin[1]
+	while (i < DefEnd[1])
 	{
-		if (OutMode[i] = 0)
+		if (DefsKanaMode[i] = 0)
 		{
-			Setted[i] := 0
+			DefsSetted[i] := 0
 			flag := 0
 			; 3キー同時押しで使われているキーは出力が確定しない
-			j := BeginTable[3]
-			while (j < EndTable[3])
+			j := DefBegin[3]
+			while (j < DefEnd[3])
 			{
-				; Key[i] は Key[j] に内包されているか
-				if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+				; DefsKey[i] は DefsKey[j] に内包されているか
+				if (DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 				{
 					; シフトも一致
-					if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+					if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 					{
 						flag := 0
 						break		; 出力確定しない
@@ -619,17 +618,17 @@ EisuSetting()
 				}
 				j++
 			}
-			if (j >= EndTable[3])
+			if (j >= DefEnd[3])
 			{
 				; 2キー同時押しで使われているキーは出力が確定しない
-;				j := BeginTable[2]
-				while (j < EndTable[2])
+;				j := DefBegin[2]
+				while (j < DefEnd[2])
 				{
-					; Key[i] は Key[j] に内包されているか
-					if (OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+					; DefsKey[i] は DefsKey[j] に内包されているか
+					if (DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 					{
 						; シフトも一致
-						if ((Key[i] & KC_SPC) = (Key[j] & KC_SPC))
+						if ((DefsKey[i] & KC_SPC) = (DefsKey[j] & KC_SPC))
 						{
 							flag := 0
 							break		; 出力確定しない
@@ -639,13 +638,13 @@ EisuSetting()
 					}
 					j++
 				}
-				if (j >= EndTable[2] && flag = 0)
+				if (j >= DefEnd[2] && flag = 0)
 				{
-;					j := BeginTable[1]
-					while (j < EndTable[1])
+;					j := DefBegin[1]
+					while (j < DefEnd[1])
 					{
-						; Key[i] は Key[j] に内包されているか
-						if (i != j && OutMode[j] = 0 && (Key[i] & Key[j]) = Key[i])
+						; DefsKey[i] は DefsKey[j] に内包されているか
+						if (i != j && DefsKanaMode[j] = 0 && (DefsKey[i] & DefsKey[j]) = DefsKey[i])
 						{
 							flag := 1
 							break	; 後置シフトは出力確定しない
@@ -653,12 +652,12 @@ EisuSetting()
 						j++
 					}
 					; 検索してもなかった
-					if (j >= BeginTable[1])
-						Setted[i] := 2	; どちらのシフトも出力確定
+					if (j >= DefBegin[1])
+						DefsSetted[i] := 2	; どちらのシフトも出力確定
 				}
 			}
 			if flag > 0
-				Setted[i] := 1	; 通常シフトのみ出力確定
+				DefsSetted[i] := 1	; 通常シフトのみ出力確定
 		}
 		i++
 	}

@@ -21,17 +21,17 @@
 ; 本ファイルのみで使う変数
 ; ----------------------------------------------------------------------
 ; グローバル変数
-KanaMode := 0	; 0: 英数入力, 1: かな入力
-Vertical := 1	; 0: 横書き用, 1: 縦書き用
+KanaMode := 0		; 0: 英数入力, 1: かな入力
+Vertical := 1		; 0: 横書き用, 1: 縦書き用
 ; 入力バッファ
-InBuf := []
-InBufTime := []	; 入力の時間
-InBufRead := 0	; 読み出し位置
-InBufWrite := 0	; 書き込み位置
+InBufsKey := []
+InBufsTime := []	; 入力の時間
+InBufReadPos := 0	; 読み出し位置
+InBufWritePos := 0	; 書き込み位置
 InBufRest := 15
 ; 仮出力バッファ
 OutStr := []
-_usc := 0		; 保存されている文字数
+_usc := 0			; 保存されている文字数
 
 ; ----------------------------------------------------------------------
 ; タイマー関数、設定
@@ -76,19 +76,19 @@ return
 PSTimer:	; 後置シフトの判定期限タイマー
 	SetTimer, PSTimer, Off	; タイマー停止
 	; 入力バッファが空の時、保存
-	InBuf[InBufWrite] := "PSTimer", InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest = 15 ? ++InBufWrite & 15 : InBufWrite)
+	InBufsKey[InBufWritePos] := "PSTimer", InBufsTime[InBufWritePos] := WinAPI_timeGetTime()
+		, InBufWritePos := (InBufRest = 15 ? ++InBufWritePos & 15 : InBufWritePos)
 		, (InBufRest = 15 ? InBufRest-- : )
-	Convert()	; 変換ルーチン
+	Convert()				; 変換ルーチン
 	return
 
 CombTimer:	; 同時押しの判定期限タイマー
 	SetTimer, CombTimer, Off	; タイマー停止
 	; 入力バッファが空の時、保存
-	InBuf[InBufWrite] := "CombTimer", InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest = 15 ? ++InBufWrite & 15 : InBufWrite)
+	InBufsKey[InBufWritePos] := "CombTimer", InBufsTime[InBufWritePos] := WinAPI_timeGetTime()
+		, InBufWritePos := (InBufRest = 15 ? ++InBufWritePos & 15 : InBufWritePos)
 		, (InBufRest = 15 ? InBufRest-- : )
-	Convert()	; 変換ルーチン
+	Convert()				; 変換ルーチン
 	return
 
 ; ----------------------------------------------------------------------
@@ -110,8 +110,8 @@ SendNeo(Str1, Delay:=0)
 ;		, SlowCopied
 
 	SlowCopied := Slow
-	if (Delay < 10 && WinActive(ahk_class CabinetWClass))
-		Delay := 10				; エクスプローラーにはゆっくり出力する
+	IfWinActive, ahk_class CabinetWClass	; エクスプローラーにはゆっくり出力する
+		Delay := (Delay < 10 ? 10 : Delay)
 	else (SlowCopied = 1 && WinActive(ahk_class Hidemaru32Class))
 		SlowCopied := 0x11		; 秀丸エディタ
 	SetKeyDelay, -1, -1
@@ -268,10 +268,10 @@ StoreBuf(nBack, Str1)
 ; 出力する文字列を選択
 SelectStr(i)
 {
-	global OutTate, OutYoko, Vertical
+	global DefsTateStr, DefsYokoStr, Vertical
 ;	local Str1
 
-	Str1 := (Vertical ? OutTate[i] : OutYoko[i])
+	Str1 := (Vertical ? DefsTateStr[i] : DefsYokoStr[i])
 
 	return Str1
 }
@@ -279,9 +279,9 @@ SelectStr(i)
 Convert()
 {
 	global KanaMode
-		, InBuf, InBufRead, InBufTime, InBufRest
+		, InBufsKey, InBufReadPos, InBufsTime, InBufRest
 		, KC_SPC, JP_YEN, KC_INT1, R
-		, Key, KeyGroup, OutMode, Setted, Repeatable, BeginTable, EndTable
+		, DefsKey, DefsGroup, DefsKanaMode, DefsSetted, DefsRepeat, DefBegin, DefEnd
 		, _usc
 		, ShiftDelay, CombDelay
 	static run		:= 0	; 多重起動防止フラグ
@@ -314,7 +314,7 @@ Convert()
 		SetTimer, CombTimer, Off	; 同時押しの判定期限タイマー停止
 
 		; 入力バッファから読み出し
-		Str1 := InBuf[InBufRead], KeyTime := InBufTime[InBufRead]
+		Str1 := InBufsKey[InBufReadPos], KeyTime := InBufsTime[InBufReadPos]
 		if (Asc(Str1) = 43)		; "+" から始まる
 		{
 			if shift = 0		; Shiftなし→あり
@@ -326,7 +326,7 @@ Convert()
 			else
 			{
 				StringTrimLeft, Str1, Str1, 1	; 先頭の1文字を消去
-				InBufRead := ++InBufRead & 15, InBufRest++
+				InBufReadPos := ++InBufReadPos & 15, InBufRest++
 			}
 		}
 		else if shift = 1		; Shiftあり→なし
@@ -335,7 +335,7 @@ Convert()
 			shift := 0, spc := 0
 		}
 		else
-			InBufRead := ++InBufRead & 15, InBufRest++
+			InBufReadPos := ++InBufReadPos & 15, InBufRest++
 
 		; 後置シフトの判定期限到来
 		if (Str1 == "PSTimer")
@@ -439,15 +439,15 @@ Convert()
 			; グループありの3キー入力を検索
 			if (LastGroup != 0 && nkeys = 0)
 			{
-				i := BeginTable[3]	; 検索開始場所の設定
+				i := DefBegin[3]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
-				while (i < EndTable[3])
+				while (i < DefEnd[3])
 				{
-					if (KeyGroup[i] = LastGroup
-						&& (Key[i] & RecentKey) 		; 今回のキーを含み
-						&& (Key[i] & KeyComb) = key[i]	; 検索中のキー集合が、いま調べている定義内にあり
-						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
-						&& OutMode[i] = KanaMode)		; 英数用、かな用の種別が一致していること
+					if (DefsGroup[i] = LastGroup
+						&& (DefsKey[i] & RecentKey) 			; 今回のキーを含み
+						&& (DefsKey[i] & KeyComb) = DefsKey[i]	; 検索中のキー集合が、いま調べている定義内にあり
+						&& !((DefsKey[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
+						&& DefsKanaMode[i] = KanaMode)			; 英数用、かな用の種別が一致していること
 					{
 						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -469,15 +469,15 @@ Convert()
 			; グループありの2キー入力を検索
 			if (LastGroup != 0 && nkeys = 0)
 			{
-				i := BeginTable[2]	; 検索開始場所の設定
+				i := DefBegin[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
-				while (i < EndTable[2])
+				while (i < DefEnd[2])
 				{
-					if (KeyGroup[i] = LastGroup
-						&& (Key[i] & RecentKey)
-						&& (Key[i] & KeyComb) = key[i]
-						&& !((Key[i] ^ KeyComb) & KC_SPC)
-						&& OutMode[i] = KanaMode)
+					if (DefsGroup[i] = LastGroup
+						&& (DefsKey[i] & RecentKey)
+						&& (DefsKey[i] & KeyComb) = DefsKey[i]
+						&& !((DefsKey[i] ^ KeyComb) & KC_SPC)
+						&& DefsKanaMode[i] = KanaMode)
 					{
 						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -496,16 +496,16 @@ Convert()
 			; グループありの1キー入力を検索
 			if (LastGroup != 0 && nkeys = 0)
 			{
-				i := BeginTable[1]	; 検索開始場所の設定
+				i := DefBegin[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
 					KeyComb := KC_SPC | LastKeys
 				else
 					KeyComb := (RealKey & KC_SPC) | RecentKey
-				while (i < EndTable[1])
+				while (i < DefEnd[1])
 				{
-					if (KeyGroup[i] = LastGroup
-						&& Key[i] = KeyComb
-						&& OutMode[i] = KanaMode)
+					if (DefsGroup[i] = LastGroup
+						&& DefsKey[i] = KeyComb
+						&& DefsKanaMode[i] = KanaMode)
 					{
 						if (RecentKey = KC_SPC)
 							nBack := 1
@@ -518,14 +518,14 @@ Convert()
 			; 3キー入力を検索
 			if nkeys = 0
 			{
-				i := BeginTable[3]	; 検索開始場所の設定
+				i := DefBegin[3]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys | Last2Keys
-				while (i < EndTable[3])
+				while (i < DefEnd[3])
 				{
-					if ((Key[i] & RecentKey)			; 今回のキーを含み
-						&& (Key[i] & KeyComb) = key[i]	; 検索中のキー集合が、いま調べている定義内にあり
-						&& !((Key[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
-						&& OutMode[i] = KanaMode)		; 英数用、かな用の種別が一致していること
+					if ((DefsKey[i] & RecentKey)				; 今回のキーを含み
+						&& (DefsKey[i] & KeyComb) = DefsKey[i]	; 検索中のキー集合が、いま調べている定義内にあり
+						&& !((DefsKey[i] ^ KeyComb) & KC_SPC)	; ただしシフトの相違はなく
+						&& DefsKanaMode[i] = KanaMode)			; 英数用、かな用の種別が一致していること
 					{
 						if (_lks = 3 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -547,14 +547,14 @@ Convert()
 			; 2キー入力を検索
 			if nkeys = 0
 			{
-				i := BeginTable[2]	; 検索開始場所の設定
+				i := DefBegin[2]	; 検索開始場所の設定
 				KeyComb := (RealKey & KC_SPC) | RecentKey | LastKeys
-				while (i < EndTable[2])
+				while (i < DefEnd[2])
 				{
-					if ((Key[i] & RecentKey)
-						&& (Key[i] & KeyComb) = key[i]
-						&& !((Key[i] ^ KeyComb) & KC_SPC)
-						&& OutMode[i] = KanaMode)
+					if ((DefsKey[i] & RecentKey)
+						&& (DefsKey[i] & KeyComb) = DefsKey[i]
+						&& !((DefsKey[i] ^ KeyComb) & KC_SPC)
+						&& DefsKanaMode[i] = KanaMode)
 					{
 						if (_lks = 2 && CombDelay > 0 && (RealKey & KC_SPC) && RecentKey != KC_SPC)
 						{
@@ -573,15 +573,15 @@ Convert()
 			; 1キー入力を検索
 			if nkeys = 0
 			{
-				i := BeginTable[1]	; 検索開始場所の設定
+				i := DefBegin[1]	; 検索開始場所の設定
 				if (RecentKey = KC_SPC)
 					KeyComb := KC_SPC | LastKeys
 				else
 					KeyComb := (RealKey & KC_SPC) | RecentKey
- 				while (i < EndTable[1])
+ 				while (i < DefEnd[1])
 				{
-					if (Key[i] = KeyComb
-						&& OutMode[i] = KanaMode)
+					if (DefsKey[i] = KeyComb
+						&& DefsKanaMode[i] = KanaMode)
 					{
 						if (RecentKey = KC_SPC)
 							nBack := 1
@@ -604,8 +604,8 @@ Convert()
 			; 出力する文字列を選ぶ
 			if nkeys > 0	; 定義が見つかった時
 			{
-				Str1 := SelectStr(i)		; 出力する文字列
-				LastSetted := Setted[i]		; 出力確定するか検索
+				Str1 := SelectStr(i)			; 出力する文字列
+				LastSetted := DefsSetted[i]		; 出力確定するか検索
 			}
 			else	; 見つからなかった時
 			{
@@ -613,7 +613,7 @@ Convert()
 					Str1 := "+" . Str1
 				LastSetted := 0	; 出力確定はしない
 			}
-;MsgBox, , , %i% %LastSetted%, 1
+
 			; 仮出力バッファに入れる
 			StoreBuf(nBack, Str1)
 			; 出力確定文字か？
@@ -630,12 +630,12 @@ Convert()
 			}
 
 			; 次回に向けて変数を更新
-			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)		; 2、3キー入力のときは、この前のキービットを保存しない
-			LastKeys := (nkeys >= 1 ? Key[i] : RecentKey)	; 今回のキービットを保存
+			Last2Keys := (nkeys >= 2 ? 0 : LastKeys)			; 2、3キー入力のときは、この前のキービットを保存しない
+			LastKeys := (nkeys >= 1 ? DefsKey[i] : RecentKey)	; 今回のキービットを保存
 			LastKeyTime := KeyTime		; 有効なキーを押した時間を保存
 			_lks := nkeys				; 何キー同時押しだったかを保存
-			LastGroup := KeyGroup[i]	; 何グループだったか保存
-			if (Repeatable[i] & R)
+			LastGroup := DefsGroup[i]	; 何グループだったか保存
+			if (DefsRepeat[i] & R)
 				RepeatKey := RecentKey	; キーリピートできる
 		}
 	}
@@ -766,8 +766,8 @@ PgUp::
 PgDn::
 	; 入力バッファへ保存
 	; キーを押す方はいっぱいまで使わない
-	InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest > 6 ? ++InBufWrite & 15 : InBufWrite)
+	InBufsKey[InBufWritePos] := A_ThisHotkey, InBufsTime[InBufWritePos] := WinAPI_timeGetTime()
+		, InBufWritePos := (InBufRest > 6 ? ++InBufWritePos & 15 : InBufWritePos)
 		, (InBufRest > 6 ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
@@ -878,8 +878,8 @@ sc39 up::	; Space
 +sc73 up::	; (JIS)_
 #If
 ; 入力バッファへ保存
-	InBuf[InBufWrite] := A_ThisHotkey, InBufTime[InBufWrite] := WinAPI_timeGetTime()
-		, InBufWrite := (InBufRest ? ++InBufWrite & 15 : InBufWrite)
+	InBufsKey[InBufWritePos] := A_ThisHotkey, InBufsTime[InBufWritePos] := WinAPI_timeGetTime()
+		, InBufWritePos := (InBufRest ? ++InBufWritePos & 15 : InBufWritePos)
 		, (InBufRest ? InBufRest-- : )
 	Convert()	; 変換ルーチン
 	return
