@@ -141,9 +141,20 @@ SendNeo(Str1, Delay:=0)
 			; SendRaw(直接入力モード)にする時
 			if (SubStr(StrChopped, LenChopped - 4, 5) = "{Raw}")
 			{
-				while (i++ < len)
+				i++
+				while (i <= len)
 				{
-					SendRaw, % SubStr(Str1, i, 1)
+					StrChopped := SubStr(Str1, i, 2)
+					if (Asc(StrChopped) > 65535)	; ユニコード拡張領域
+					{
+						SendRaw, % StrChopped
+						i += 2
+					}
+					else
+					{
+						SendRaw, % SubStr(Str1, i, 1)
+						i++
+					}
 					; 出力直後のディレイ
 					Sleep, PostDelay
 				}
