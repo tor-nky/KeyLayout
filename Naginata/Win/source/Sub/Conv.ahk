@@ -295,7 +295,7 @@ Convert()
 		, DefsKey, DefsGroup, DefsKanaMode, DefsSetted, DefsRepeat, DefBegin, DefEnd
 		, _usc
 		, ShiftDelay, CombDelay
-	static run		:= 0	; 多重起動防止フラグ
+	static ConvRest	:= 0	; 多重起動防止フラグ
 		, spc		:= 0	; スペースキーの単押しを空白入力にするためのフラグ
 		, RealKey	:= 0	; 今押している全部のキービットの集合
 		, LastKeys	:= 0	; 前回のキービット
@@ -315,11 +315,11 @@ Convert()
 ;		, i			; カウンタ
 ;		, nkeys		; 今回は何キー同時押しか
 
-	if run > 0
+	if ConvRest > 0
 		return	; 多重起動防止で終了
 
 	; 入力バッファが空になるまで
-	while (run := 15 - InBufRest)
+	while (ConvRest := 15 - InBufRest)
 	{
 		SetTimer, PSTimer, Off		; 後置シフトの判定期限タイマー停止
 		SetTimer, CombTimer, Off	; 同時押しの判定期限タイマー停止
@@ -630,7 +630,7 @@ Convert()
 			; 出力確定文字か？
 			if (!RecentKey || LastSetted > (ShiftDelay > 0 ? 1 : 0))
 				OutBuf()	; 出力確定
-			else if (run = 1)
+			else if (ConvRest = 1)
 			{
 				; 後置シフトの判定期限タイマー起動
 				if LastSetted = 1
