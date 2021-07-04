@@ -351,7 +351,7 @@ Convert()
 		; 後置シフトの判定期限到来
 		if (Str1 == "PSTimer")
 		{
-			if (LastSetted = 1 && LastKeyTime + ShiftDelay <= WinAPI_timeGetTime())	; 割り込みの行き違いを防ぐ
+			if LastSetted = 1
 				OutBuf()
 			continue
 		}
@@ -360,7 +360,7 @@ Convert()
 		; 同時押しの判定期限到来(シフト時のみ)
 		if (Str1 == "CombTimer")
 		{
-			if ((RealKey & KC_SPC) && LastKeyTime + CombDelay <= WinAPI_timeGetTime())	; 割り込みの行き違いを防ぐ
+			if (RealKey & KC_SPC)
 			{
 				OutBuf()
 				Last2Keys := 0, LastKeys := 0
@@ -634,10 +634,10 @@ Convert()
 			{
 				; 後置シフトの判定期限タイマー起動
 				if LastSetted = 1
-					SetTimer, PSTimer, % ShiftDelay + 9
+					SetTimer, PSTimer, % ShiftDelay + 10
 				; 同時押しの判定期限タイマー起動(シフト時のみ)
 				if (CombDelay > 0 && (RealKey & KC_SPC))
-					SetTimer, CombTimer, % CombDelay + 9
+					SetTimer, CombTimer, % CombDelay + 10
 			}
 
 			; 次回に向けて変数を更新
