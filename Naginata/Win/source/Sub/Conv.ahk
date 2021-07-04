@@ -428,7 +428,7 @@ Convert()
 		else if (!(RealKey & RecentKey) && RecentKey = KC_SPC
 			&& (_usc = 0 || LastKeyTime + ShiftDelay <= KeyTime))
 		{
-			spc := 1	; 単独スペース判定フラグ
+			spc := 1	    ; 単独スペース判定フラグ
 			OutBuf()
 			RealKey |= KC_SPC
 			LastGroup := 0
