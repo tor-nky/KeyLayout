@@ -1,18 +1,32 @@
 {"title": "Support Script for Benkei",
 "rules":[{
-  "description":" Space and Shift (if not KANA Mode)",
+  "description":"Shift+英数(左Command) → 全角英数 (日本語IM専用) ※先頭に登録してください",
   "manipulators":[
-    {"conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_unless"}],
-    "from":{"key_code":"spacebar"},
-    "to":[{"key_code":"left_shift"}],
-    "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"},
-    {"conditions":[{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_if"}],
-    "from":{"key_code":"spacebar"},
-    "to":[{"key_code":"left_shift"}],
-    "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"},
-    {"conditions":[{"input_sources":[{"input_source_id":"Kotoeri"}],"type":"input_source_if"}],
-    "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"]}},
-    "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
-    {"from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"]}},
-    "to":[{"key_code":"japanese_kana"}],"type":"basic"}
-]}]}
+    {"description":"U.S.使用時、Shift+英数",
+      "conditions":[{"input_sources":[{"input_source_id":"com.apple.keylayout.US"}],"type":"input_source_if"}],
+      "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"]}},
+      "to":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
+    {"description":"U.S.使用時、Shift+左Command",
+      "conditions":[{"input_sources":[{"input_source_id":"com.apple.keylayout.US"}],"type":"input_source_if"}],
+      "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"]}},
+      "to":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
+    {"description":"その他、Shift+英数",
+      "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"]}},
+      "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
+    {"description":"その他、Shift+左Command",
+      "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"]}},
+      "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"}
+  ]},{
+    "description":"Space and Shift (if not KANA Mode)",
+    "manipulators":[
+      {"description":"かな入力以外のSandS",
+        "conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_unless"}],
+        "from":{"key_code":"spacebar"},
+        "to":[{"key_code":"left_shift"}],
+        "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"},
+      {"description":"英数入力時のSandS",
+        "conditions":[{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_if"}],
+        "from":{"key_code":"spacebar"},
+        "to":[{"key_code":"left_shift"}],
+        "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"}
+  ]}]}
