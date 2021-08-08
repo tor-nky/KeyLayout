@@ -1,32 +1,44 @@
-{"title": "Support Script for Benkei",
+{"title": "Benkei補助スクリプト",
 "rules":[{
-  "description":"Shift+英数(左Command) → 全角英数 (日本語IM専用) ※先頭に登録してください",
+  "description":"【日本語IM専用】Shift+英数(左Command) → 全角英字 ※先頭に登録してください",
   "manipulators":[
-    {"description":"U.S.使用時、Shift+英数",
+    {"description":"U.S.使用時の Shift+英数",
       "conditions":[{"input_sources":[{"input_source_id":"com.apple.keylayout.US"}],"type":"input_source_if"}],
       "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
       "to":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
-    {"description":"U.S.使用時、Shift+左Command",
+    {"description":"U.S.使用時の Shift+左Command",
       "conditions":[{"input_sources":[{"input_source_id":"com.apple.keylayout.US"}],"type":"input_source_if"}],
       "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
       "to":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
-    {"description":"その他、Shift+英数",
+
+    {"description":"日本語IM使用時の Shift+英数",
+      "conditions":[{"input_sources":[{"input_source_id":"Kotoeri"}],"type":"input_source_if"}],
       "from":{"key_code":"japanese_eisuu","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
       "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
-    {"description":"その他、Shift+左Command",
+    {"description":"日本語IM使用時の Shift+左Command",
+      "conditions":[{"input_sources":[{"input_source_id":"Kotoeri"}],"type":"input_source_if"}],
       "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
       "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"}
-  ]},{
-    "description":"Space and Shift (if not KANA Mode)",
-    "manipulators":[
-      {"description":"かな入力以外のSandS",
-        "conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_unless"}],
-        "from":{"key_code":"spacebar","modifiers":{"optional":["caps_lock"]}},
-        "to":[{"key_code":"left_shift"}],
-        "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"},
-      {"description":"英数入力時のSandS",
-        "conditions":[{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_if"}],
-        "from":{"key_code":"spacebar","modifiers":{"optional":["caps_lock"]}},
-        "to":[{"key_code":"left_shift"}],
-        "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"}
-  ]}]}
+]},{
+  "description":"Space and Shift (if not KANA Mode), etc.",
+  "manipulators":[
+    {"description":"かな入力以外の F+G → 英字 (option)",
+      "conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_unless"}],
+      "from":{"simultaneous":[{"key_code":"f"},{"key_code":"g"}],"modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"japanese_eisuu"}],"type": "basic"},
+
+    {"description":"全角英字入力時の F+G → 英字",
+      "conditions":[{"input_sources":[{"input_mode_id":"FullWidthRoman$"}],"type":"input_source_if"}],
+      "from":{"simultaneous":[{"key_code":"f"},{"key_code":"g"}],"modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"japanese_eisuu"}],"type": "basic"},
+    {"description":"かな入力以外のSandS",
+      "conditions":[{"input_sources":[{"language":"ja"}],"type":"input_source_unless"}],
+      "from":{"key_code":"spacebar","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"left_shift"}],
+      "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"},
+    {"description":"英数入力時のSandS",
+      "conditions":[{"input_sources":[{"input_mode_id":"Roman$"}],"type":"input_source_if"}],
+      "from":{"key_code":"spacebar","modifiers":{"optional":["caps_lock"]}},
+      "to":[{"key_code":"left_shift"}],
+      "to_if_alone":[{"key_code":"spacebar"}],"type": "basic"}
+]}]}
