@@ -9,7 +9,8 @@
     {"description":"U.S.使用時の Shift+左Command",
       "conditions":[{"input_sources":[{"input_source_id":"com.apple.keylayout.US"}],"type":"input_source_if"}],
       "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
-      "to":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
+      "to":[{"key_code":"left_command"}],
+      "to_if_alone":[{"key_code":"japanese_kana"},{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"},
 
     {"description":"日本語IM使用時の Shift+英数",
       "conditions":[{"input_sources":[{"input_source_id":"Kotoeri"}],"type":"input_source_if"}],
@@ -18,7 +19,8 @@
     {"description":"日本語IM使用時の Shift+左Command",
       "conditions":[{"input_sources":[{"input_source_id":"Kotoeri"}],"type":"input_source_if"}],
       "from":{"key_code":"left_command","modifiers":{"mandatory":["shift"],"optional":["caps_lock"]}},
-      "to":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"}
+      "to":[{"key_code":"left_command"}],
+      "to_if_alone":[{"key_code":"l","modifiers":["control","shift"]}],"type":"basic"}
 ]},{
   "description":"Space and Shift (if not KANA Mode), etc.",
   "manipulators":[
