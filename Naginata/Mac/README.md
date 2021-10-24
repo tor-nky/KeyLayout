@@ -125,6 +125,7 @@ A6. できないソフトでは、通常のカーソルを使ってください�
 
 * [【薙刀式】v14（仮）の配列図とDvorakJファイル](http://oookaworks.seesaa.net/article/483714452.html#comment&gsc.tab=0)
 * [【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)
+* [【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)
 * [Karabiner-Elementsの設定項目をまとめました](https://qiita.com/s-show/items/a1fd228b04801477729c)
 * [Documentation | Karabiner-Elements](https://karabiner-elements.pqrs.org/docs/)
 * [Mac薙刀式v11 sorshi版](https://github.com/sorshi/KE-complex_modifications-NAGINATA)
@@ -146,3 +147,7 @@ A6. できないソフトでは、通常のカーソルを使ってください�
 * [【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)を反映
 
 (ここまで2021年10月15日追加)
+
+* [【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)を反映
+
+(ここまで2021年10月24日追加)
