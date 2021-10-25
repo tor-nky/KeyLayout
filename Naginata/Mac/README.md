@@ -1,4 +1,12 @@
-# Mac を 薙刀式 v14集大成版（仮） にするスクプリト
+# Mac を 薙刀式 にするスクプリト
+
+### 2021年10月23日版
+
+参考：
+[【薙刀式】v14（仮）の配列図とDvorakJファイル](http://oookaworks.seesaa.net/article/483714452.html#comment&gsc.tab=0)／
+[【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)／
+[【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)
+
 
 Windows版、QMK版の薙刀式は、押したキーをどれか離すと計算がおこなわれ、画面に出力されます。
 
