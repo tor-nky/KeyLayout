@@ -1,12 +1,9 @@
 # Mac を 薙刀式 にするスクプリト
 
-### 2021年10月23日版
+### 薙刀式配列v14（集大成版） 2021年12月10日付
 
 参考：
-[【薙刀式】v14（仮）の配列図とDvorakJファイル](http://oookaworks.seesaa.net/article/483714452.html#comment&gsc.tab=0)／
-[【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)／
-[【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)
-
+[【薙刀式】v14集大成版](http://oookaworks.seesaa.net/article/484704326.html#gsc.tab=0)
 
 Windows版、QMK版の薙刀式は、押したキーをどれか離すと計算がおこなわれ、画面に出力されます。
 
@@ -21,7 +18,7 @@ JISキーボードにもUSキーボードにも対応しています。
 Karabiner-Elements で登録してください。
 英語系の配列を取り除かなくてはいけません。
 
-# 薙刀式 v14集大成版（仮） +かわせみ2
+# 薙刀式配列v14（集大成版）+かわせみ2
 
 ### 【重要】かわせみ2 以降でのみ動作します。
 
@@ -29,9 +26,9 @@ Karabiner-Elements で登録してください。
 
 ![かわせみ2設定](かわせみ2設定.png)
 
-macOS Big Sur (11.6) + Karabiner-Elements (v13.7.0) + かわせみ3 (3.0) でテスト継続中です。
+macOS Big Sur (11.6.1) + Karabiner-Elements (v14.3.0) + かわせみ3 (3.0) でテスト継続中です。
 
-(インストール後サイズ: 6.6MB)
+(インストール後サイズ: 6.7MB)
 
 ## 仕様
 
@@ -131,9 +128,7 @@ A6. できないソフトでは、通常のカーソルを使ってください�
 
 ## 参考
 
-* [【薙刀式】v14（仮）の配列図とDvorakJファイル](http://oookaworks.seesaa.net/article/483714452.html#comment&gsc.tab=0)
-* [【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)
-* [【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)
+* [【薙刀式】v14集大成版](http://oookaworks.seesaa.net/article/484704326.html#gsc.tab=0)
 * [Karabiner-Elementsの設定項目をまとめました](https://qiita.com/s-show/items/a1fd228b04801477729c)
 * [Documentation | Karabiner-Elements](https://karabiner-elements.pqrs.org/docs/)
 * [Mac薙刀式v11 sorshi版](https://github.com/sorshi/KE-complex_modifications-NAGINATA)
@@ -144,18 +139,6 @@ A6. できないソフトでは、通常のカーソルを使ってください�
 
 ## おもな修正履歴
 
-* 「薙刀式 v14集大成版（仮）」へ対応
+* 「[【薙刀式】v14集大成版](http://oookaworks.seesaa.net/article/484704326.html#gsc.tab=0)へ対応
 
-(ここまで2021年10月7日追加)
-
-* キーリピートが設定されていなかった一部のカーソル移動を修正
-
-(ここまで2021年10月9日追加)
-
-* [【薙刀式】v14仮のバグフィックス](http://oookaworks.seesaa.net/article/483884499.html#gsc.tab=0)を反映
-
-(ここまで2021年10月15日追加)
-
-* [【薙刀式】１４仮のカナをひとつ交換](http://oookaworks.seesaa.net/article/484030707.html#gsc.tab=0)を反映
-
-(ここまで2021年10月24日追加)
+(ここまで2021年12月12日追加)
