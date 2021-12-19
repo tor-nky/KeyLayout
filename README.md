@@ -11,7 +11,7 @@ Karabiner-Elements で動作します。
 
 ### 種類
 
-* 薙刀式 v14集大成版
+* 薙刀式 v14集大成版 (かわせみ2シリーズ専用)
 * 薙刀式 v13完成版
 * 薙刀式 2キー同時版
 * 新JIS配列
@@ -25,6 +25,7 @@ Karabiner-Elements で動作します。
 ### おまけ
 
 * Mac で、東プレのテンキー REALFORCE23U で「＝」キーを使う、あるいは Cut, Copy, Paste キーを使うスクプリト
+* Benkei 補助スクリプト (Naginata/Mac内)
 
 ## Windows 用の使い方
 
