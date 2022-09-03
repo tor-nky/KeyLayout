@@ -1,4 +1,4 @@
-# Benizara 用の薙刀式v13完成版ファイル
+# Benizara 用の薙刀式v14集大成版ファイル
 Benizara ver.0.1.4.91 以降用です。  
 新旧MS-IME （Windows 10、Windows 11）、ATOK、Google日本語入力 に対応していると思いますが、テストしていません。
 ## ATOK を使う場合のキー設定
