@@ -22,7 +22,6 @@ Karabiner-Elements で動作します。
 ## Windows 用の使い方
 AutoHotkey で動作します。
 ### 種類
-* 薙刀式 v13完成版 - 旧版
 * 新JIS配列(JISキーボード用のみ)
 * Mac用英語キーボード のかな配列
 
