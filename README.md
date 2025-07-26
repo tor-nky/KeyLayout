@@ -6,6 +6,7 @@ Karabiner-Elements で動作します。
 * Karabiner-Elements の Preferences を開き、Complex modifications 画面の下の方にある Add rule を押す。
 * 使いたいスクリプトを選び、+Enable を押す。
 ### 種類
+* 薙刀式 v15fix版(かわせみ2シリーズ専用)
 * 薙刀式 v14集大成版 (かわせみ2シリーズ専用)
 * 薙刀式 v13完成版
 * 薙刀式 2キー同時版
@@ -20,12 +21,16 @@ Karabiner-Elements で動作します。
 * Mac で、東プレのテンキー REALFORCE23U で「＝」キーを使う、あるいは Cut, Copy, Paste キーを使うスクプリト
 * Benkei 補助スクリプト (Naginata/Mac内)
 ## Windows 用の使い方
-AutoHotkey で動作します。
-### 種類
+### AutoHotkey 用
+新MS-IME（Windows 10 version 2004）に対応し、ストアアプリでもかな入力が可能です。
 * 新JIS配列(JISキーボード用のみ)
 * Mac用英語キーボード のかな配列
-
-新MS-IME（Windows 10 version 2004）に対応し、ストアアプリでもかな入力が可能です。
+### 紅皿 用
+[キーボード配列エミュレーションソフトウェア 紅皿](https://qiita.com/kenichiro_ayaki/items/03ac81a20137c3d91554)の配列定義ファイル
+* 薙刀式 v14集大成版 (かわせみ2シリーズ専用)
+* 薙刀式 v13完成版
+### keymapper 用
+* 薙刀式 v15fix版 (横書き用)
 ### おまけ
 * KeyCodeList.xlsx
 
