@@ -1,5 +1,5 @@
 # 薙刀式 v15fix版 (横書き用)
- [keymapper](https://github.com/houmain/keymapper)の __Windows版専用__ の設定ファイルです。
+ [keymapper 5.2.0以降](https://github.com/houmain/keymapper)用の __Windows版専用__ の設定ファイルです。
  @deepprog氏の[keymapper 薙刀式の設定](https://qiita.com/deepprog/items/4d18a8cc4ab628ee9fb9)を編集して作りました。
 
 IMEのキー設定を利用しますので、__新MS-IMEでは使えません__。
@@ -8,8 +8,9 @@ __JISキーボード__（日本語配列キーボード）でご使用くださ�
 設定ファイル `keymapper.conf` を `C:\Users\ユーザー名` に置きます。
 
 ポータブル版を使う場合は、ZIPファイルを解凍後に `keymapper.exe` と `keymapperd.exe` の2つを実行します。
+さらに keymapper.exe のショートカットを作成し、そのプロパティ内のリンク先を `%パス名%\keymapper.exe -c %パス名%\Naginata_v15.conf` などと書き換えて実行することもできます。
 
-記号入力が文字化けしたら、`keymapper.conf` のエンコードが UTF-8 でBOMなし になっているか確認してください。
+記号入力が文字化けになったら、`keymapper.conf` のエンコードが UTF-8 でBOMなし になっているか確認してください。
 ## IMEのキー設定
 |* キー|入力/変換済み文字なし|他|
 |---|:---:|:---:|
