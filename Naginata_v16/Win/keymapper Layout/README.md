@@ -1,5 +1,5 @@
 # 薙刀式v16快速版
- [keymapper 5.2.0以降](https://github.com/houmain/keymapper)用の __Windows版専用__ の設定ファイルです。
+ [keymapper 5.3.2以降](https://github.com/houmain/keymapper)用の __Windows版専用__ の設定ファイルです。
  @deepprog氏の[keymapper 薙刀式の設定](https://qiita.com/deepprog/items/4d18a8cc4ab628ee9fb9)を編集して作りました。
 
 IMEのキー設定は不要です。(Windows 11標準のMS-IMEにも対応)
